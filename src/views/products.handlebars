@@ -1,0 +1,33 @@
+<div class="container">
+    <h2>Productos</h2>
+
+    <ul class="product-list">
+        {{#each products.payload}}
+        <li>
+            <div class="product">
+                <h4>{{this.title}}</h4>
+                <img class="product-image" src="{{thumbnail}}" alt="imagen de {{title}}">
+                <p>Precio: {{this.price}}</p>
+                <p>Stock: {{this.stock}}</p>
+                <p>Descripcion: {{this.description}}</p>
+                <p class="id-label">ID:</p> 
+                <p class="id-number">{{this._id}}</p> 
+                <a href="http://localhost:8080/api/products/{{this._id}}" class="product-link">Ver</a>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+
+    <div class="page-info">
+        <p class="current-page">Página actual: <span>{{products.page}}</span></p>
+        <div class="pagination-links">
+            {{#if products.hasPrevPage}}
+            <a href="{{products.prevLink}}" class="pagination-link">Anterior</a>
+            {{/if}}
+
+            {{#if products.hasNextPage}}
+            <a href="{{products.nextLink}}" class="pagination-link">Siguiente</a>
+            {{/if}}
+        </div>
+    </div>
+</div>

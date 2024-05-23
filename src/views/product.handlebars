@@ -1,0 +1,19 @@
+<div class="container">
+    {{#each product}}
+    <div class="product">
+        <h2>{{title}}</h2>
+        <img src="../{{thumbnail}}" alt="imagen de {{title}}">
+        <div class="product__info">
+            <p>{{description}}</p>
+            <p>Precio: {{price}}</p>
+            <p>Stock: {{stock}}</p>
+            <p>Código: {{code}}</p>
+            <p>ID: {{id}}</p>
+            <form action="/api/cart/{{cartId}}/product/{{id}}" id="formProductToCart" method="post">
+                <input id="addToCart" type="submit" value="Agregar al Carrito" class="add-to-cart-green-button">
+            </form>
+        </div>
+        <a href="/api/products" class="product-link">Volver</a>
+    </div>
+    {{/each}}
+</div>

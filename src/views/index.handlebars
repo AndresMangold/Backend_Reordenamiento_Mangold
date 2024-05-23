@@ -1,0 +1,10 @@
+<div class="login-page"> 
+    {{#if isNotLoggedIn}}
+        <a href="/login" class="home-link">Login</a> 
+        <a href="/register" class="home-link">Register</a> 
+    {{/if}}
+
+    {{#if isLoggedIn}}
+        <a href="/profile" class="home-link">My Profile</a>
+    {{/if}}
+</div>

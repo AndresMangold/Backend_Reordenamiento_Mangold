@@ -1,0 +1,598 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #161616;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.form-container {
+    margin-top: 3rem;
+}
+
+.form {
+    margin: 0 auto; 
+    width: 20rem;
+    background-color: #afafaf;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.form form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid rgb(59, 57, 57);
+    padding: 1rem;
+}
+
+.form form label,
+.form form input,
+.form form select,
+.form form button {
+    margin: 0 auto;
+    width: 100%;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+.navBar {
+    background-color: #2a2a2c;
+}
+
+h1 {
+    text-decoration: chartreuse;
+}
+
+h2 {
+    color: white;
+}
+
+.navBar h1 {
+    text-align: center;
+    padding: 2rem;
+}
+
+.ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.ul li {
+    list-style-type: none;
+    margin-bottom: 1rem;
+    text-decoration: none;
+    background-color: #afafaf;
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    transition: all .3s ease-in-out;
+}
+
+.ul li:hover {
+    background-color: #c1d133;
+}
+
+.ul li a {
+    text-decoration: none;
+    color: #000000;
+}
+
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 1rem; 
+}
+
+.product {
+    background-color: rgba(107, 105, 105, 0.7);
+    padding: 0.5rem;
+    border: 0.5px solid gray;
+    border-radius: 1rem;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    width: calc(50% - 0.5rem); 
+}
+
+
+.product h4 {
+    font-size: 30px; 
+    color: #ffffff;
+    margin-bottom: 1rem; 
+}
+
+.product-image {
+    width: 200px; 
+    height: auto; 
+}
+
+.product img {
+    max-width: 100%;
+    height: auto;
+}
+
+.product__info {
+    font-size: 20px;
+    color: #ffffff;
+    margin-top: 1rem;  
+}
+
+.products {
+    background-color: rgba(107, 105, 105, 0.7);
+    padding: 0.5rem;
+    border: 0.5px solid gray;
+    border-radius: 1rem;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    width: 250px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; 
+}
+
+.products h4 {
+    font-size: 20px; 
+    color: #ffffff;
+    margin-bottom: 0.5rem; 
+}
+
+.products p {
+    font-size: 16px; 
+    color: #ffffff;
+    margin: 0.5rem 0; 
+}
+
+.container {
+    text-align: center;
+    margin: 1rem auto;
+    max-width: 1200px; 
+    display: grid;
+    gap: 1rem; 
+}
+
+.page-info {
+    text-align: center; 
+    margin-bottom: 1rem;
+}
+
+.pagination-links {
+    display: inline-block; 
+    margin-top: 0.5rem; 
+}
+
+.current-page {
+    color: white;
+    margin-bottom: 0; 
+}
+
+.pagination-link {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-link:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.pagination-link:hover {
+    background-color: #ffffff; 
+    color: #000000; 
+}
+
+.page-title {
+    color: #ffffff; 
+    font-size: 50px; 
+}
+
+.form button {
+    width: 100%; 
+    padding: 10px; 
+    margin-top: 10px; 
+    background-color: #3bfa34; 
+    color: #000000; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+
+.form button:hover {
+    background-color: #36ac00; 
+}
+
+.form div {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+}
+
+.add-to-cart-button {
+    background-color: #4CAF50; 
+    border: none; 
+    color: white; 
+    padding: 10px 20px; 
+    text-align: center; 
+    text-decoration: none; 
+    display: inline-block; 
+    font-size: 16px; 
+    margin: 4px 2px; 
+    cursor: pointer; 
+    border-radius: 4px; 
+}
+
+.add-to-cart-button:hover {
+    background-color: #45a049; 
+}
+
+.cart {
+    display: flex;
+    gap: 2rem;
+    margin: 1rem 0;
+}
+
+.cart .cart__id {
+    width: 15rem;
+}
+
+.product-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.product-link:hover {
+    background-color: #45a049;
+}
+
+.product p {
+    color: white; 
+}
+
+.product p {
+    color: white;
+    font-size: 16px; 
+    margin: 0.5rem 0;
+}
+
+.product p.id-label {
+    font-size: 14px; 
+}
+
+.product p.id-number {
+    font-size: 12px; 
+}
+
+.cart {
+    background-color: #444; 
+    padding: 1rem; 
+    border-radius: 0.5rem; 
+    margin-bottom: 1rem; 
+}
+
+.cart p,
+.cart a {
+    color: white; 
+    margin-bottom: 0.5rem; 
+}
+
+.cart a {
+    display: inline-block; 
+    padding: 0.5rem 1rem; 
+    background-color: #4CAF50; 
+    border: none; 
+    color: white; 
+    text-decoration: none; 
+    border-radius: 0.25rem; 
+    transition: background-color 0.3s ease; 
+}
+
+.cart a:hover {
+    background-color: #45a049; 
+}
+
+.cart-container {
+    text-align: center;
+    margin: 1rem auto;
+    max-width: 800px;
+    background-color: #444;
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.cart-container h2 {
+    color: white;
+}
+
+.cart-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.cart-container .margin {
+    margin-bottom: 1rem;
+}
+
+.cart-container .margin p {
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.cart-container a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease;
+}
+
+.cart-container a:hover {
+    background-color: #45a049;
+}
+
+.cart-container .margin {
+    margin-bottom: 3rem; 
+    margin-top: 2rem; 
+}
+
+.cart-container .margin p {
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.product__info p {
+    margin-bottom: 0.75rem;
+}
+
+.add-to-cart-green-button {
+    background-color: #4CAF50;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.add-to-cart-green-button:hover {
+    background-color: #45a049;
+    cursor: pointer;
+}
+
+.login-page {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-page .home-links {
+    margin-top: 3rem;
+}
+
+.login-page .home-links .home-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #2a2a2c;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    margin: 0 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.login-page .home-links .home-link:hover {
+    background-color: #3b3b3d;
+}
+
+.login-page .form-container {
+    margin-top: 3rem;
+}
+
+.login-page .form {
+    margin: 0 auto; 
+    width: 20rem;
+    background-color: #afafaf;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.login-page .form form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.login-page .form form label,
+.login-page .form form input {
+    width: 100%;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+.login-page .register-link {
+    margin-top: 1rem;
+}
+
+.profile-info {
+    color: white;
+    font-size: 16px;
+    margin-top: 3rem;
+    text-align: center; 
+}
+
+.profile-info h1,
+.profile-info h2,
+.profile-info div {
+    margin-bottom: 1rem;
+}
+
+.profile-info button,
+.profile-info a {
+    display: inline-block;
+    margin-top: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.profile-info button.logout-button {
+    background-color: #FF5733; 
+}
+
+.profile-info button:hover,
+.profile-info a:hover {
+    background-color: #45a049;
+}
+
+.form-container {
+    margin-bottom: 2rem;
+}
+
+.form {
+    margin: 0 auto;
+    width: 20rem;
+    background-color: #afafaf;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.form form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid rgb(59, 57, 57);
+    padding: 1rem;
+}
+
+.form form label,
+.form form input,
+.form form select,
+.form form button {
+    margin: 0 auto;
+    width: 100%;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+}
+
+.form .input-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.form .input-row label {
+    width: 30%;
+}
+
+.form .input-row input {
+    width: 70%;
+}
+
+.form button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 1rem;
+    background-color: #3bfa34;
+    color: #000000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form button:hover {
+    background-color: #36ac00;
+}
+
+.register-link {
+    margin-top: 1rem;
+}
+
+.register-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.register-button:hover {
+    background-color: #45a049;
+}
+
+.registration-form {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+}
+
+.registration-form form {
+    width: 20rem;
+    background-color: #afafaf;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    width: 100%;
+    display: block;
+    color: white;
+}
+
+.form-group input {
+    width: calc(100% - 20px); 
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #000;
+}
+
+.register-button {
+    width: auto; 
+    padding: 10px 20px; 
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.register-button:hover {
+    background-color: #45a049;
+}
+
+.github-button {
+    width: auto; 
+    padding: 10px 20px;
+    margin-top: 1rem; 
+    background-color: #4c87af;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.github-button:hover {
+    background-color: #4c87af;
+}
+

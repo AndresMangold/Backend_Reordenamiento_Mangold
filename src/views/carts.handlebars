@@ -1,0 +1,15 @@
+<ul class="container">
+    <h2>Carritos de Compras</h2>
+    {{#each carts}}
+    <li>
+        <div class="cart">
+            <p class="cart__id">ID: {{id}}</p> 
+            <p>Tipos de productos: {{quantity}}</p> 
+            <a href="/api/cart/{{id}}">Ver</a>
+        </div>
+    </li>
+    {{/each}}
+    <li>
+        <a href="/api/products" class="product-link">Volver</a>
+    </li>
+</ul>

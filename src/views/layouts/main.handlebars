@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{#each style}}
+    <link rel="stylesheet" href="/css/{{this}}">
+    {{/each}}
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>{{titlePage}}</title>
+</head>
+
+<body>
+    <div class="navBar">
+        <h1>VM - Woodworking</h1>
+        <ul class="ul">
+            <li><a href="http://localhost:8080/api/products">Nuestros Productos</a></li>
+            <li><a href="http://localhost:8080/api/createProduct">Incluir Nuevo Producto</a></li>
+            <li><a href="http://localhost:8080/api/cart">Carrito de Compras</a></li>
+            {{#if isLoggedIn}}
+            <li><a href="http://localhost:8080/api/profile">Perfil</a></li>
+            <li><a href="http://localhost:8080/api/logout">Logout</a></li>
+            {{/if}}
+        </ul>
+    </div>
+    {{{body}}}
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    {{#if welcomeMessage}}
+    <script>
+        $(document).ready(function () {
+            alert('{{welcomeMessage}}');
+        });
+    </script>
+    {{/if}}
+</body>
+
+</html>
