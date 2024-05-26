@@ -15,6 +15,6 @@ cartSchema.virtual('id').get(function () {
     return this._id.toString();
 });
 
-const Carts = mongoose.model('Cart', cartSchema);
+const Cart = mongoose.model('Cart', cartSchema);
 
-module.exports = Carts;
+module.exports = Cart;
