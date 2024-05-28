@@ -15,8 +15,7 @@ const { dbName, mongoUrl } = require('./dbConfig');
 const createProductRouter = require('./routes/createProduct.router');
 const productsRouter = require('./routes/products.router');
 const cartRouter = require('./routes/cart.router');
-const sessionRouter = require('./routes/session.router');
-// const viewsRouter = require('./routes/views.router');
+const sessionRouter = require('./routes/session.router'); 
 
 const initializePassport = require('./config/passport.config');
 const initializePassportGitHub = require('./config/passport-github.config');
@@ -67,6 +66,11 @@ app.use('/api/createProduct', createProductRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/cart', cartRouter);
 app.use('/', sessionRouter);
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
 
 app.set('productManager', new daoProducts());
 app.set('cartManager', new daoCarts());

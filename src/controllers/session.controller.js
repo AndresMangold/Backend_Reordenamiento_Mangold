@@ -1,12 +1,16 @@
 require('dotenv').config(); 
+const { Router } = require('express');
+const router = Router();
 const { generateToken } = require('../utils/jwt');
 const cookieParser = require('cookie-parser');
 const daoUsers = require('../dao/mongo/daoUsers');
 
+router.use(cookieParser());
+
 class Controller {
     constructor() { }
 
-    redirect(req, res) {
+    redirect(res) {
         try {
             res.redirect('/');
         } catch (e) {
@@ -40,7 +44,7 @@ class Controller {
             }
             const accessToken = generateToken(user);
             res.cookie('accessToken', accessToken, { maxAge: 60 * 5 * 1000, httpOnly: true });
-            res.redirect('/api/products');
+            res.redirect('/');
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
@@ -63,7 +67,7 @@ class Controller {
         }
     }
 
-    logout(req, res) {
+    logout(res) {
         try {
             res.clearCookie('accessToken'); 
             res.redirect('/');

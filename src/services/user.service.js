@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 class UserService {
     constructor() {
         this.adminUser = {
-            email: 'admin@example.com',
-            password: 'adminpass',
+            email: 'adminCoder@coder.com',
+            password: 'adminCod3r123',
             role: 'admin',
             _id: 'admin_id'
         };

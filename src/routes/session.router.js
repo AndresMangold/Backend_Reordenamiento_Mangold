@@ -18,7 +18,9 @@ router.get('/current', passport.authenticate('current', { session: false }), (re
 
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 
-router.get('/githubcallback', passport.authenticate('github', { session: false, failureRedirect: '/login' }), (req, res) => controller.githubCb(req, res));
+router.get('/githubcallback', passport.authenticate('github', { session: false, failureRedirect: '/login' }), (req, res) => {
+    controller.githubCb(req, res);
+});
 
 router.get('/logout', (req, res) => controller.logout(req, res));
 
