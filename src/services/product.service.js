@@ -7,7 +7,6 @@ class ProductService {
 
     async getProducts(page, limit, sort, category, availability) {
         try {
-            await this.daoProducts.prepare();
             return await this.daoProducts.getProducts(page, limit, sort, category, availability);
         } catch (error) {
             throw new Error(error.message);
@@ -21,7 +20,7 @@ class ProductService {
         } catch (error) {
             throw new Error(error.message);
         }
-    }
+    }    
 
     async addProduct(title, description, price, thumbnail, code, stock, category) {
         try {

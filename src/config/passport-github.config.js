@@ -27,7 +27,7 @@ const initializeStrategy = () => {
                 age: 30,
                 email: profile._json.email,
                 password: '',
-                cartId: newCart._id 
+                cartId: newCart._id
             };
             const result = await Users.create(newUser).lean();
             done(null, result);

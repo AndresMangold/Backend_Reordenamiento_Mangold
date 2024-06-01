@@ -1,18 +1,13 @@
 require('dotenv').config(); 
-const { Router } = require('express');
-const router = Router();
 const { generateToken } = require('../utils/jwt');
-const cookieParser = require('cookie-parser');
 const daoUsers = require('../dao/mongo/daoUsers');
-
-router.use(cookieParser());
 
 class Controller {
     constructor() { }
 
     redirect(res) {
         try {
-            res.redirect('/');
+            res.redirect('/api/products');
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
@@ -44,7 +39,7 @@ class Controller {
             }
             const accessToken = generateToken(user);
             res.cookie('accessToken', accessToken, { maxAge: 60 * 5 * 1000, httpOnly: true });
-            res.redirect('/');
+            res.redirect('/api/products');
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
@@ -60,20 +55,57 @@ class Controller {
 
     githubCb(req, res) {
         try {
-            res.cookie('accessToken', req.user.accessToken, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
-            res.redirect('/');
+            const user = {
+                email: req.user.email,
+                _id: req.user._id.toString(),
+                rol: req.user.rol,
+                firstName: req.user.firstName,
+                lastName: req.user.lastName,
+                age: req.user.age,
+                cart: req.user.cart ? req.user.cart._id : null
+            };
+            const accessToken = generateToken(user);
+
+            res.cookie('accessToken', accessToken, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
+            res.redirect('/api/products');
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
     }
 
-    logout(res) {
+    profile(req, res) {
         try {
-            res.clearCookie('accessToken'); 
-            res.redirect('/');
-        } catch (e) {
-            res.status(500).json({ error: e.message });
+            const user = req.user || req.session.user;
+            if (!user) {
+                return res.status(401).json({ error: 'User not authenticated' });
+            }
+
+            res.render('profile', {
+                title: 'My profile',
+                style: ['styles.css'],
+                user: user,
+                isLoggedIn: true,
+            });
+        } catch (err) {
+            console.error('Error al buscar el usuario en la base de datos:', err);
+            res.status(500).send('Error interno del servidor');
         }
+    }
+
+    logout(req, res) {
+        req.logout((err) => {
+            if (err) { 
+                console.error("Error during logout:", err);
+                return res.status(500).json({ error: err.message }); 
+            }
+            req.session.destroy((err) => {
+                if (err) { 
+                    console.error("Error destroying session:", err);
+                    return res.status(500).json({ error: err.message }); 
+                }
+                res.redirect('/sessions/login'); 
+            });
+        });
     }
 
     async deleteUser(req, res) {

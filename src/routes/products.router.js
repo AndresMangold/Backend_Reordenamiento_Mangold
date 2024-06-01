@@ -2,13 +2,13 @@ const { Router } = require('express');
 const router = Router();
 const ProductController = require('../controllers/product.controller');
 const { verifyToken } = require('../utils/jwt');
-const { userIsLoggedIn, userIsNotLoggedIn, userIsAdmin } = require('../middlewares/auth.middleware');
+const { userIsLoggedIn, userIsAdmin } = require('../middlewares/auth.middleware');
 
 const controller = new ProductController();
 
-router.get('/', userIsLoggedIn, (req, res) => controller.getProducts(req, res));
+router.get('/', verifyToken, userIsLoggedIn, (req, res) => controller.getProducts(req, res));
 
-router.get('/:pid', userIsLoggedIn, (req, res) => controller.getProductById(req, res));
+router.get('/:pid', verifyToken, userIsLoggedIn, (req, res) => controller.getProductById(req, res));
 
 router.post('/:pid', verifyToken, userIsLoggedIn, (req, res) => controller.addProductToCart(req, res));
 

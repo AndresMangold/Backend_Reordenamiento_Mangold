@@ -7,27 +7,27 @@ class ProductController {
 
     async getProducts(req, res) {
         try {
-            const { page, limit, sort, category, availability } = req.query;
+            const { page = 1, limit = 10, sort, category, availability } = req.query;
             const products = await this.productService.getProducts(page, limit, sort, category, availability);
-            res.status(200).render('products', {
-                products: products.payload,
+            res.render('products', {
+                products,
                 titlePage: 'Productos',
                 style: ['styles.css'],
-                isLoggedIn: req.session.user !== undefined || req.user !== undefined,
-                prevLink: products.prevLink,
-                nextLink: products.nextLink
+                isLoggedIn: req.session.user !== undefined || req.user !== undefined
             });
         } catch (error) {
-            res.status(500).json({ Error: 'Error interno del servidor' });
+            res.status(500).json({ error: error.message });
         }
     }
+    
 
     async getProductById(req, res) {
         try {
             const productId = req.params.pid;
             const product = await this.productService.getProductById(productId);
+            const productData = product.toObject();
             res.status(200).render('product', {
-                product: [product],
+                product: [productData],
                 titlePage: `Productos | ${product.title}`,
                 style: ['styles.css'],
                 isLoggedIn: req.session.user !== undefined || req.user !== undefined,
@@ -35,7 +35,7 @@ class ProductController {
         } catch (error) {
             res.status(500).json({ Error: error.message });
         }
-    }
+    } 
 
     async addProduct(req, res) {
         try {

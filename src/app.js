@@ -1,6 +1,6 @@
 const express = require('express');
 const http = require('http');
-const exphbs = require('express-handlebars'); 
+const exphbs = require('express-handlebars');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
 const session = require('express-session');
@@ -15,7 +15,7 @@ const { dbName, mongoUrl } = require('./dbConfig');
 const createProductRouter = require('./routes/createProduct.router');
 const productsRouter = require('./routes/products.router');
 const cartRouter = require('./routes/cart.router');
-const sessionRouter = require('./routes/session.router'); 
+const sessionRouter = require('./routes/session.router');
 
 const initializePassport = require('./config/passport.config');
 const initializePassportGitHub = require('./config/passport-github.config');
@@ -24,9 +24,13 @@ const app = express();
 
 const hbs = exphbs.create({
     extname: '.handlebars',
-    defaultLayout: 'main', 
-    layoutsDir: `${__dirname}/views/layouts`, 
-    partialsDir: `${__dirname}/views/partials`, 
+    defaultLayout: 'main',
+    layoutsDir: `${__dirname}/views/layouts`,
+    partialsDir: `${__dirname}/views/partials`,
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true,
+    }
 });
 
 app.engine('handlebars', hbs.engine);
@@ -48,7 +52,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET || "adminCod3r123",
     resave: false,
     saveUninitialized: false,
-    maxAge: DEFAULT_MAX_AGE
+    cookie: { maxAge: DEFAULT_MAX_AGE }
 }));
 
 initializePassport();
@@ -61,11 +65,14 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api', sessionRouter);
+app.use('/sessions', sessionRouter);
 app.use('/api/createProduct', createProductRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/cart', cartRouter);
-app.use('/', sessionRouter);
+
+app.use((req, res, next) => {
+    res.status(404).send('Page Not Found');
+});
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

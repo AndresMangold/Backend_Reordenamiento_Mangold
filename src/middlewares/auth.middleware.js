@@ -3,7 +3,7 @@ module.exports = {
         if (req.isAuthenticated()) {
             return next();
         } else {
-            return res.redirect('/login');
+            return res.redirect('/sessions/login');
         }
     },
 
@@ -16,9 +16,6 @@ module.exports = {
     },
 
     userIsAdmin: (req, res, next) => {
-        console.log('Authenticated:', req.isAuthenticated());
-        console.log('User:', req.user);
-        
         if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
             return next();
         } else {

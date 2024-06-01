@@ -1,7 +1,7 @@
 const Product = require('../../models/product.model');
 
 class daoProducts {
-    constructor() { }
+    constructor() {}
 
     async prepare() {
         if (Product.db.readyState !== 1) {
@@ -12,7 +12,7 @@ class daoProducts {
     async getProducts(page, limit, sort, category, availability) {
         try {
             const query = {
-                ...(category && { category: category }),
+                ...(category && { category }),
                 ...(availability && { status: availability === 'true' })
             };
             const options = {
@@ -49,7 +49,6 @@ class daoProducts {
     async getProductById(id) {
         try {
             const product = await Product.findOne({ _id: id });
-
             if (product) {
                 return product;
             } else {
@@ -60,6 +59,7 @@ class daoProducts {
             throw new Error('Error al obtener el producto por ID');
         }
     }
+    
 
     async updateProduct(id, fieldsToUpdate) {
         try {

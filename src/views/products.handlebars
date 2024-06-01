@@ -6,10 +6,10 @@
         <li>
             <div class="product">
                 <h4>{{this.title}}</h4>
-                <img class="product-image" src="{{thumbnail}}" alt="imagen de {{title}}">
+                <img class="product-image" src="{{this.thumbnail}}" alt="imagen de {{this.title}}">
                 <p>Precio: {{this.price}}</p>
                 <p>Stock: {{this.stock}}</p>
-                <p>Descripcion: {{this.description}}</p>
+                <p>Descripción: {{this.description}}</p>
                 <p class="id-label">ID:</p> 
                 <p class="id-number">{{this._id}}</p> 
                 <a href="http://localhost:8080/api/products/{{this._id}}" class="product-link">Ver</a>

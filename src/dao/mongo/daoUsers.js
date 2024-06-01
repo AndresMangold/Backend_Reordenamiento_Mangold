@@ -17,26 +17,28 @@ class daoUsers {
     async loginUser(email, password) {
         try {
             this.userService.validateLoginCredentials(email, password);
-
+    
+            let user;
             if (this.userService.isAdminUser(email, password)) {
-                return this.userService.adminUser;
-            }
-
-            const user = await Users.findOne({ email });
-
-            if (!user) {
-                throw new Error('El usuario no existe');
-            }
-
-            if (isValidPassword(password, user.password)) {
-                return user;
+                user = this.userService.adminUser;
             } else {
-                throw new Error('Credenciales inválidas');
+                user = await Users.findOne({ email });
+    
+                if (!user) {
+                    throw new Error('El usuario no existe');
+                }
+    
+                if (!isValidPassword(password, user.password)) {
+                    throw new Error('Credenciales inválidas');
+                }
             }
-        } catch {
+            req.session.user = user;
+            return user;
+        } catch (error) {
             throw new Error('El usuario o contraseña son incorrectos');
         }
     }
+    
 
     async registerUser(firstName, lastName, age, email, password) {
         try {
@@ -71,27 +73,6 @@ class daoUsers {
             }
         } catch {
             throw new Error('Error al cargar la sesión de usuario');
-        }
-    }
-
-    async resetPassword(email, password) {
-        try {
-            this.userService.validateLoginCredentials(email, password);
-            const user = await Users.findOne({ email });
-            if (!user) {
-                throw new Error('El usuario no existe.');
-            }
-
-            if (email === this.userService.adminUser.email) {
-                throw new Error('No tiene permisos para actualizar ese email.');
-            }
-
-            await Users.updateOne({ email }, { $set: { password: hashPassword(password) } });
-
-            const userUpdated = await Users.findOne({ email });
-            return userUpdated;
-        } catch (error) {
-            throw new Error('No se pudo actualizar la contraseña');
         }
     }
 

@@ -2,7 +2,7 @@ const passport = require('passport');
 const { Strategy } = require('passport-local');
 const { isValidPassword, hashPassword } = require("../utils/hashing");
 const Cart = require('../models/cart.model');
-const User = require('../models/user.model'); 
+const User = require('../models/user.model');
 
 const initializePassport = () => {
     passport.use('login', new Strategy(
@@ -37,7 +37,7 @@ const initializePassport = () => {
                     return done(null, false);
                 } else {
                     const newCart = await Cart.create({ products: [] });
-    
+
                     const newUser = {
                         firstName,
                         lastName,
@@ -45,7 +45,7 @@ const initializePassport = () => {
                         age: +age,
                         password: hashPassword(password),
                         role: 'user',
-                        cartId: newCart._id 
+                        cartId: newCart._id
                     }
                     const result = await User.create(newUser);
                     return done(null, result);
@@ -55,8 +55,6 @@ const initializePassport = () => {
             }
         }
     ));
-    
-    
 
     passport.serializeUser((user, done) => {
         done(null, user._id);
