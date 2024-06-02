@@ -59,7 +59,6 @@ class daoProducts {
             throw new Error('Error al obtener el producto por ID');
         }
     }
-    
 
     async updateProduct(id, fieldsToUpdate) {
         try {
@@ -82,7 +81,7 @@ class daoProducts {
         }
     }
 
-    async addProduct(title, description, price, thumbnail, code, stock, category) {
+    async addProduct({ title, description, price, thumbnail, code, stock, category }) {
         const invalidOptions = isNaN(+price) || +price <= 0 || isNaN(+stock) || +stock < 0;
 
         if (!title || !description || !code || !category || invalidOptions) {

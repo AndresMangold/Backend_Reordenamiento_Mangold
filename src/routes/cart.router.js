@@ -2,7 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const CartController = require('../controllers/cart.controller');
 const { verifyToken } = require('../utils/jwt');
-const { userIsLoggedIn, userIsAdmin } = require('../middlewares/auth.middleware');
+const { userIsLoggedIn } = require('../middlewares/auth.middleware');
 
 const controller = new CartController();
 

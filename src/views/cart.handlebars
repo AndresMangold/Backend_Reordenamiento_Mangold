@@ -1,15 +1,21 @@
 <div class="cart-container">
-    <h2>ID Carrito: {{cart._id}}</h2> 
+    <h2>ID Carrito: {{cart._id}}</h2>
     <ul>
         {{#each cart.products}}
         <li>
             <div class="margin">
-                <p>Nombre de Producto: {{this.title}}</p> 
-                <p>ID Producto: {{this._id}}</p> 
+                <p>Nombre de Producto: {{this.title}}</p>
+                <p>ID Producto: {{this.product._id}}</p> 
                 <p>Cantidad en Carrito: {{this.quantity}}</p>
+                <form action="/api/cart/{{../cart._id}}/product/{{this.product._id}}?_method=DELETE" method="post" class="delete-product-form">
+                    <button type="submit" class="delete-product-button red-button">Eliminar</button>
+                </form>
             </div>
         </li>
         {{/each}}
     </ul>
+    <form action="/api/cart/{{cart._id}}?_method=DELETE" method="post" class="clear-cart-form">
+        <button type="submit" class="clear-cart-button blue-button">Vaciar Carrito</button>
+    </form>
     <a href="/api/products" class="product-link">Volver</a>
 </div>

@@ -6,6 +6,7 @@ const MongoStore = require('connect-mongo');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
+const methodOverride = require('method-override'); 
 const { DEFAULT_MAX_AGE } = require('./constants');
 
 const daoProducts = require('./dao/mongo/daoProducts');
@@ -40,6 +41,8 @@ app.set('views', `${__dirname}/views`);
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(methodOverride('_method'));
 
 app.use(express.static(`${__dirname}/../public`));
 app.use(express.static('public'));

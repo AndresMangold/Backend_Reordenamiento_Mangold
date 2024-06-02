@@ -41,14 +41,29 @@ class ProductController {
     } 
 
     async addProduct(req, res) {
-        try {
-            const { title, description, price, thumbnail, code, stock, category } = req.body;
-            await this.productService.addProduct(title, description, price, thumbnail, code, stock, category);
-            res.status(301).redirect('/api/products');
-        } catch (error) {
-            res.status(500).json({ Error: error.message });
+        if (req.method === 'GET') {
+            return res.render('createProduct', {
+                titlePage: 'Agregar Producto',
+                style: ['styles.css'],
+                script: ['createProduct.js']
+            });
+        }
+
+        if (req.method === 'POST') {
+            try {
+                const { title, description, price, thumbnail, code, stock, category } = req.body;
+
+                console.log('Datos recibidos:', { title, description, price, thumbnail, code, stock, category });
+
+                await this.productService.addProduct(title, description, price, thumbnail, code, stock, category);
+                res.status(301).redirect('/api/products');
+            } catch (error) {
+                console.error(error);
+                res.status(500).send('Error interno del servidor');
+            }
         }
     }
+
 
     async updateProduct(req, res) {
         try {

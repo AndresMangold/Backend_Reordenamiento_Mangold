@@ -44,6 +44,9 @@ body {
 
 h1 {
     text-decoration: chartreuse;
+    color: white;
+    text-align: center;
+
 }
 
 h2 {
@@ -212,22 +215,60 @@ h2 {
     gap: 10px; 
 }
 
-.add-to-cart-button {
-    background-color: #4CAF50; 
-    border: none; 
-    color: white; 
-    padding: 10px 20px; 
-    text-align: center; 
-    text-decoration: none; 
-    display: inline-block; 
-    font-size: 16px; 
-    margin: 4px 2px; 
-    cursor: pointer; 
-    border-radius: 4px; 
+.red-button {
+    background-color: #fa4545;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 24px; 
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    width: auto; 
 }
 
-.add-to-cart-button:hover {
-    background-color: #45a049; 
+.red-button:hover {
+    background-color: #b83b3b;
+}
+
+.blue-button {
+    background-color: #4242fc;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 24px; 
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    width: auto; 
+}
+
+.blue-button:hover {
+    background-color: #3030c4;
+}
+
+.add-to-cart-green-button {
+    background-color: #4CAF50;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    padding: 12px 24px; 
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    width: auto; 
+}
+
+.add-to-cart-green-button:hover {
+    background-color: #45a049;
+    cursor: pointer;
 }
 
 .cart {
@@ -361,7 +402,7 @@ h2 {
     background-color: #4CAF50;
     margin-top: 1rem;
     margin-bottom: 2rem;
-    padding: 12px 24px;
+    padding: 12px 24px; 
     border: none;
     border-radius: 4px;
     transition: background-color 0.3s ease;

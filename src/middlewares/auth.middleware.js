@@ -19,7 +19,8 @@ module.exports = {
         if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
             return next();
         } else {
-            return res.status(403).json({ error: 'Access denied! You should be an Admin' });
+            const error = new Error('User is not an admin');
+            next(error);
         }
     }
 };
