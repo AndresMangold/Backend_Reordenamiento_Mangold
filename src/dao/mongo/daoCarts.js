@@ -1,18 +1,23 @@
-const { Carts, Products } = require('../../models/cart.model');
-const Cart = require('../../models/cart.model');
+const mongoose = require('mongoose');
+const Cart = require('../../models/cart.model'); 
+const Product = require('../../models/product.model'); 
 
 class daoCarts {
-    constructor() {}
+    constructor() {
+        this.Cart = Cart;
+        this.Product = Product;
+    }
 
     async prepare() {
-        if (Carts.db.readyState !== 1) {
-            throw new Error('must connect to mongodb!');
+        if (mongoose.connection.readyState !== 1) {
+            throw new Error('Debe estar conectado a MongoDB');
         }
     }
 
     async verifyCartExists(cartId) {
         try {
-            const cart = await Carts.findById(cartId);
+            await this.prepare();
+            const cart = await this.Cart.findById(cartId);
             if (!cart) {
                 throw new Error('El carrito no existe.');
             }
@@ -24,36 +29,45 @@ class daoCarts {
     }
 
     async verifyProductExists(productId) {
-        const product = await Products.findById(productId);
-        if (!product) {
+        try {
+            await this.prepare();
+            const product = await this.Product.findById(productId);
+            if (!product) {
+                throw new Error('El producto no existe.');
+            }
+            return product;
+        } catch (error) {
+            console.error('Error verificando si el producto existe:', error);
             throw new Error('El producto no existe.');
         }
-        return product;
     }
 
     async getCarts() {
         try {
-            const carts = await Carts.find();
+            await this.prepare();
+            const carts = await this.Cart.find();
             return carts;
-        } catch {
+        } catch (error) {
             throw new Error('Error al importar los carritos');
         }
     }
 
     async addCart() {
         try {
-            const newCart = await Carts.create({
+            await this.prepare();
+            const newCart = await this.Cart.create({
                 products: []
             });
             return newCart;
-        } catch {
+        } catch (error) {
             throw new Error('Error al agregar un nuevo carrito.');
         }
     }
 
     async getCartById(cartId) {
         try {
-            const cart = await Carts.findById(cartId).populate('products.product');
+            await this.prepare();
+            const cart = await this.Cart.findById(cartId).populate('products.product');
             if (!cart) {
                 throw new Error('El carrito no existe');
             }
@@ -66,6 +80,7 @@ class daoCarts {
 
     async addProductToCart(productId, cartId) {
         try {
+            await this.prepare();
             const product = await this.verifyProductExists(productId);
             const cart = await this.verifyCartExists(cartId);
             const existingProductIndex = cart.products.findIndex(p => p.product.equals(productId));
@@ -85,9 +100,10 @@ class daoCarts {
 
     async deleteProductFromCart(productId, cartId) {
         try {
+            await this.prepare();
             const product = await this.verifyProductExists(productId);
             const cart = await this.verifyCartExists(cartId);
-            const updateResult = await Cart.updateOne(
+            const updateResult = await this.Cart.updateOne(
                 { _id: cartId },
                 { $pull: { products: { product: productId } } }
             );
@@ -103,9 +119,10 @@ class daoCarts {
 
     async updateCart(cartId, products) {
         try {
+            await this.prepare();
             const cart = await this.verifyCartExists(cartId);
             for (const { product: productId, quantity } of products) {
-                const product = await Products.findById(productId);
+                const product = await this.Product.findById(productId);
                 if (!product) {
                     throw new Error(`El producto con ID ${productId} no existe.`);
                 }
@@ -126,6 +143,7 @@ class daoCarts {
 
     async updateProductQuantityFromCart(productId, cartId, quantity) {
         try {
+            await this.prepare();
             const product = await this.verifyProductExists(productId);
             const cart = await this.verifyCartExists(cartId);
             const existingProductIndex = cart.products.findIndex(p => p.product.equals(productId));
@@ -144,18 +162,20 @@ class daoCarts {
 
     async clearCart(cartId) {
         try {
+            await this.prepare();
             const cart = await this.verifyCartExists(cartId);
-            await Carts.updateOne({ _id: cartId }, { $set: { products: [] } });
-        } catch {
+            await this.Cart.updateOne({ _id: cartId }, { $set: { products: [] } });
+        } catch (error) {
             throw new Error('Hubo un error al vaciar el carrito.');
         }
     }
 
     async deleteCart(cartId) {
         try {
+            await this.prepare();
             const cart = await this.verifyCartExists(cartId);
-            await Carts.deleteOne({ _id: cartId });
-        } catch {
+            await this.Cart.deleteOne({ _id: cartId });
+        } catch (error) {
             throw new Error('Hubo un error al eliminar el carrito.');
         }
     }

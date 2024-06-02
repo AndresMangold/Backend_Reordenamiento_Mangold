@@ -81,7 +81,7 @@ class CartController {
             res.status(500).json({ Error: error.message });
         }
     }
-
+    
     async deleteProductFromCart(req, res) {
         try {
             const cartId = req.params.cid;

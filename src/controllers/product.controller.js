@@ -1,4 +1,5 @@
 const ProductService = require('../services/product.service');
+const User = require('../models/user.model');
 
 class ProductController {
     constructor() {
@@ -19,15 +20,17 @@ class ProductController {
             res.status(500).json({ error: error.message });
         }
     }
-    
 
     async getProductById(req, res) {
         try {
             const productId = req.params.pid;
             const product = await this.productService.getProductById(productId);
             const productData = product.toObject();
+            const user = await User.findById(req.user._id).populate('cartId').lean();
+
             res.status(200).render('product', {
                 product: [productData],
+                cartId: user.cartId ? user.cartId._id : null,
                 titlePage: `Productos | ${product.title}`,
                 style: ['styles.css'],
                 isLoggedIn: req.session.user !== undefined || req.user !== undefined,

@@ -20,7 +20,8 @@ class ProductService {
         } catch (error) {
             throw new Error(error.message);
         }
-    }    
+    }
+    
 
     async addProduct(title, description, price, thumbnail, code, stock, category) {
         try {

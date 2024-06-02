@@ -103,10 +103,12 @@ class Controller {
                     console.error("Error destroying session:", err);
                     return res.status(500).json({ error: err.message }); 
                 }
+                res.clearCookie('connect.sid');
                 res.redirect('/sessions/login'); 
             });
         });
     }
+    
 
     async deleteUser(req, res) {
         try {

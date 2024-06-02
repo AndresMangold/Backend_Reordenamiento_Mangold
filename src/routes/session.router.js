@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { Router } = require('express');
 const passport = require('passport');
 const { Controller } = require('../controllers/session.controller');

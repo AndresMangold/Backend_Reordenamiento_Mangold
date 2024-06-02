@@ -8,8 +8,8 @@
             <p>Precio: {{price}}</p>
             <p>Stock: {{stock}}</p>
             <p>Código: {{code}}</p>
-            <p>ID: {{id}}</p>
-            <form action="/api/cart/{{cartId}}/product/{{id}}" id="formProductToCart" method="post">
+            <p>ID: {{_id}}</p>
+            <form action="/api/cart/{{../cartId}}/product/{{_id}}" id="formProductToCart" method="post">
                 <input id="addToCart" type="submit" value="Agregar al Carrito" class="add-to-cart-green-button">
             </form>
         </div>
