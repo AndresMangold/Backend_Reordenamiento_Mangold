@@ -41,10 +41,10 @@ class ProductService {
         }
     }
 
+    
     async getProductById(id) {
         try {
-            const product = await this.Product.findById(id);
-            return product;
+            return await this.daoProducts.getProductById(id);
         } catch (error) {
             throw new Error('Error al obtener el producto por ID');
         }

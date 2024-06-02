@@ -19,7 +19,8 @@ class daoProducts {
                 limit: parseInt(limit),
                 page: parseInt(page),
                 sort: sort ? { price: sort } : undefined,
-                lean: true
+                lean: true,
+                select: '-thumbnail'//Revisar esto para posterior uso de imgs
             };
 
             const allProducts = await Product.paginate(query, options);
@@ -48,7 +49,7 @@ class daoProducts {
 
     async getProductById(id) {
         try {
-            const product = await Product.findOne({ _id: id });
+            const product = await Product.findOne({ _id: id }).select('-thumbnail'); //Sacar el .select para posterior use de imgs
             if (product) {
                 return product;
             } else {

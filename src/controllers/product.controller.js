@@ -38,7 +38,7 @@ class ProductController {
         } catch (error) {
             res.status(500).json({ Error: error.message });
         }
-    } 
+    }
 
     async addProduct(req, res) {
         if (req.method === 'GET') {
