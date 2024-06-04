@@ -6,7 +6,7 @@ const MongoStore = require('connect-mongo');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
-const methodOverride = require('method-override'); 
+const methodOverride = require('method-override');
 const { DEFAULT_MAX_AGE } = require('./constants');
 
 const daoProducts = require('./dao/mongo/daoProducts');
@@ -20,6 +20,7 @@ const sessionRouter = require('./routes/session.router');
 
 const initializePassport = require('./config/passport.config');
 const initializePassportGitHub = require('./config/passport-github.config');
+const initializePassportJWT = require('./config/passport-jwt.config'); 
 
 const app = express();
 
@@ -60,6 +61,7 @@ app.use(session({
 
 initializePassport();
 initializePassportGitHub();
+initializePassportJWT(); 
 app.use(passport.initialize());
 app.use(passport.session());
 
