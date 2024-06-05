@@ -21,7 +21,7 @@ router.post('/register', userIsNotLoggedIn, passport.authenticate('register', gi
 
 router.get('/profile', userIsLoggedIn, (req, res) => { controller.profile(req, res); });
 
-router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => { controller.current(req, res); });
+router.get('/current', userIsLoggedIn, (req, res) => { controller.current(req, res); });
 
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 

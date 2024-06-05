@@ -20,7 +20,7 @@ const sessionRouter = require('./routes/session.router');
 
 const initializePassport = require('./config/passport.config');
 const initializePassportGitHub = require('./config/passport-github.config');
-const initializePassportJWT = require('./config/passport-jwt.config'); 
+const initializePassportJWT = require('./config/passport-jwt.config');
 
 const app = express();
 
@@ -61,13 +61,17 @@ app.use(session({
 
 initializePassport();
 initializePassportGitHub();
-initializePassportJWT(); 
+initializePassportJWT();
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
     next();
+});
+
+app.get('/', (req, res) => {
+    res.redirect('/sessions/login');
 });
 
 app.use('/sessions', sessionRouter);

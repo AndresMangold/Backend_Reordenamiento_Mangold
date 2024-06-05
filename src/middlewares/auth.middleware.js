@@ -1,26 +1,26 @@
-module.exports = {
-    userIsLoggedIn: (req, res, next) => {
-        if (req.isAuthenticated()) {
-            return next();
-        } else {
-            return res.redirect('/sessions/login');
-        }
-    },
-
-    userIsNotLoggedIn: (req, res, next) => {
-        if (!req.isAuthenticated()) {
-            return next();
-        } else {
-            return res.status(401).json({ error: 'User should not be logged in!' });
-        }
-    },
-
-    userIsAdmin: (req, res, next) => {
-        if (req.isAuthenticated() && req.user && req.user.role === 'admin') {
-            return next();
-        } else {
-            const error = new Error('User is not an admin');
-            next(error);
-        }
+const userIsLoggedIn = (req, res, next) => {
+    if (req.user) {
+        return next();
     }
+    res.redirect('/sessions/login');
+};
+
+const userIsNotLoggedIn = (req, res, next) => {
+    if (!req.user) {
+        return next();
+    }
+    res.status(401).json({ error: 'User should not be logged in!' });
+};
+
+const userIsAdmin = (req, res, next) => {
+    if (req.user && req.user.role === 'admin') {
+        return next();
+    }
+    res.status(403).json({ error: 'User is not an admin' });
+};
+
+module.exports = {
+    userIsLoggedIn,
+    userIsNotLoggedIn,
+    userIsAdmin
 };
