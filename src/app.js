@@ -6,12 +6,8 @@ const MongoStore = require('connect-mongo');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
-const methodOverride = require('method-override'); 
+const methodOverride = require('method-override');
 const { DEFAULT_MAX_AGE } = require('./constants');
-
-const daoProducts = require('./dao/mongo/daoProducts');
-const daoCarts = require('./dao/mongo/daoCarts');
-const { dbName, mongoUrl } = require('./dbConfig');
 
 const createProductRouter = require('./routes/createProduct.router');
 const productsRouter = require('./routes/products.router');
@@ -20,6 +16,10 @@ const sessionRouter = require('./routes/session.router');
 
 const initializePassport = require('./config/passport.config');
 const initializePassportGitHub = require('./config/passport-github.config');
+const initializePassportJWT = require('./config/passport-jwt.config');
+const { verifyToken } = require('./utils/jwt');
+
+const { dbName, mongoUrl } = require('./dbConfig');
 
 const app = express();
 
@@ -60,6 +60,7 @@ app.use(session({
 
 initializePassport();
 initializePassportGitHub();
+initializePassportJWT();
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -68,10 +69,14 @@ app.use((req, res, next) => {
     next();
 });
 
+app.get('/', (req, res) => {
+    res.redirect('/sessions/login');
+});
+
 app.use('/sessions', sessionRouter);
-app.use('/api/createProduct', createProductRouter);
-app.use('/api/products', productsRouter);
-app.use('/api/cart', cartRouter);
+app.use('/api/createProduct', verifyToken, createProductRouter);
+app.use('/api/products', verifyToken, productsRouter);
+app.use('/api/cart', verifyToken, cartRouter);
 
 app.use((req, res, next) => {
     res.status(404).send('Page Not Found');
@@ -82,9 +87,6 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!');
 });
 
-app.set('productManager', new daoProducts());
-app.set('cartManager', new daoCarts());
-
 const server = http.createServer(app);
 const PORT = process.env.PORT || 8080;
 
@@ -93,7 +95,7 @@ const main = async () => {
         await mongoose.connect(mongoUrl, { dbName: dbName });
         server.listen(PORT, () => {
             console.log('Servidor cargado!');
-            console.log(`http://localhost:${PORT}/api/products`);
+            console.log(`http://localhost:${PORT}/sessions/login`);
         });
     } catch (error) {
         console.error('Error al conectar con la base de datos:', error);

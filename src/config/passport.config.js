@@ -1,3 +1,5 @@
+// src/config/passport.config.js
+
 const passport = require('passport');
 const { Strategy } = require('passport-local');
 const { isValidPassword, hashPassword } = require("../utils/hashing");
@@ -17,10 +19,13 @@ const initializePassport = () => {
                     return done(null, false, { message: 'Email o contraseña incorrectas.' });
                 }
                 if (!isValidPassword(password, user.password)) {
+                    console.log('ver que posee la funcion valida de pass1',isValidPassword)
                     return done(null, false, { message: 'Email o contraseña incorrectas.' });
                 }
+                console.log('ver que posee la funcion valida de pass2',isValidPassword)
                 return done(null, user);
             } catch (err) {
+                console.log('ver que posee la funcion valida de pass3',isValidPassword)
                 return done(err);
             }
         }
@@ -46,7 +51,7 @@ const initializePassport = () => {
                         password: hashPassword(password),
                         role: 'user',
                         cartId: newCart._id
-                    }
+                    };
                     const result = await User.create(newUser);
                     return done(null, result);
                 }
@@ -68,6 +73,6 @@ const initializePassport = () => {
             done(err);
         }
     });
-}
+};
 
 module.exports = initializePassport;

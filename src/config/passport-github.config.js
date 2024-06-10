@@ -11,26 +11,24 @@ const initializeStrategy = () => {
         callbackURL
     }, async (accessToken, refreshToken, profile, done) => {
         try {
-            console.log('access token', accessToken);
-            const user = await Users.findOne({ email: profile._json.email }).populate('cartId').lean();
-            if (user) {
-                return done(null, user);
+            let user = await Users.findOne({ email: profile._json.email }).populate('cartId').lean();
+            if (!user) {
+                const newCart = await Cart.create({ products: [] });
+                const fullName = profile._json.name || profile._json.login;
+                const [firstName, ...lastNameParts] = fullName.split(' ');
+                const lastName = lastNameParts.join(' ');
+                user = {
+                    firstName,
+                    lastName,
+                    age: 30,
+                    email: profile._json.email,
+                    password: '',
+                    role: 'user',
+                    cartId: newCart._id
+                };
+                user = await Users.create(user);
             }
-
-            const newCart = await Cart.create({ products: [] });
-            const fullName = profile._json.name;
-            const firstName = fullName.substring(0, fullName.lastIndexOf(' '));
-            const lastName = fullName.substring(fullName.lastIndexOf(' ') + 1);
-            const newUser = {
-                firstName,
-                lastName,
-                age: 30,
-                email: profile._json.email,
-                password: '',
-                cartId: newCart._id
-            };
-            const result = await Users.create(newUser).lean();
-            done(null, result);
+            done(null, user);
         }
         catch (err) {
             done(err);
@@ -44,7 +42,7 @@ const initializeStrategy = () => {
 
     passport.deserializeUser(async (id, done) => {
         console.log('Deserialized: ', id);
-        const user = await Users.findById(id);
+        const user = await Users.findById(id).populate('cartId');
         done(null, user);
     });
 };

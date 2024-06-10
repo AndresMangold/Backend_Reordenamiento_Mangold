@@ -1,14 +1,14 @@
-const CartService = require('../services/cart.service');
+const CartsRepository = require('../dataRepository/carts.dataRepository');
 const User = require('../models/user.model');
 
 class CartController {
     constructor() {
-        this.cartService = new CartService();
+        this.cartsRepository = new CartsRepository();
     }
 
     async getCarts(req, res) {
         try {
-            const userId = req.user._id;
+            const userId = req.user.id;
             const user = await User.findById(userId).lean().populate('cartId');
             if (!user) {
                 return res.status(404).json({ error: 'Usuario no encontrado.' });
@@ -31,7 +31,7 @@ class CartController {
     async getCartById(req, res) {
         try {
             const cartId = req.params.cid;
-            const cart = await this.cartService.getCartById(cartId);
+            const cart = await this.cartsRepository.getCartById(cartId);
             res.status(200).render('cart', {
                 cart: cart.toObject(),
                 titlePage: 'Carrito',
@@ -45,7 +45,7 @@ class CartController {
 
     async addCart(req, res) {
         try {
-            const cart = await this.cartService.createCart();
+            const cart = await this.cartsRepository.addCart();
             res.status(200).json({ message: 'Carrito creado con éxito', cart });
         } catch (err) {
             res.status(500).json({ error: 'No se pudo crear el carrito' });
@@ -56,7 +56,7 @@ class CartController {
         try {
             const cartId = req.params.cid;
             const productId = req.params.pid;
-            const cart = await this.cartService.addProductToCart(cartId, productId);
+            const cart = await this.cartsRepository.addProductToCart(cartId, productId);
             res.status(200).render('cart', {
                 cart: cart.toObject(),
                 titlePage: 'Carrito',
@@ -73,10 +73,10 @@ class CartController {
         try {
             const cartId = req.params.cid;
             const productId = req.params.pid;
-            await this.cartService.deleteProductFromCart(cartId, productId);
+            await this.cartsRepository.deleteProductFromCart(cartId, productId);
             console.log(`Producto ${productId} eliminado del carrito ${cartId} de manera correcta.`);
 
-            const cart = await this.cartService.getCartById(cartId);
+            const cart = await this.cartsRepository.getCartById(cartId);
             res.status(200).render('cart', {
                 cart: cart.toObject(),
                 titlePage: 'Carrito',
@@ -94,10 +94,10 @@ class CartController {
             const cartId = req.params.cid;
             const productId = req.params.pid;
             const { quantity } = req.body;
-            await this.cartService.updateProductQuantity(cartId, productId, quantity);
+            await this.cartsRepository.updateProductQuantity(cartId, productId, quantity);
             console.log(`Cantidad del producto ${productId} actualizada en el carrito ${cartId}.`);
 
-            const cart = await this.cartService.getCartById(cartId);
+            const cart = await this.cartsRepository.getCartById(cartId);
             res.status(200).render('cart', {
                 cart: cart.toObject(),
                 titlePage: 'Carrito',
@@ -112,10 +112,10 @@ class CartController {
     async clearCart(req, res) {
         try {
             const cartId = req.params.cid;
-            await this.cartService.clearCart(cartId);
+            await this.cartsRepository.clearCart(cartId);
             console.log(`Carrito ${cartId} vaciado de manera correcta.`);
 
-            const cart = await this.cartService.getCartById(cartId);
+            const cart = await this.cartsRepository.getCartById(cartId);
             res.status(200).render('cart', {
                 cart: cart.toObject(),
                 titlePage: 'Carrito',
@@ -131,7 +131,7 @@ class CartController {
         try {
             const cartId = req.params.cid;
             const { products } = req.body;
-            await this.cartService.updateCart(cartId, products);
+            await this.cartsRepository.updateCart(cartId, products);
             res.status(200).json({ message: 'Carrito actualizado correctamente.' });
         } catch (err) {
             res.status(500).json({ error: err.message });
@@ -141,7 +141,7 @@ class CartController {
     async deleteCart(req, res) {
         try {
             const cartId = req.params.cid;
-            await this.cartService.deleteCart(cartId);
+            await this.cartsRepository.deleteCart(cartId);
             console.log(`Carrito ${cartId} eliminado de manera correcta.`);
             res.redirect('/api/products'); 
         } catch (err) {

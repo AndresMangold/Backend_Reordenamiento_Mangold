@@ -1,17 +1,22 @@
-const ProductService = require('../services/product.service');
+const ProductsRepository = require('../dataRepository/products.dataRepository');
 const User = require('../models/user.model');
 
 class ProductController {
     constructor() {
-        this.productService = new ProductService();
+        this.productRepository = new ProductsRepository();
     }
 
     async getProducts(req, res) {
         try {
             const { page = 1, limit = 10, sort, category, availability } = req.query;
-            const products = await this.productService.getProducts(page, limit, sort, category, availability);
+            const products = await this.productRepository.getProducts(page, limit, sort, category, availability);
             res.render('products', {
-                products,
+                products: {
+                    payload: products,
+                    page,
+                    // Añadir más detalles de paginación si es necesario
+                    // hasPrevPage, prevLink, hasNextPage, nextLink
+                },
                 titlePage: 'Productos',
                 style: ['styles.css'],
                 isLoggedIn: req.session.user !== undefined || req.user !== undefined
@@ -24,21 +29,23 @@ class ProductController {
     async getProductById(req, res) {
         try {
             const productId = req.params.pid;
-            const product = await this.productService.getProductById(productId);
-            const productData = product.toObject();
-            const user = await User.findById(req.user._id).populate('cartId').lean();
-
-            res.status(200).render('product', {
-                product: [productData],
+            const product = await this.productRepository.getProductById(productId);
+            const productData = product;
+            const user = await User.findById(req.user.id).populate('cartId').lean();
+    
+            res.render('product', {
+                product: [productData], 
                 cartId: user.cartId ? user.cartId._id : null,
                 titlePage: `Productos | ${product.title}`,
                 style: ['styles.css'],
                 isLoggedIn: req.session.user !== undefined || req.user !== undefined,
             });
         } catch (error) {
+            console.log('Error:', error); 
             res.status(500).json({ Error: error.message });
         }
     }
+    
 
     async addProduct(req, res) {
         if (req.method === 'GET') {
@@ -52,10 +59,7 @@ class ProductController {
         if (req.method === 'POST') {
             try {
                 const { title, description, price, thumbnail, code, stock, category } = req.body;
-
-                console.log('Datos recibidos:', { title, description, price, thumbnail, code, stock, category });
-
-                await this.productService.addProduct(title, description, price, thumbnail, code, stock, category);
+                await this.productRepository.addProduct({ title, description, price, thumbnail, code, stock, category });
                 res.status(301).redirect('/api/products');
             } catch (error) {
                 console.error(error);
@@ -64,11 +68,10 @@ class ProductController {
         }
     }
 
-
     async updateProduct(req, res) {
         try {
             const productId = req.params.pid;
-            await this.productService.updateProduct(productId, req.body);
+            await this.productRepository.updateProduct(productId, req.body);
             res.status(200).json({ message: 'Producto actualizado' });
         } catch (error) {
             res.status(500).json({ error: 'Error al actualizar el producto' });
@@ -78,7 +81,7 @@ class ProductController {
     async deleteProduct(req, res) {
         try {
             const productId = req.params.pid;
-            await this.productService.deleteProduct(productId);
+            await this.productRepository.deleteProduct(productId);
             res.status(301).redirect('/api/products');
         } catch (error) {
             res.status(500).json({ Error: error.message });

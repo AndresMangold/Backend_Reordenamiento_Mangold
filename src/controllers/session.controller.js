@@ -1,9 +1,12 @@
 require('dotenv').config(); 
 const { generateToken } = require('../utils/jwt');
-const daoUsers = require('../dao/mongo/daoUsers');
+const UsersRepository = require('../dataRepository/users.dataRepository');
+const { usersTokenDTO } = require('../dto/usersToken.dto');  
 
 class Controller {
-    constructor() { }
+    constructor() {
+        this.usersRepository = new UsersRepository();
+    }
 
     redirect(res) {
         try {
@@ -21,31 +24,33 @@ class Controller {
         }
     }
 
-    login(req, res) {
+    async login(req, res) {
+        const { email, password } = req.body;
+    
         try {
-            let user;
-            if (req.user && req.user.email === process.env.ADMIN_USER) {
-                user = req.user;
-            } else {
-                user = {
-                    email: req.user.email,
-                    _id: req.user._id.toString(),
-                    rol: req.user.rol,
-                    firstName: req.user.firstName,
-                    lastName: req.user.lastName,
-                    age: req.user.age,
-                    cart: req.user.cart ? req.user.cart._id : null
-                };
-            }
-            const accessToken = generateToken(user);
-            res.cookie('accessToken', accessToken, { maxAge: 60 * 5 * 1000, httpOnly: true });
-            res.redirect('/api/products');
+            const { user, token } = await this.usersRepository.loginUser(email, password);
+            const userDto = new usersTokenDTO(user);
+            req.session.user = userDto;
+            res.cookie('accessToken', token, { maxAge: 60 * 60 * 1000, httpOnly: true });
+            res.redirect('/api/products'); 
         } catch (e) {
-            res.status(500).json({ error: e.message });
+            res.status(400).json({ error: e.message });
         }
     }
 
-    current(req, res) {
+    async register(req, res) {
+        const { firstName, lastName, age, email, password } = req.body;
+
+        try {
+            const newUser = await this.usersRepository.registerUser(firstName, lastName, age, email, password);
+            const userDto = new usersTokenDTO(newUser);
+            res.status(201).json({ message: 'Usuario registrado con éxito', user: userDto });
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+        }
+    }
+
+    async current(req, res) {
         try {
             res.json(req.user);
         } catch (e) {
@@ -53,25 +58,19 @@ class Controller {
         }
     }
 
-    githubCb(req, res) {
+    async githubCb(req, res) {
         try {
-            const user = {
-                email: req.user.email,
-                _id: req.user._id.toString(),
-                rol: req.user.rol,
-                firstName: req.user.firstName,
-                lastName: req.user.lastName,
-                age: req.user.age,
-                cart: req.user.cart ? req.user.cart._id : null
-            };
-            const accessToken = generateToken(user);
-
+            const profile = req.user;
+            const { accessToken, user } = await this.usersRepository.githubLogin(profile);
+            const userDto = new usersTokenDTO(user);
+    
             res.cookie('accessToken', accessToken, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
-            res.redirect('/api/products');
+            res.redirect('/api/products'); 
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
     }
+    
 
     profile(req, res) {
         try {
@@ -104,16 +103,16 @@ class Controller {
                     return res.status(500).json({ error: err.message }); 
                 }
                 res.clearCookie('connect.sid');
+                res.clearCookie('accessToken');
                 res.redirect('/sessions/login'); 
             });
         });
     }
-    
 
     async deleteUser(req, res) {
         try {
             const { email } = req.body;
-            await new daoUsers().deleteUser(email);
+            await this.usersRepository.deleteUser(email);
             res.json({ message: 'Usuario eliminado correctamente.' });
         } catch (e) {
             res.status(500).json({ error: e.message });
