@@ -271,6 +271,26 @@ h2 {
     cursor: pointer;
 }
 
+.yellow-button {
+    background-color: #FFEB3B; 
+    color: #000000; 
+    border: none;
+    padding: 12px 24px; 
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    width: auto; 
+}
+
+.yellow-button:hover {
+    background-color: #FDD835; 
+}
+
 .cart {
     display: flex;
     gap: 2rem;

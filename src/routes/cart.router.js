@@ -13,5 +13,6 @@ router.delete('/:cid/product/:pid', verifyToken, (req, res) => controller.delete
 router.put('/:cid/product/:pid', verifyToken, (req, res) => controller.updateProductQuantityFromCart(req, res));
 router.delete('/:cid', verifyToken, (req, res) => controller.clearCart(req, res));
 router.delete('/destroyCart/:cid', verifyToken, (req, res) => controller.deleteCart(req, res));
+router.post('/:cid/purchase', verifyToken, (req, res) => controller.purchase(req, res)); 
 
 module.exports = router;

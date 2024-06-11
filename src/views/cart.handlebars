@@ -17,5 +17,8 @@
     <form action="/api/cart/{{cart._id}}?_method=DELETE" method="post" class="clear-cart-form">
         <button type="submit" class="clear-cart-button blue-button">Vaciar Carrito</button>
     </form>
+    <form action="/api/cart/{{cart._id}}/purchase" method="post" class="purchase-cart-form">
+        <button type="submit" class="purchase-cart-button yellow-button">Comprar</button>
+    </form>
     <a href="/api/products" class="product-link">Volver</a>
 </div>

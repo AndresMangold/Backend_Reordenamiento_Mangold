@@ -23,8 +23,11 @@ class CartsRepository {
     }
 
     async getCartById(cartId) {
-        await this.#verifyCartExists(cartId);
-        return await this.#cartDAO.getCartById(cartId);
+        const cart = await this.#cartDAO.getCartById(cartId);
+        if (!cart) {
+            throw new Error('Cart does not exist');
+        }
+        return cart;
     }
 
     async addCart() {
@@ -76,6 +79,13 @@ class CartsRepository {
     async clearCart(cartId) {
         await this.#verifyCartExists(cartId);
         await this.#cartDAO.updateCart(cartId, { products: [] });
+    }
+
+    async updateCartWithRemainingProducts(cartId, outOfStockProducts) {
+        await this.#verifyCartExists(cartId);
+        const cart = await this.#cartDAO.getCartById(cartId);
+        const remainingProducts = cart.products.filter(p => outOfStockProducts.includes(p.product.toString()));
+        await this.#cartDAO.updateCart(cartId, { products: remainingProducts });
     }
 
     async deleteCart(cartId) {

@@ -1,9 +1,11 @@
 const CartsRepository = require('../dataRepository/carts.dataRepository');
+const TicketRepository = require('../dataRepository/tickets.dataRepository');
 const User = require('../models/user.model');
 
 class CartController {
     constructor() {
         this.cartsRepository = new CartsRepository();
+        this.ticketRepository = new TicketRepository();
     }
 
     async getCarts(req, res) {
@@ -146,6 +148,26 @@ class CartController {
             res.redirect('/api/products'); 
         } catch (err) {
             res.status(500).json({ Error: err.message });
+        }
+    }
+
+    async purchase(req, res) {
+        const { cid } = req.params;
+        const { user } = req;
+    
+        try {
+            const result = await this.ticketRepository.generateTicket(cid, user.email);
+            if (result.success) {
+                res.status(200).json(result.ticket);
+            } else {
+                await this.cartsRepository.updateCartWithRemainingProducts(cid, result.outOfStockProducts);
+                res.status(400).json({
+                    message: 'Algunos productos no pudieron ser comprados por falta de stock',
+                    outOfStockProducts: result.outOfStockProducts
+                });
+            }
+        } catch (error) {
+            res.status(400).json({ error: error.message });
         }
     }
 }

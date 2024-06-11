@@ -22,12 +22,20 @@ class TicketRepository {
         if (!cart) throw new Error('Carrito no encontrado');
 
         let totalAmount = 0;
+        const outOfStockProducts = [];
 
         for (const item of cart.products) {
             const product = await this.#productsRepository.getProductById(item.product);
             if (product.stock < item.quantity) {
-                throw new Error(`No hay suficiente stock para el producto con ID ${product.id}`);
+                outOfStockProducts.push(item.product);
             }
+        }
+
+        if (outOfStockProducts.length > 0) {
+            return {
+                success: false,
+                outOfStockProducts
+            };
         }
 
         for (const item of cart.products) {
@@ -44,10 +52,12 @@ class TicketRepository {
         };
 
         const ticket = await this.#ticketDAO.addTicket(ticketData);
-
         await this.#cartsRepository.clearCart(cartId);
 
-        return ticket;
+        return {
+            success: true,
+            ticket
+        };
     }
 }
 
