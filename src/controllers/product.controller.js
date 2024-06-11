@@ -1,5 +1,6 @@
 const ProductsRepository = require('../dataRepository/products.dataRepository');
 const User = require('../models/user.model');
+const mongoose = require('mongoose');
 
 class ProductController {
     constructor() {
@@ -8,14 +9,12 @@ class ProductController {
 
     async getProducts(req, res) {
         try {
-            const { page = 1, limit = 10, sort, category, availability } = req.query;
+            const { page = 1, limit = 15, sort, category, availability } = req.query;
             const products = await this.productRepository.getProducts(page, limit, sort, category, availability);
             res.render('products', {
                 products: {
                     payload: products,
                     page,
-                    // Añadir más detalles de paginación si es necesario
-                    // hasPrevPage, prevLink, hasNextPage, nextLink
                 },
                 titlePage: 'Productos',
                 style: ['styles.css'],
@@ -29,6 +28,11 @@ class ProductController {
     async getProductById(req, res) {
         try {
             const productId = req.params.pid;
+
+            if (!mongoose.Types.ObjectId.isValid(productId)) {
+                return res.status(400).json({ error: 'ID de producto no válido' });
+            }
+
             const product = await this.productRepository.getProductById(productId);
             const productData = product;
             const user = await User.findById(req.user.id).populate('cartId').lean();

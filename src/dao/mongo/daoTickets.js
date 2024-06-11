@@ -1,5 +1,3 @@
-// src/dao/mongo/daoTickets.js
-
 const Ticket = require('../../models/ticket.model');
 
 class TicketDAO {

@@ -1,5 +1,3 @@
-// src/dao/mongo/daoCarts.js
-
 const Cart = require('../../models/cart.model');
 
 class CartDAO {

@@ -1,5 +1,3 @@
-// src/dao/mongo/daoUsers.js
-
 const User = require('../../models/user.model');
 
 class UserDAO {

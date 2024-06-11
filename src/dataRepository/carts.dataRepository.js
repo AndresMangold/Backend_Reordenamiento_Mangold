@@ -1,5 +1,6 @@
 const CartDAO = require('../dao/mongo/daoCarts');
 const ProductsRepository = require('./products.dataRepository');
+const Cart = require('../models/cart.model'); 
 
 class CartsRepository {
     #cartDAO;
@@ -29,6 +30,7 @@ class CartsRepository {
     async addCart() {
         return await this.#cartDAO.addCart({ products: [] });
     }
+    
 
     async addProductToCart(cartId, productId) {
         await this.#verifyCartExists(cartId);

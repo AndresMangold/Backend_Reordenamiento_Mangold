@@ -1,5 +1,3 @@
-// src/routes/createProduct.router.js
-
 const { Router } = require('express');
 const ProductController = require('../controllers/product.controller');
 const { verifyToken } = require('../utils/jwt');

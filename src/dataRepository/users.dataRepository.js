@@ -1,7 +1,8 @@
 const UserDAO = require('../dao/mongo/daoUsers');
 const { usersTokenDTO } = require('../dto/usersToken.dto');
-const { hashPassword, isValidPassword } = require('../utils/hashing'); // Importar isValidPassword
+const { hashPassword, isValidPassword } = require('../utils/hashing'); 
 const jwt = require('jsonwebtoken');
+const User = require('../models/user.model')
 
 class UsersRepository {
     #userDAO;
@@ -87,6 +88,15 @@ class UsersRepository {
         }
 
         return new usersTokenDTO(user);
+    }
+
+    async getUserById(id) {
+        try {
+            const user = await User.findById(id);
+            return user;
+        } catch (error) {
+            throw new Error('Error retrieving user by ID');
+        }
     }
 
     async githubLogin(profile) {

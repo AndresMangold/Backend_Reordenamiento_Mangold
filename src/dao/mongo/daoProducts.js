@@ -1,5 +1,3 @@
-// src/dao/mongo/daoProducts.js
-
 const Product = require('../../models/product.model');
 
 class ProductDAO {

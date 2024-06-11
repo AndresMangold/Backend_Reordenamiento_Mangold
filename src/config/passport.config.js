@@ -1,5 +1,3 @@
-// src/config/passport.config.js
-
 const passport = require('passport');
 const { Strategy } = require('passport-local');
 const { isValidPassword, hashPassword } = require("../utils/hashing");

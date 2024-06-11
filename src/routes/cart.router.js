@@ -1,10 +1,6 @@
-// src/routes/cart.router.js
-
 const { Router } = require('express');
 const CartController = require('../controllers/cart.controller');
 const { verifyToken } = require('../utils/jwt');
-// const { userIsLoggedIn } = require('../middlewares/auth.middleware');
-
 const router = Router();
 const controller = new CartController();
 

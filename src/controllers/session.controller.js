@@ -52,11 +52,19 @@ class Controller {
 
     async current(req, res) {
         try {
-            res.json(req.user);
+            const userId = req.user.id;
+            const user = await this.usersRepository.getUserById(userId);
+            if (!user) {
+                return res.status(401).json({ error: 'User not authenticated' });
+            }
+
+            const userDto = new usersTokenDTO(user);
+            res.json(userDto);
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
     }
+    
 
     async githubCb(req, res) {
         try {

@@ -21,14 +21,14 @@ router.get('/register', (req, res) => {
 });
 
 router.post('/register', passport.authenticate('register', gitConfig), (req, res) => {
-    res.redirect('/api/products');
+    res.redirect('/sessions/login');
 });
 
 router.get('/profile', (req, res) => { 
     controller.profile(req, res); 
 });
 
-router.get('/current', (req, res) => { 
+router.get('/current', verifyToken, (req, res) => { 
     controller.current(req, res); 
 });
 
