@@ -13,6 +13,7 @@ const createProductRouter = require('./routes/createProduct.router');
 const productsRouter = require('./routes/products.router');
 const cartRouter = require('./routes/cart.router');
 const sessionRouter = require('./routes/session.router');
+const mockingProduct = require('./routes/mockingProduct.router');
 
 const initializePassport = require('./config/passport.config');
 const initializePassportGitHub = require('./config/passport-github.config');
@@ -77,6 +78,7 @@ app.use('/sessions', sessionRouter);
 app.use('/api/createProduct', verifyToken, createProductRouter);
 app.use('/api/products', verifyToken, productsRouter);
 app.use('/api/cart', verifyToken, cartRouter);
+app.use('/api/mockingproducts', mockingProduct);
 
 app.use((req, res, next) => {
     res.status(404).send('Page Not Found');

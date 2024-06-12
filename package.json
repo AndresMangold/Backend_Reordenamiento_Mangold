@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "bcrpyt": "^2.0.0",
     "bcrypt": "^5.1.1",
     "connect-mongo": "^5.1.0",

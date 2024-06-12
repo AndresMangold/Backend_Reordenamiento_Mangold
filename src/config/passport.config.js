@@ -17,13 +17,10 @@ const initializePassport = () => {
                     return done(null, false, { message: 'Email o contraseña incorrectas.' });
                 }
                 if (!isValidPassword(password, user.password)) {
-                    console.log('ver que posee la funcion valida de pass1',isValidPassword)
                     return done(null, false, { message: 'Email o contraseña incorrectas.' });
                 }
-                console.log('ver que posee la funcion valida de pass2',isValidPassword)
                 return done(null, user);
             } catch (err) {
-                console.log('ver que posee la funcion valida de pass3',isValidPassword)
                 return done(err);
             }
         }

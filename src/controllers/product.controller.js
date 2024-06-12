@@ -1,6 +1,7 @@
 const ProductsRepository = require('../dataRepository/products.dataRepository');
 const User = require('../models/user.model');
 const mongoose = require('mongoose');
+const { generateProduct } = require('../utils/generateProduct');
 
 class ProductController {
     constructor() {
@@ -50,6 +51,17 @@ class ProductController {
         }
     }
     
+    async getMockingProducts(res) {
+        try {
+            const products = [];
+            for (let i = 0; i < 50; i++) {
+                products.push(generateProduct());
+            }
+            res.json(products);
+        } catch (error) {
+            res.status(500).json({ error });
+        }
+    }
 
     async addProduct(req, res) {
         if (req.method === 'GET') {
