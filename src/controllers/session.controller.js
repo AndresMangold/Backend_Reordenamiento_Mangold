@@ -102,20 +102,19 @@ class Controller {
     logout(req, res) {
         req.logout((err) => {
             if (err) { 
-                console.error("Error during logout:", err);
                 return res.status(500).json({ error: err.message }); 
             }
             req.session.destroy((err) => {
                 if (err) { 
-                    console.error("Error destroying session:", err);
                     return res.status(500).json({ error: err.message }); 
                 }
-                res.clearCookie('connect.sid');
-                res.clearCookie('accessToken');
+                res.clearCookie('connect.sid', { httpOnly: true, secure: true });
+                res.clearCookie('accessToken', { httpOnly: true, secure: true });
                 res.redirect('/sessions/login'); 
             });
         });
     }
+       
 
     async deleteUser(req, res) {
         try {
