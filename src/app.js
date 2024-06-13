@@ -14,6 +14,7 @@ const productsRouter = require('./routes/products.router');
 const cartRouter = require('./routes/cart.router');
 const sessionRouter = require('./routes/session.router');
 const mockingProduct = require('./routes/mockingProduct.router');
+const { errorHandler } = require('./middlewares/errorHandler.middleware'); 
 
 const initializePassport = require('./config/passport.config');
 const initializePassportGitHub = require('./config/passport-github.config');
@@ -84,10 +85,7 @@ app.use((req, res, next) => {
     res.status(404).send('Page Not Found');
 });
 
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
+app.use(errorHandler);
 
 const server = http.createServer(app);
 const PORT = process.env.PORT || 8080;

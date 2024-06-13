@@ -1,4 +1,4 @@
-const { ErrorCodes } = require("../utils/errors/errorCodes");
+const { ErrorCodes } = require("../utils/error/errorCodes");
 
 const errorHandler = (error, req, res, next) => {
     console.log(error.cause);
