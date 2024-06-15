@@ -1,6 +1,3 @@
-// src/dataRepository/carts.dataRepository.js
-//PRUEBA 1
-
 const CartDAO = require('../dao/mongo/daoCarts');
 const ProductsRepository = require('./products.dataRepository');
 const { CustomError } = require('../utils/error/customErrors');

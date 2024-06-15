@@ -1,6 +1,3 @@
-// src/dataRepository/tickets.dataRepository.js
-//PRUEBA 1
-
 const TicketDAO = require('../dao/mongo/daoTickets');
 const CartsRepository = require('./carts.dataRepository');
 const ProductsRepository = require('./products.dataRepository');

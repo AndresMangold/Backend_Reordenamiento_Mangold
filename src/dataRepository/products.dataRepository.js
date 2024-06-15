@@ -1,6 +1,3 @@
-// src/dataRepository/products.dataRepository.js
-//PRUEBA 1
-
 const ProductDAO = require('../dao/mongo/daoProducts');
 const { productsDTO } = require('../dto/products.dto');
 const { CustomError } = require('../utils/error/customErrors');

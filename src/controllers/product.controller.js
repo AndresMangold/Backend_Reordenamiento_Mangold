@@ -1,6 +1,3 @@
-// src/controllers/product.controller.js
-//TEST 1
-
 const ProductsRepository = require('../dataRepository/products.dataRepository');
 const User = require('../models/user.model');
 const mongoose = require('mongoose');

@@ -1,6 +1,3 @@
-// src/controllers/session.controller.js
-//TEST 1
-
 require('dotenv').config();
 const { generateToken } = require('../utils/jwt');
 const UsersRepository = require('../dataRepository/users.dataRepository');

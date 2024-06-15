@@ -1,6 +1,3 @@
-// src/dataRepository/users.dataRepository.js
-//PRUEBA 1
-
 const UserDAO = require('../dao/mongo/daoUsers');
 const { usersTokenDTO } = require('../dto/usersToken.dto');
 const { hashPassword, isValidPassword } = require('../utils/hashing');

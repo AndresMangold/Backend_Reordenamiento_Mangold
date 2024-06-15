@@ -1,6 +1,3 @@
-// src/controllers/cart.controller.js
-//TEST 1
-
 const CartsRepository = require('../dataRepository/carts.dataRepository');
 const TicketRepository = require('../dataRepository/tickets.dataRepository');
 const User = require('../models/user.model');
