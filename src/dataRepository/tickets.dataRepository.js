@@ -1,8 +1,12 @@
+// src/dataRepository/tickets.dataRepository.js
+//PRUEBA 1
+
 const TicketDAO = require('../dao/mongo/daoTickets');
 const CartsRepository = require('./carts.dataRepository');
 const ProductsRepository = require('./products.dataRepository');
 const { CustomError } = require('../utils/error/customErrors');
 const { ErrorCodes } = require('../utils/error/errorCodes');
+const logger = require('../utils/logger').logger;
 
 class TicketRepository {
     #ticketDAO;
@@ -23,6 +27,7 @@ class TicketRepository {
         try {
             const cart = await this.#cartsRepository.getCartById(cartId);
             if (!cart) {
+                logger.warn(`Carrito con ID ${cartId} no encontrado.`);
                 throw CustomError.createError({
                     name: 'Carrito no encontrado',
                     cause: 'Debe ingresar un ID válido existente en la base de datos',
@@ -42,6 +47,7 @@ class TicketRepository {
             }
 
             if (outOfStockProducts.length > 0) {
+                logger.warn(`No hay suficiente stock para los productos con ID: ${outOfStockProducts.join(', ')}.`);
                 throw CustomError.createError({
                     name: 'Error con el stock',
                     cause: `No hay suficiente stock para los productos con ID: ${outOfStockProducts.join(', ')}`,
@@ -65,9 +71,11 @@ class TicketRepository {
 
             const ticket = await this.#ticketDAO.addTicket(ticketData);
             await this.#cartsRepository.clearCart(cartId);
+            logger.info(`Ticket generado correctamente para el carrito ${cartId}.`);
 
             return ticket;
         } catch (error) {
+            logger.error(`Error al generar el ticket para el carrito ${cartId}.`, error);
             throw CustomError.createError({
                 name: 'Error al generar el ticket',
                 cause: 'Ocurrió un error a la hora de generar su ticket de compra',

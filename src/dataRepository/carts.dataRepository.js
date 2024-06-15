@@ -1,7 +1,11 @@
+// src/dataRepository/carts.dataRepository.js
+//PRUEBA 1
+
 const CartDAO = require('../dao/mongo/daoCarts');
 const ProductsRepository = require('./products.dataRepository');
 const { CustomError } = require('../utils/error/customErrors');
 const { ErrorCodes } = require('../utils/error/errorCodes');
+const logger = require('../utils/logger').logger;
 
 class CartsRepository {
     #cartDAO;
@@ -15,6 +19,7 @@ class CartsRepository {
     async #verifyCartExists(cartId) {
         const cart = await this.#cartDAO.getCartById(cartId);
         if (!cart) {
+            logger.warn(`Carrito con ID ${cartId} no encontrado.`);
             throw CustomError.createError({
                 name: 'Error con el carrito',
                 cause: 'Debe ingresar un ID válido existente en la base de datos',
@@ -30,6 +35,7 @@ class CartsRepository {
             const product = await this.#productRepository.getProductById(productId);
             return product;
         } catch {
+            logger.warn(`Producto con ID ${productId} no encontrado.`);
             throw CustomError.createError({
                 name: 'Error con los productos',
                 cause: 'Debe ingresar un ID válido existente en la base de datos',
@@ -41,8 +47,11 @@ class CartsRepository {
 
     async getCarts() {
         try {
-            return await this.#cartDAO.getCarts();
+            const carts = await this.#cartDAO.getCarts();
+            logger.info('Carritos obtenidos correctamente.');
+            return carts;
         } catch (error) {
+            logger.error('Error al obtener los carritos.', error);
             throw CustomError.createError({
                 name: 'Error con el carrito',
                 cause: 'Ocurrió un error al buscar los carritos en la base de datos',
@@ -56,8 +65,10 @@ class CartsRepository {
     async getCartById(cartId) {
         try {
             const cart = await this.#verifyCartExists(cartId);
+            logger.info(`Carrito con ID ${cartId} obtenido correctamente.`);
             return cart;
         } catch (error) {
+            logger.error(`Error al obtener el carrito con ID ${cartId}.`, error);
             throw CustomError.createError({
                 name: 'Error con el carrito',
                 cause: 'Ocurrió un error al buscar el carrito en la base de datos',
@@ -71,8 +82,11 @@ class CartsRepository {
     async addCart() {
         try {
             const cart = { products: [] };
-            return await this.#cartDAO.addCart(cart);
+            const newCart = await this.#cartDAO.addCart(cart);
+            logger.info('Carrito creado correctamente.');
+            return newCart;
         } catch (error) {
+            logger.error('Error al agregar el carrito.', error);
             throw CustomError.createError({
                 name: 'Error con el carrito',
                 cause: 'Hubo un problema al generar un nuevo carrito en la base de datos',
@@ -98,8 +112,10 @@ class CartsRepository {
             }
 
             await this.#cartDAO.updateCart(cartId, { products: cart.products });
+            logger.info(`Producto ${productId} agregado al carrito ${cartId} correctamente.`);
             return cart;
         } catch (error) {
+            logger.error(`Error al agregar el producto ${productId} al carrito ${cartId}.`, error);
             throw CustomError.createError({
                 name: 'Error con el carrito',
                 cause: 'Hubo un problema al agregar el producto al carrito',
@@ -118,8 +134,10 @@ class CartsRepository {
             const cart = await this.#cartDAO.getCartById(cartId);
             cart.products = cart.products.filter(p => !p.product.equals(productId));
             await this.#cartDAO.updateCart(cartId, { products: cart.products });
+            logger.info(`Producto ${productId} eliminado del carrito ${cartId} correctamente.`);
             return cart;
         } catch (error) {
+            logger.error(`Error al eliminar el producto ${productId} del carrito ${cartId}.`, error);
             throw CustomError.createError({
                 name: 'Error con el carrito',
                 cause: 'Hubo un problema al eliminar el producto del carrito',
@@ -141,7 +159,9 @@ class CartsRepository {
             if (productIndex !== -1) {
                 cart.products[productIndex].quantity = quantity;
                 await this.#cartDAO.updateCart(cartId, { products: cart.products });
+                logger.info(`Cantidad del producto ${productId} en el carrito ${cartId} actualizada a ${quantity}.`);
             } else {
+                logger.warn(`Producto ${productId} no encontrado en el carrito ${cartId}.`);
                 throw CustomError.createError({
                     name: 'Producto no encontrado en el carrito',
                     cause: 'El producto no está presente en el carrito',
@@ -151,6 +171,7 @@ class CartsRepository {
             }
             return cart;
         } catch (error) {
+            logger.error(`Error al actualizar la cantidad del producto ${productId} en el carrito ${cartId}.`, error);
             throw CustomError.createError({
                 name: 'Error con el carrito',
                 cause: 'Hubo un problema al actualizar la cantidad de unidades del producto en el carrito',
@@ -165,7 +186,9 @@ class CartsRepository {
         try {
             await this.#verifyCartExists(cartId);
             await this.#cartDAO.updateCart(cartId, { products: [] });
+            logger.info(`Carrito ${cartId} vaciado correctamente.`);
         } catch (error) {
+            logger.error(`Error al vaciar el carrito ${cartId}.`, error);
             throw CustomError.createError({
                 name: 'Error con el carrito',
                 cause: 'Hubo un problema al vaciar el carrito',
@@ -182,7 +205,9 @@ class CartsRepository {
             const cart = await this.#cartDAO.getCartById(cartId);
             const remainingProducts = cart.products.filter(p => !outOfStockProducts.includes(p.product.toString()));
             await this.#cartDAO.updateCart(cartId, { products: remainingProducts });
+            logger.info(`Carrito ${cartId} actualizado con productos restantes.`);
         } catch (error) {
+            logger.error(`Error al actualizar el carrito ${cartId} con productos restantes.`, error);
             throw CustomError.createError({
                 name: 'Error con el carrito',
                 cause: 'Hubo un problema al actualizar el carrito con los productos restantes',
@@ -197,7 +222,9 @@ class CartsRepository {
         try {
             await this.#verifyCartExists(cartId);
             await this.#cartDAO.deleteCart(cartId);
+            logger.info(`Carrito ${cartId} eliminado correctamente.`);
         } catch (error) {
+            logger.error(`Error al eliminar el carrito ${cartId}.`, error);
             throw CustomError.createError({
                 name: 'Error con el carrito',
                 cause: 'Hubo un problema al eliminar el carrito',

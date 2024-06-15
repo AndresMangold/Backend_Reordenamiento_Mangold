@@ -1,0 +1,9 @@
+{"level":"error","message":"Test"}
+{"level":"error","message":"Test"}
+{"level":"error","message":"Test"}
+2024-06-08 11:25:45 [ERROR]: Test
+08-06-2024 11:26:19 [ERROR]: Test
+08-06-2024 11:58:50 / Level: [ERROR] - Message: ERROR - Relevancia: 1
+08-06-2024 11:58:50 / Level: [FATAL] - Message: FATAL - Relevancia: 0
+08-06-2024 11:59:51 / Level: [ERROR] - Message: ERROR test - Relevancia: 1
+08-06-2024 11:59:51 / Level: [FATAL] - Message: FATAL test - Relevancia: 0  

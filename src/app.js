@@ -15,6 +15,7 @@ const cartRouter = require('./routes/cart.router');
 const sessionRouter = require('./routes/session.router');
 const mockingProduct = require('./routes/mockingProduct.router');
 const { errorHandler } = require('./middlewares/errorHandler.middleware'); 
+const { useLogger } = require('./middlewares/logger.middleware'); 
 
 const initializePassport = require('./config/passport.config');
 const initializePassportGitHub = require('./config/passport-github.config');
@@ -66,10 +67,7 @@ initializePassportJWT();
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
-    next();
-});
+app.use(useLogger);
 
 app.get('/', (req, res) => {
     res.redirect('/sessions/login');

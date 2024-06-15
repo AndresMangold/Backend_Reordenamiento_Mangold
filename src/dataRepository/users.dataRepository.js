@@ -1,3 +1,6 @@
+// src/dataRepository/users.dataRepository.js
+//PRUEBA 1
+
 const UserDAO = require('../dao/mongo/daoUsers');
 const { usersTokenDTO } = require('../dto/usersToken.dto');
 const { hashPassword, isValidPassword } = require('../utils/hashing');
@@ -5,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const { CustomError } = require('../utils/error/customErrors');
 const { ErrorCodes } = require('../utils/error/errorCodes');
 const { generateInvalidCredentialsUserData } = require('../utils/error/errors');
-const { ObjectId } = require('mongodb');
+const logger = require('../utils/logger').logger;
 
 class UsersRepository {
     #userDAO;
@@ -23,6 +26,7 @@ class UsersRepository {
 
     validateLoginCredentials(email, password) {
         if (!email || !password) {
+            logger.warn('Credenciales inválidas proporcionadas.');
             throw CustomError.createError({
                 name: 'Credenciales inválidas',
                 cause: generateInvalidCredentialsUserData({ email, password }),
@@ -38,6 +42,7 @@ class UsersRepository {
 
     generateNewUser(firstName, lastName, age, email, password, cart) {
         if (age <= 0) {
+            logger.warn('Edad inválida proporcionada para un nuevo usuario.');
             throw CustomError.createError({
                 name: 'Error en la edad',
                 cause: 'Debe ingresar un número válido mayor a 0',
@@ -71,6 +76,7 @@ class UsersRepository {
             } else {
                 user = await this.#userDAO.findByEmail(email);
                 if (!user || !isValidPassword(password, user.password)) {
+                    logger.warn(`Contraseña incorrecta para el usuario con email ${email}.`);
                     throw CustomError.createError({
                         name: 'Error de logeo',
                         cause: 'Ingresó una contraseña incorrecta. Intente nuevamente o cambie la misma',
@@ -81,8 +87,10 @@ class UsersRepository {
             }
 
             const token = this.generateAccessToken(user);
+            logger.info(`Usuario con email ${email} logueado correctamente.`);
             return { user: new usersTokenDTO(user), token };
         } catch (error) {
+            logger.error(`Error al iniciar sesión para el usuario con email ${email}.`, error);
             throw CustomError.createError({
                 name: 'Error de logeo',
                 cause: 'Ocurrió un problema al validar sus credenciales. Intente nuevamente o cambie su contraseña',
@@ -96,6 +104,7 @@ class UsersRepository {
     async registerUser(firstName, lastName, age, email, password) {
         try {
             if (email === this.#adminUser.email) {
+                logger.warn(`Intento de registro del usuario administrador con email ${email}.`);
                 throw CustomError.createError({
                     name: 'Error de registro',
                     cause: 'No se puede registrar el usuario administrador de esta manera',
@@ -106,6 +115,7 @@ class UsersRepository {
 
             const existingUser = await this.#userDAO.findByEmail(email);
             if (existingUser) {
+                logger.warn(`Intento de registro con un email ya registrado: ${email}.`);
                 throw CustomError.createError({
                     name: 'Error de registro',
                     cause: 'El email se encuentra registrado en la base de datos. Intente validar sus credenciales.',
@@ -118,8 +128,10 @@ class UsersRepository {
             const user = this.generateNewUser(firstName, lastName, age, email, password, cart);
 
             const newUser = await this.#userDAO.create(user);
+            logger.info(`Usuario con email ${email} registrado correctamente.`);
             return new usersTokenDTO(newUser);
         } catch (error) {
+            logger.error(`Error al registrar el usuario con email ${email}.`, error);
             throw CustomError.createError({
                 name: 'Error de registro',
                 cause: 'Algo salió mal al registrar un nuevo usuario.',
@@ -138,9 +150,10 @@ class UsersRepository {
             } else {
                 user = await this.#userDAO.findById(id);
             }
-
+            logger.info(`Usuario con ID ${id} obtenido correctamente.`);
             return new usersTokenDTO(user);
         } catch (error) {
+            logger.error(`Error al obtener el usuario con ID ${id}.`, error);
             throw CustomError.createError({
                 name: 'Error al obtener usuario',
                 cause: 'Ocurrió un problema al intentar obtener el usuario',
@@ -153,9 +166,11 @@ class UsersRepository {
 
     async getUserById(id) {
         try {
-            const user = await User.findById(id);
+            const user = await this.#userDAO.findById(id);
+            logger.info(`Usuario con ID ${id} obtenido correctamente.`);
             return user;
         } catch (error) {
+            logger.error(`Error al obtener el usuario por ID ${id}.`, error);
             throw CustomError.createError({
                 name: 'Error al obtener usuario por ID',
                 cause: 'Ocurrió un problema al intentar obtener el usuario por ID',
@@ -181,8 +196,10 @@ class UsersRepository {
             }
 
             const accessToken = this.generateAccessToken(user);
+            logger.info(`Usuario autenticado con GitHub con email ${profile.email}.`);
             return { accessToken, user: new usersTokenDTO(user) };
         } catch (error) {
+            logger.error(`Error de logeo con GitHub para el usuario con email ${profile.email}.`, error);
             throw CustomError.createError({
                 name: 'Error de logeo con GitHub',
                 cause: 'Ocurrió un error inesperado y no se pudo emparejar su cuenta de GitHub en la base de datos',
@@ -197,6 +214,7 @@ class UsersRepository {
         try {
             const user = await this.#userDAO.findByEmail(email);
             if (!user) {
+                logger.warn(`Intento de eliminación de un usuario con un email no registrado: ${email}.`);
                 throw CustomError.createError({
                     name: 'Email desconocido',
                     cause: 'Está intentando eliminar un usuario con un email que no se encuentra registrado',
@@ -207,7 +225,9 @@ class UsersRepository {
 
             await new CartsRepository().deleteCart(user.cartId.toString());
             await this.#userDAO.deleteByEmail(email);
+            logger.info(`Usuario con email ${email} eliminado correctamente.`);
         } catch (error) {
+            logger.error(`Error al eliminar el usuario con email ${email}.`, error);
             throw CustomError.createError({
                 name: 'Error al eliminar el usuario',
                 cause: 'Su petición no fue procesada de forma correcta y no se pudo eliminar el usuario.',
