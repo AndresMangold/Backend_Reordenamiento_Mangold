@@ -14,6 +14,7 @@ const productsRouter = require('./routes/products.router');
 const cartRouter = require('./routes/cart.router');
 const sessionRouter = require('./routes/session.router');
 const mockingProduct = require('./routes/mockingProduct.router');
+const loggerTestRouter = require('./routes/loggerTest.router');
 const { errorHandler } = require('./middlewares/errorHandler.middleware'); 
 const { useLogger } = require('./middlewares/logger.middleware'); 
 
@@ -78,6 +79,7 @@ app.use('/api/createProduct', verifyToken, createProductRouter);
 app.use('/api/products', verifyToken, productsRouter);
 app.use('/api/cart', verifyToken, cartRouter);
 app.use('/api/mockingproducts', mockingProduct);
+app.use('/loggertest', loggerTestRouter);
 
 app.use((req, res, next) => {
     res.status(404).send('Page Not Found');
