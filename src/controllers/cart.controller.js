@@ -65,6 +65,9 @@ class CartController {
             const cartId = req.params.cid;
             const productId = req.params.pid;
             const cart = await this.cartsRepository.addProductToCart(cartId, productId);
+            if (product.owner === req.user.email) {
+                return res.status(403).json({ error: 'Cannot add your own product to the cart' });
+            }
             req.logger.info(`Producto ${productId} agregado al carrito ${cartId} de manera correcta.`);
             res.status(200).render('cart', {
                 cart: cart.toObject(),

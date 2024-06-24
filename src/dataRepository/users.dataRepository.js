@@ -207,6 +207,97 @@ class UsersRepository {
         }
     }
 
+    async sendMailToResetPassword(email) {
+        if (!email) {
+            throw CustomError.createError({
+                name: 'Sin email',
+                cause: 'Es necesario que ingrese un email para poder continuar con el cambio de contraseña',
+                message: 'Debe ingresar un email',
+                code: ErrorCodes.UNDEFINED_USER
+            })
+        }
+
+        const user = await this.#userDAO.findByEmail(email);
+
+        if (!user) {
+            if (!user) {
+                throw CustomError.createError({
+                    name: 'Email desconocido',
+                    cause: 'Está intentando cambiar la contraseña de un email que no se encuentra registrado',
+                    message: 'El email no se encuentra registrado',
+                    code: ErrorCodes.UNDEFINED_USER
+                })
+            }
+        }
+
+        const passToken = (await new MailingService().sendMail(email));
+
+        const handlerPassToken = generatePasswordRecoveryToken(passToken.randomNumber, passToken.email);
+
+        return handlerPassToken;
+    }
+
+    async resetPassword(urlToken, token, newPassword, confirmPassword) {
+        const { code, email } = token;
+
+        if (!newPassword || !confirmPassword) {
+            throw CustomError.createError({
+                name: 'Datos faltantes',
+                cause: 'Es necesario que ingrese una nueva contraseña y la confirmación de la misma',
+                message: 'Debe completar todos los cambios',
+                code: ErrorCodes.PASSWORD_UPDATE_ERROR
+            })
+        }
+
+        const isValidToken = urlToken === code.toString();
+
+        if (!isValidToken) {
+            throw CustomError.createError({
+                name: 'Link inválido',
+                cause: 'El link no es válido o ha expirado. Vuelva a enviar el mail de confirmación.',
+                message: 'El link no es válido o ha expirado.',
+                code: ErrorCodes.PASSWORD_UPDATE_ERROR
+            })
+        }
+
+        if (newPassword !== confirmPassword) {
+            throw CustomError.createError({
+                name: 'Contraseña inválida',
+                cause: 'Las dos contraseñas ingresadas deben coincidir para poder continuar con la actualización',
+                message: 'Las dos contraseñas no coinciden',
+                code: ErrorCodes.PASSWORD_UPDATE_ERROR
+            })
+        }
+
+        const user = await this.#userDAO.findByEmail(email);
+
+        const confirmValidPassword = isValidPassword(newPassword, user.password);
+
+        if (confirmValidPassword) {
+            throw CustomError.createError({
+                name: 'Contraseña inválida',
+                cause: 'La la nueva contraseña no puede ser igual a la contraseña anterior.',
+                message: 'Debe actualizar su contraseña',
+                code: ErrorCodes.PASSWORD_UPDATE_ERROR
+            })
+        }
+
+        const updatedUser = await this.#userDAO.updatePassword(email, hashPassword(newPassword));
+
+        return updatedUser;
+
+    }
+
+    async getUserByEmail(email) {
+        const user = await this.#userDAO.findByEmail(email);
+        return user;
+    }
+
+    async updatePassword(userId, newPassword) {
+        const hashedPassword = hashPassword(newPassword);
+        await this.#userDAO.updatePassword(userId, hashedPassword);
+    }
+
     async deleteUser(email) {
         try {
             const user = await this.#userDAO.findByEmail(email);

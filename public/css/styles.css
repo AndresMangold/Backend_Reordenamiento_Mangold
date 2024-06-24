@@ -657,3 +657,73 @@ h2 {
     background-color: #4c87af;
 }
 
+.retrieve-pass {
+    width: auto; 
+    padding: 10px 20px;
+    margin-top: 1rem; 
+    background-color: #934caf;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.retrieve-pass:hover {
+    background-color: #7f4caf;
+}
+
+.form-container-new-password, .form-container-retrieve-password {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+}
+
+.form-new-password, .form-retrieve-password {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    width: 300px;
+}
+
+.form-new-password h2, .form-retrieve-password h2 {
+    color: #fff;
+}
+
+.form-new-password .input-row, .form-retrieve-password .input-row {
+    margin-bottom: 15px;
+}
+
+.form-new-password label, .form-retrieve-password label {
+    color: #fff;
+    display: block;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.form-new-password input[type="password"], .form-retrieve-password input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 10px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.form-new-password button, .form-retrieve-password button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.form-new-password button:hover, .form-retrieve-password button:hover {
+    background-color: #45a049;
+}

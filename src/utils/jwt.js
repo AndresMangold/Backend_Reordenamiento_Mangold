@@ -1,12 +1,25 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const UsersRepository = require('../dataRepository/users.dataRepository');
 
 const PRIVATE_KEY = process.env.JWT_SECRET;
 
 const generateToken = user => {
     const token = jwt.sign({ id: user.id, role: user.role }, PRIVATE_KEY, { expiresIn: '24h' });
     return token;
+}
+
+const generatePasswordRecoveryToken = user => {
+    const token = jwt.sign({ id: user.id, email: user.email }, PRIVATE_KEY, { expiresIn: '1h' });
+    return token;
+}
+
+const verifyPasswordToken = token => {
+    try {
+        const decoded = jwt.verify(token, PRIVATE_KEY);
+        return decoded;
+    } catch (error) {
+        throw new Error('Token inválido o expirado');
+    }
 }
 
 const verifyToken = (req, res, next) => {
@@ -40,6 +53,4 @@ const verifyToken = (req, res, next) => {
     });
 };
 
-
-module.exports = { generateToken, verifyToken, secret: PRIVATE_KEY };
-
+module.exports = { generateToken, generatePasswordRecoveryToken, verifyPasswordToken, verifyToken, secret: PRIVATE_KEY };

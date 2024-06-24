@@ -38,6 +38,26 @@ router.get('/githubcallback', passport.authenticate('github', gitConfig), (req, 
     controller.githubCb(req, res);
 });
 
+router.get('/retrievePass', (req, res) => { 
+    res.render('retrievePass'); 
+});
+
+router.post('/retrievePass', (req, res) => {
+    controller.sendPasswordResetEmail(req, res);
+});
+
+router.get('/resetPassword/:token', (req, res) => {
+    controller.renderResetPasswordPage(req, res);
+});
+
+router.post('/resetPassword/:token', (req, res) => {
+    controller.resetPassword(req, res);
+});
+
+router.post('/premium/:uid', verifyToken, userIsAdmin, (req, res) => {
+    controller.changeRole(req, res);
+});
+
 router.get('/logout', (req, res) => { 
     controller.logout(req, res); 
 });

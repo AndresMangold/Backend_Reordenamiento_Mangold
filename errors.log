@@ -17,3 +17,17 @@
 17-06-2024 10:35:51 / Level: [FATAL] - Message: FATAL test - Relevancia: 0
 17-06-2024 10:44:18 / Level: [ERROR] - Message: ERROR test - Relevancia: 1
 17-06-2024 10:44:18 / Level: [FATAL] - Message: FATAL test - Relevancia: 0
+22-06-2024 13:53:43 / Level: [ERROR] - Message: this.usersRepository.getUserByEmail is not a function this.usersRepository.getUserByEmail is not a function
+22-06-2024 17:45:31 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 17:48:08 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:00:50 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:02:29 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:03:46 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:13:29 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:16:34 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:17:58 / Level: [ERROR] - Message: No se pudo enviar el email No se pudo enviar el email
+22-06-2024 18:47:06 / Level: [ERROR] - Message: No se pudo enviar el correo No se pudo enviar el correo
+22-06-2024 18:49:16 / Level: [ERROR] - Message: No se pudo enviar el correo No se pudo enviar el correo
+24-06-2024 20:38:34 / Level: [ERROR] - Message: isValidPassword is not defined isValidPassword is not defined
+24-06-2024 20:40:47 / Level: [ERROR] - Message: bcrypt is not defined bcrypt is not defined
+24-06-2024 20:41:35 / Level: [ERROR] - Message: bcrypt is not defined bcrypt is not defined

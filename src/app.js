@@ -53,10 +53,10 @@ app.use(express.static('public'));
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URL || "mongodb+srv://andresmangold:andresPass@cluster0.hrz9nqj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+        mongoUrl: process.env.MONGO_URL,
         ttl: 60 * 60
     }),
-    secret: process.env.SESSION_SECRET || "adminCod3r123",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: DEFAULT_MAX_AGE }

@@ -15,6 +15,7 @@
     "mongoose": "^8.4.0",
     "mongoose-paginate-v2": "^1.8.1",
     "node": "^18.20.3",
+    "nodemailer": "^6.9.14",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-jwt": "^4.0.1",

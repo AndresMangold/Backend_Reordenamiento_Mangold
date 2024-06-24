@@ -1,11 +1,15 @@
 require('dotenv').config();
-const { generateToken } = require('../utils/jwt');
+const bcrypt = require('bcrypt');
+const { generateToken, generatePasswordRecoveryToken, verifyPasswordToken } = require('../utils/jwt');
+const { isValidPassword } = require('../utils/hashing')
 const UsersRepository = require('../dataRepository/users.dataRepository');
 const { usersTokenDTO } = require('../dto/usersToken.dto');
+const MailingService = require('../utils/mailingService');
 
 class Controller {
     constructor() {
         this.usersRepository = new UsersRepository();
+        this.mailingService = new MailingService();
     }
 
     redirect(res) {
@@ -106,6 +110,66 @@ class Controller {
         } catch (err) {
             req.logger.error('Error al buscar el usuario en la base de datos:', err);
             res.status(500).send('Error interno del servidor');
+        }
+    }
+
+    async sendPasswordResetEmail(req, res) {
+        try {
+            const { email } = req.body;
+            const user = await this.usersRepository.getUserByEmail(email);
+            if (!user) {
+                return res.status(400).json({ error: 'Email no registrado' });
+            }
+
+            const token = generatePasswordRecoveryToken(user);
+            await this.mailingService.sendMail(email, token);
+            res.status(200).json({ message: 'Correo de restablecimiento enviado' });
+        } catch (error) {
+            req.logger.error(error.message, error);
+            res.status(500).json({ error: 'No se pudo enviar el email' });
+        }
+    }
+
+    async renderResetPasswordPage(req, res) {
+        const { token } = req.params;
+        res.render('resetPassword', { token });
+    }
+
+    async resetPassword(req, res) {
+        try {
+            const { token } = req.params;
+            const { newPassword } = req.body;
+    
+            if (!newPassword) {
+                return res.status(400).json({ error: 'Debe ingresar una nueva contraseña' });
+            }
+    
+            const decoded = verifyPasswordToken(token);
+            const user = await this.usersRepository.getUserById(decoded.id);
+    
+            if (await isValidPassword(newPassword, user.password)) {
+                return res.status(400).json({ error: 'No puede usar la misma contraseña anterior' });
+            }
+    
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            await this.usersRepository.updatePassword(user.id, hashedPassword);
+            res.status(200).json({ message: 'Contraseña actualizada exitosamente' });
+        } catch (error) {
+            req.logger.error(error.message, error);
+            res.status(500).json({ error: error.message });
+        }
+    }
+
+    async changeRole(req, res) {
+        try {
+            const uid = req.params.uid;
+            const user = await this.dataRepository.changeRole(uid);
+            req.logger.info(`Rol del usuario actualizado a ${user.rol}`);
+            res.clearCookie('accessToken');
+            return res.json(user);
+        } catch (error) {
+            req.logger.error(error);
+            res.status(500).json({ error });
         }
     }
 

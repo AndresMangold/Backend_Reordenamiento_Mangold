@@ -9,6 +9,10 @@ class UserDAO {
         return await User.create(user);
     }
 
+    async updateRole(email, rol) {
+        return await Users.updateOne({ email }, { $set: { rol } });
+    }
+
     async updatePassword(email, password) {
         return await User.updateOne({ email }, { $set: { password } });
     }
