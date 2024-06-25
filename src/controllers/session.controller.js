@@ -162,7 +162,7 @@ class Controller {
     async changeRole(req, res) {
         try {
             const uid = req.params.uid;
-            const user = await this.dataRepository.changeRole(uid);
+            const user = await this.usersRepository.changeRole(uid);
             req.logger.info(`Rol del usuario actualizado a ${user.rol}`);
             res.clearCookie('accessToken');
             return res.json(user);

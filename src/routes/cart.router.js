@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const CartController = require('../controllers/cart.controller');
 const { verifyToken } = require('../utils/jwt');
-const {  isUser } = require('../middlewares/auth.middleware');
+const { isUser } = require('../middlewares/auth.middleware');
 const router = Router();
 const controller = new CartController();
 
@@ -14,6 +14,6 @@ router.delete('/:cid/product/:pid', verifyToken, isUser, (req, res) => controlle
 router.put('/:cid/product/:pid', verifyToken, isUser, (req, res) => controller.updateProductQuantityFromCart(req, res));
 router.delete('/:cid', verifyToken, isUser, (req, res) => controller.clearCart(req, res));
 router.delete('/destroyCart/:cid', verifyToken, isUser, (req, res) => controller.deleteCart(req, res));
-router.post('/:cid/purchase', verifyToken, isUser, (req, res) => controller.purchase(req, res)); 
+router.post('/:cid/purchase', verifyToken, isUser, (req, res) => controller.purchase(req, res));
 
 module.exports = router;

@@ -6,7 +6,7 @@ const canDeleteProduct = async (req, res, next) => {
         const user = await User.findById(req.user.id);
         const product = await Product.findById(req.params.pid);
 
-        if (user.rol === 'admin' || (user.rol === 'premium' && product.owner === user.email)) {
+        if (user.role === 'admin' || (user.role === 'premium' && product.owner === user.email)) {
             return next();
         }
 
@@ -43,7 +43,7 @@ module.exports = {
     },
 
     isUserPremium: (req, res, next) => {
-        if (req.user && (req.user.rol === 'admin' || req.user.rol === 'premium')) {
+        if (req.user && (req.user.role === 'admin' || req.user.role === 'premium')) {
             return next();
         }
         req.logger.warning('Acceso denegado: Necesitas ser User Premium');
@@ -51,7 +51,7 @@ module.exports = {
     },
 
     isUser: (req, res, next) => {
-        if (req.user && (req.user.rol === 'user' || req.user.rol === 'premium')) {
+        if (req.user && (req.user.role === 'user' || req.user.role === 'premium')) {
             return next();
         }
         req.logger.warning('Acceso denegado: reservado para usuarios');

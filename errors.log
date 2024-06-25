@@ -32,3 +32,19 @@
 24-06-2024 20:40:47 / Level: [ERROR] - Message: bcrypt is not defined bcrypt is not defined
 24-06-2024 20:41:35 / Level: [ERROR] - Message: bcrypt is not defined bcrypt is not defined
 24-06-2024 22:30:59 / Level: [ERROR] - Message: mongoose is not defined mongoose is not defined
+24-06-2024 22:49:32 / Level: [ERROR] - Message: accesToken is not defined accesToken is not defined
+24-06-2024 22:50:08 / Level: [ERROR] - Message: accessToken is not defined accessToken is not defined
+24-06-2024 22:50:44 / Level: [ERROR] - Message: accessToken is not defined accessToken is not defined
+25-06-2024 10:43:26 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:43:29 / Level: [ERROR] - Message: product is not defined product is not defined
+25-06-2024 10:43:36 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:43:42 / Level: [ERROR] - Message: product is not defined product is not defined
+25-06-2024 10:50:28 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:50:30 / Level: [ERROR] - Message: product is not defined product is not defined
+25-06-2024 10:50:43 / Level: [ERROR] - Message: product is not defined product is not defined
+25-06-2024 10:50:53 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:50:54 / Level: [ERROR] - Message: product is not defined product is not defined
+25-06-2024 10:53:25 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:55:12 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:56:30 / Level: [ERROR] - Message: Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User" Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
+25-06-2024 11:01:57 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
