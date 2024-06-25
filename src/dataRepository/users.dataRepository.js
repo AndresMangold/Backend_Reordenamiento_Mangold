@@ -293,9 +293,9 @@ class UsersRepository {
         return user;
     }
 
-    async updatePassword(userId, newPassword) {
+    async updatePassword(userEmail, newPassword) {
         const hashedPassword = hashPassword(newPassword);
-        await this.#userDAO.updatePassword(userId, hashedPassword);
+        await this.#userDAO.updatePassword(userEmail, hashedPassword);
     }
 
     async deleteUser(email) {

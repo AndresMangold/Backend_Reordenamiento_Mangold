@@ -150,9 +150,8 @@ class Controller {
             if (await isValidPassword(newPassword, user.password)) {
                 return res.status(400).json({ error: 'No puede usar la misma contraseña anterior' });
             }
-    
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
-            await this.usersRepository.updatePassword(user.id, hashedPassword);
+
+            await this.usersRepository.updatePassword(user.email, newPassword);
             res.status(200).json({ message: 'Contraseña actualizada exitosamente' });
         } catch (error) {
             req.logger.error(error.message, error);
