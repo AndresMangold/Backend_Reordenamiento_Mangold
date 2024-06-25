@@ -162,15 +162,28 @@ class Controller {
     async changeRole(req, res) {
         try {
             const uid = req.params.uid;
-            const user = await this.usersRepository.changeRole(uid);
-            req.logger.info(`Rol del usuario actualizado a ${user.rol}`);
-            res.clearCookie('accessToken');
-            return res.json(user);
+            const user = await this.usersRepository.getUserById(uid);
+            if (!user) {
+                req.logger.warn('Usuario no encontrado.');
+                return res.status(404).json({ error: 'Usuario no encontrado' });
+            }
+
+            if (req.user.id !== uid) {
+                req.logger.warn('No tienes permisos para cambiar el rol de este usuario.');
+                return res.status(403).json({ error: 'No tienes permisos para cambiar el rol de este usuario.' });
+            }
+
+            const newRole = user.role === 'user' ? 'premium' : 'user';
+            await this.usersRepository.changeRole(uid, newRole);
+
+            req.logger.info(`Rol del usuario actualizado a ${newRole}`);
+            return res.json({ message: `Rol del usuario actualizado a ${newRole}`, user: { ...user._doc, role: newRole } });
         } catch (error) {
-            req.logger.error(error);
-            res.status(500).json({ error });
+            req.logger.error(error.message, error);
+            res.status(500).json({ error: error.message });
         }
     }
+
 
     logout(req, res) {
         req.logout((err) => {

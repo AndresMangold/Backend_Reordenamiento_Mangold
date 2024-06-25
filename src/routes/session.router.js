@@ -54,10 +54,6 @@ router.post('/resetPassword/:token', (req, res) => {
     controller.resetPassword(req, res);
 });
 
-router.post('/premium/:uid', verifyToken, userIsAdmin, (req, res) => {
-    controller.changeRole(req, res);
-});
-
 router.get('/logout', (req, res) => { 
     controller.logout(req, res); 
 });

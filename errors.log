@@ -48,3 +48,5 @@
 25-06-2024 10:55:12 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
 25-06-2024 10:56:30 / Level: [ERROR] - Message: Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User" Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
 25-06-2024 11:01:57 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 19:40:41 / Level: [ERROR] - Message: this.usersRepository.changeRole is not a function this.usersRepository.changeRole is not a function
+25-06-2024 19:41:40 / Level: [ERROR] - Message: this.usersRepository.changeRole is not a function this.usersRepository.changeRole is not a function

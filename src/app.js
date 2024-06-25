@@ -13,6 +13,7 @@ const createProductRouter = require('./routes/createProduct.router');
 const productsRouter = require('./routes/products.router');
 const cartRouter = require('./routes/cart.router');
 const sessionRouter = require('./routes/session.router');
+const userRouter = require('./routes/user.router');  
 const mockingProduct = require('./routes/mockingProduct.router');
 const loggerTestRouter = require('./routes/loggerTest.router');
 const { errorHandler } = require('./middlewares/errorHandler.middleware'); 
@@ -75,6 +76,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/sessions', sessionRouter);
+app.use('/api/users', verifyToken, userRouter);  
 app.use('/api/createProduct', verifyToken, createProductRouter);
 app.use('/api/products', verifyToken, productsRouter);
 app.use('/api/cart', verifyToken, cartRouter);

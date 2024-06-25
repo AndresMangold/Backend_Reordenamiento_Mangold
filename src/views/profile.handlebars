@@ -9,8 +9,42 @@
         <form action="/sessions/logout" method="get">
             <button type="submit" class="logout-button">Logout</button>
         </form>
+        <form id="convert-role-form">
+            <button type="button" class="convert-role-button">Convertir usuario</button>
+        </form>
     </div>
     {{else}}
     <p>No estás logueado. <a href="/sessions/login">Iniciar sesión</a></p>
     {{/if}}
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const convertRoleButton = document.querySelector('.convert-role-button');
+
+        convertRoleButton.addEventListener('click', async () => {
+            const userId = '{{user._id}}';  
+
+            try {
+                const response = await fetch(`/api/users/premium/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${document.cookie.replace('accessToken=', '')}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Rol del usuario actualizado correctamente.');
+                    location.reload();  
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.error}`);
+                }
+            } catch (error) {
+                console.error('Error updating user role:', error);
+                alert('An error occurred while updating the user role');
+            }
+        });
+    });
+</script>

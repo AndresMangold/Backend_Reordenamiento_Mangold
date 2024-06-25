@@ -178,6 +178,21 @@ class UsersRepository {
         }
     }
 
+    async changeRole(id, role) {
+        try {
+            return await this.#userDAO.changeRole(id, role);
+        } catch (error) {
+            logger.error(`Error al cambiar el rol del usuario con ID ${id}.`, error);
+            throw CustomError.createError({
+                name: 'Error al cambiar el rol',
+                cause: 'Ocurrió un problema al intentar cambiar el rol del usuario',
+                message: 'No se pudo cambiar el rol del usuario',
+                code: ErrorCodes.ROLE_CHANGE_ERROR,
+                otherProblems: error
+            });
+        }
+    }
+
     async githubLogin(profile) {
         try {
             let user = await this.#userDAO.findByEmail(profile.email);
@@ -319,7 +334,7 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Error al eliminar el usuario',
                 cause: 'Su petición no fue procesada de forma correcta y no se pudo eliminar el usuario.',
-                message: 'Hubo un problema y no se pudo eliminar el usuario',
+                mensaje: 'Hubo un problema y no se pudo eliminar el usuario',
                 code: ErrorCodes.USER_DELETION_ERROR,
                 otherProblems: error
             });
