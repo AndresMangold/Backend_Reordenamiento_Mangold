@@ -64,10 +64,14 @@ class CartController {
         try {
             const cartId = req.params.cid;
             const productId = req.params.pid;
-            const cart = await this.cartsRepository.addProductToCart(cartId, productId);
-            if (product.owner === req.user.email) {
+            const user = req.user;
+
+            const product = await Product.findById(productId);
+            if (user.role === 'premium' && product.owner === user.email) {
                 return res.status(403).json({ error: 'Cannot add your own product to the cart' });
             }
+
+            const cart = await this.cartsRepository.addProductToCart(cartId, productId);
             req.logger.info(`Producto ${productId} agregado al carrito ${cartId} de manera correcta.`);
             res.status(200).render('cart', {
                 cart: cart.toObject(),
@@ -77,7 +81,7 @@ class CartController {
             });
         } catch (error) {
             req.logger.error(error.message, error);
-            res.status(500).json({ Error: error.message });
+            res.status(500).json({ error: error.message });
         }
     }
 

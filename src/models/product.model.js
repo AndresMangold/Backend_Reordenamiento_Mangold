@@ -36,7 +36,7 @@ const productSchema = new Schema({
     },
     owner: {
         type: String,
-        default: "admin"
+        required: true 
     }
 }, { timestamps: true });
 

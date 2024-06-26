@@ -50,3 +50,9 @@
 25-06-2024 11:01:57 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
 25-06-2024 19:40:41 / Level: [ERROR] - Message: this.usersRepository.changeRole is not a function this.usersRepository.changeRole is not a function
 25-06-2024 19:41:40 / Level: [ERROR] - Message: this.usersRepository.changeRole is not a function this.usersRepository.changeRole is not a function
+26-06-2024 18:39:31 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+26-06-2024 18:41:22 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "P505" }
+26-06-2024 18:41:22 / Level: [ERROR] - Message: Error al agregar el producto Error al agregar el producto
+26-06-2024 18:42:24 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+26-06-2024 18:52:09 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
+26-06-2024 18:52:09 / Level: [ERROR] - Message: Error al agregar el producto Error al agregar el producto

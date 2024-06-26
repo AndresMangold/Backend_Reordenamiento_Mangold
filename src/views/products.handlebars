@@ -13,6 +13,9 @@
                 <p class="id-label">ID:</p> 
                 <p class="id-number">{{this.id}}</p> 
                 <a href="/api/products/{{this.id}}" class="product-link">Ver</a>
+                <form class="delete-product-form" method="POST" action="/api/products/{{this.id}}?_method=DELETE">
+                    <button type="submit" class="delete-button">Eliminar</button>
+                </form>
             </div>
         </li>
         {{/each}}

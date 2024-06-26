@@ -81,7 +81,7 @@ class ProductController {
         if (req.method === 'POST') {
             try {
                 const { title, description, price, thumbnail, code, stock, category } = req.body;
-                const owner = req.user.email;
+                const owner = req.user.id;
                 await this.productRepository.addProduct({ title, description, price, thumbnail, code, stock, category, owner });
                 req.logger.info('Producto agregado con éxito.');
                 res.status(301).redirect('/api/products');
