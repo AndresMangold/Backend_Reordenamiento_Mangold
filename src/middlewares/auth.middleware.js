@@ -6,7 +6,7 @@ const canDeleteProduct = async (req, res, next) => {
         const user = await User.findById(req.user.id);
         const product = await Product.findById(req.params.pid);
 
-        if (user.role === 'admin' || (user.role === 'premium' && product.owner === user.email)) {
+        if (user.role === 'admin' || (user.role === 'premium' && product.owner === user.id)) {
             return next();
         }
 
