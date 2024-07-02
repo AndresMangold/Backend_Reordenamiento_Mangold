@@ -7,6 +7,8 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const methodOverride = require('method-override');
+const swaggerJSDoc = require('swagger-jsdoc');
+const { serve, setup } = require('swagger-ui-express');
 const { DEFAULT_MAX_AGE } = require('./constants');
 
 const createProductRouter = require('./routes/createProduct.router');
@@ -70,6 +72,20 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(useLogger);
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'API de Andrés',
+            description: 'API de Andrés para CoderH!'
+        },
+    },
+    apis: [`${__dirname}/../src/docs/*.yaml`],
+};
+const specs = swaggerJSDoc(swaggerOptions);
+
+app.use('/apidocs', serve, setup(specs));
 
 app.get('/', (req, res) => {
     res.redirect('/sessions/login');

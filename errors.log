@@ -56,3 +56,6 @@
 26-06-2024 18:42:24 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
 26-06-2024 18:52:09 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
 26-06-2024 18:52:09 / Level: [ERROR] - Message: Error al agregar el producto Error al agregar el producto
+26-06-2024 21:16:45 / Level: [ERROR] - Message: Error validando permisos Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
+26-06-2024 21:23:22 / Level: [ERROR] - Message: Error validando permisos Class constructor ObjectId cannot be invoked without 'new'
+26-06-2024 21:23:38 / Level: [ERROR] - Message: Error validando permisos Class constructor ObjectId cannot be invoked without 'new'

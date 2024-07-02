@@ -84,7 +84,7 @@ class ProductsRepository {
             throw CustomError.createError({
                 name: 'El producto no existe',
                 cause: 'Debe ingresar un ID válido existente en la base de datos',
-                message: 'El producto no existe',
+                mensaje: 'El producto no existe',
                 code: ErrorCodes.UNDEFINED_PRODUCT,
                 otherProblems: error
             });

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const User = require('../models/user.model'); 
 const Product = require('../models/product.model'); 
 
@@ -6,7 +7,15 @@ const canDeleteProduct = async (req, res, next) => {
         const user = await User.findById(req.user.id);
         const product = await Product.findById(req.params.pid);
 
-        if (user.role === 'admin' || (user.role === 'premium' && product.owner === user.id)) {
+        if (!user || !product) {
+            return res.status(404).json({ error: 'User or product not found' });
+        }
+
+        if (user.role === 'premium' && product.owner.toString() === user._id.toString()) {
+            return next();
+        }
+
+        if (user.role === 'admin') {
             return next();
         }
 

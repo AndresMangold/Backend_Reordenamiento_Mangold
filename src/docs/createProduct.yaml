@@ -1,0 +1,78 @@
+paths:
+  /api/createProduct:
+    all:
+      summary: Crear un nuevo producto
+      tags:
+        - Product
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProduct'
+      responses:
+        "201":
+          description: Producto creado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "403":
+          description: Acceso denegado: Necesitas ser admin o usuario premium
+        "500":
+          description: Error en el servidor
+
+components:
+  schemas:
+    NewProduct:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: integer
+          description: Stock del producto
+      example:
+        name: Producto de prueba
+        description: Descripción del producto de prueba
+        price: 100.0
+        stock: 10
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID del producto
+        name:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: integer
+          description: Stock del producto
+      example:
+        _id: "60a6c7e9f99b4b23c8f5b5a3"
+        name: Producto de prueba
+        description: Descripción del producto de prueba
+        price: 100.0
+        stock: 10
+
+securitySchemes:
+  bearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
