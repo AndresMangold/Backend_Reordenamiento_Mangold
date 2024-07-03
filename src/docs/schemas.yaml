@@ -50,3 +50,87 @@ components:
         price: 100.0
         stock: 10
         category: Prueba
+    NewProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: integer
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoría del producto
+      example:
+        title: Producto de prueba
+        description: Descripción del producto de prueba
+        price: 100.0
+        stock: 10
+        category: Prueba
+    UpdateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: integer
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoría del producto
+      example:
+        title: Producto actualizado
+        description: Descripción actualizada del producto
+        price: 150.0
+        stock: 15
+        category: Prueba
+    UpdateCart:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: string
+                description: ID del producto
+              quantity:
+                type: integer
+                description: Cantidad del producto
+      example:
+        products:
+          - product: "60a6c7e9f99b4b23c8f5b5a4"
+            quantity: 3
+    NewCart:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: string
+                description: ID del producto
+              quantity:
+                type: integer
+                description: Cantidad del producto
+      example:
+        products:
+          - product: "60a6c7e9f99b4b23c8f5b5a4"
+            quantity: 1

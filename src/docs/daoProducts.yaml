@@ -1,0 +1,131 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtener todos los productos
+      tags:
+        - ProductDAO
+      parameters:
+        - name: page
+          in: query
+          description: Número de página
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Límite de productos por página
+          schema:
+            type: integer
+        - name: sort
+          in: query
+          description: Orden de los productos (ascendente o descendente)
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: Categoría de los productos
+          schema:
+            type: string
+        - name: availability
+          in: query
+          description: Disponibilidad de los productos
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de productos obtenida con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        "500":
+          description: Error en el servidor
+    post:
+      summary: Crear un nuevo producto
+      tags:
+        - ProductDAO
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProduct'
+      responses:
+        "201":
+          description: Producto creado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "500":
+          description: Error en el servidor
+  /api/products/{id}:
+    get:
+      summary: Obtener producto por ID
+      tags:
+        - ProductDAO
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto obtenido con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "404":
+          description: Producto no encontrado
+        "500":
+          description: Error en el servidor
+    put:
+      summary: Actualizar producto por ID
+      tags:
+        - ProductDAO
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProduct'
+      responses:
+        "200":
+          description: Producto actualizado con éxito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "404":
+          description: Producto no encontrado
+        "500":
+          description: Error en el servidor
+    delete:
+      summary: Eliminar producto por ID
+      tags:
+        - ProductDAO
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del producto
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Producto eliminado con éxito
+        "404":
+          description: Producto no encontrado
+        "500":
+          description: Error en el servidor

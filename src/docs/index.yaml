@@ -18,6 +18,10 @@ paths:
     $ref: './cartController.yaml'
   /api/productController:
     $ref: './productController.yaml'
+  /api/daoCarts:
+    $ref: './daoCarts.yaml'
+  /api/daoProducts:
+    $ref: './daoProducts.yaml'
 components:
   schemas:
     $ref: './schemas.yaml'

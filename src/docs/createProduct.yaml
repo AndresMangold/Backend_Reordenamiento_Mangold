@@ -29,7 +29,7 @@ components:
     NewProduct:
       type: object
       properties:
-        name:
+        title:
           type: string
           description: Nombre del producto
         description:
@@ -41,18 +41,22 @@ components:
         stock:
           type: integer
           description: Stock del producto
+        category:
+          type: string
+          description: Categoría del producto
       example:
-        name: Producto de prueba
+        title: Producto de prueba
         description: Descripción del producto de prueba
         price: 100.0
         stock: 10
+        category: Prueba
     Product:
       type: object
       properties:
         _id:
           type: string
           description: ID del producto
-        name:
+        title:
           type: string
           description: Nombre del producto
         description:
@@ -64,12 +68,16 @@ components:
         stock:
           type: integer
           description: Stock del producto
+        category:
+          type: string
+          description: Categoría del producto
       example:
         _id: "60a6c7e9f99b4b23c8f5b5a3"
-        name: Producto de prueba
+        title: Producto de prueba
         description: Descripción del producto de prueba
         price: 100.0
         stock: 10
+        category: Prueba
 
 securitySchemes:
   bearerAuth:
