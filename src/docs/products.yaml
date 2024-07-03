@@ -1,35 +1,26 @@
+openapi: 3.0.0
+info:
+  title: API de Productos
+  version: 1.0.0
 paths:
-  /api/products:
+  /api/products/:
     get:
-      summary: Obtener todos los productos
+      summary: Devuelve el catálogo completo de productos
       tags:
-        - ProductsRepository
+        - Products
       parameters:
-        - name: page
-          in: query
-          description: Número de página
-          schema:
+        - in: query
+          name: page
+          schema: 
             type: integer
-        - name: limit
-          in: query
-          description: Límite de productos por página
-          schema:
-            type: integer
-        - name: sort
-          in: query
-          description: Orden de los productos (ascendente o descendente)
+            default: 1
+          description: Página de resultado a devolver
+        - in: query
+          name: sort
           schema:
             type: string
-        - name: category
-          in: query
-          description: Categoría de los productos
-          schema:
-            type: string
-        - name: availability
-          in: query
-          description: Disponibilidad de los productos
-          schema:
-            type: string
+            enum: [asc, desc]
+          description: Orden de los productos por orden de precio
       responses:
         "200":
           description: Operación exitosa
@@ -39,13 +30,16 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
+        "400": 
+          description: Página no existente
         "500":
-          description: Error en el servidor
+          description: Error Interno
     post:
-      summary: Agregar un nuevo producto
+      summary: Añade un nuevo producto a la base de datos
       tags:
-        - ProductsRepository
+        - Products
       requestBody:
+        description: Datos del nuevo producto
         required: true
         content:
           application/json:
@@ -53,85 +47,94 @@ paths:
               $ref: '#/components/schemas/NewProduct'
       responses:
         "201":
-          description: Producto agregado con éxito
+          description: Producto creado exitosamente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Product'
         "400":
-          description: Datos inválidos
+          description: Error en la solicitud
+        "403":
+          description: No cuenta con los permisos adecuados
+        "409":
+          description: Código de producto duplicado
         "500":
-          description: Error en el servidor
+          description: Error Interno
   /api/products/{productId}:
     get:
-      summary: Obtener producto por ID
+      summary: Devuelve un único producto según su ID
       tags:
-        - ProductsRepository
+        - Products
       parameters:
         - name: productId
           in: path
           required: true
-          description: ID del producto
+          description: ID del producto a devolver
           schema:
             type: string
       responses:
         "200":
           description: Operación exitosa
-          content:
+          content: 
             application/json:
               schema:
+                type: object
                 $ref: '#/components/schemas/Product'
         "404":
-          description: Producto no encontrado
+          description: El producto no existe
         "500":
-          description: Error en el servidor
+          description: Error Interno
     put:
-      summary: Actualizar producto por ID
+      summary: Actualiza un producto según su ID
       tags:
-        - ProductsRepository
+        - Products
       parameters:
         - name: productId
           in: path
           required: true
-          description: ID del producto
+          description: ID del producto a actualizar
           schema:
             type: string
       requestBody:
+        description: Campos del producto a actualizar
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdateProduct'
       responses:
-        "200":
-          description: Producto actualizado con éxito
+        "201":
+          description: Producto actualizado exitosamente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Product'
+        "403":
+          description: No cuenta con los permisos adecuados
         "404":
-          description: Producto no encontrado
+          description: El producto no existe
         "500":
-          description: Error en el servidor
+          description: Error Interno
     delete:
-      summary: Eliminar producto por ID
+      summary: Elimina un producto según su ID
       tags:
-        - ProductsRepository
+        - Products
       parameters:
         - name: productId
           in: path
           required: true
-          description: ID del producto
+          description: ID del producto a eliminar
           schema:
             type: string
       responses:
-        "200":
-          description: Producto eliminado con éxito
+        "204":
+          description: Producto eliminado exitosamente
+        "403":
+          description: No cuenta con los permisos adecuados
         "404":
-          description: Producto no encontrado
+          description: El producto no existe
         "500":
-          description: Error en el servidor
-
+          description: Error Interno
 components:
   schemas:
     Product:
@@ -142,50 +145,92 @@ components:
           description: ID del producto
         title:
           type: string
+          required: true
           description: Nombre del producto
         description:
           type: string
+          required: true
           description: Descripción del producto
         price:
           type: number
+          required: true
           description: Precio del producto
-        stock:
+        thumbnail:
+          type: string
+          description: URL con la imagen del producto
+          default: Sin Imagen
+        code:
+          type: string
+          required: true
+          unique: true
+          description: Codigo del producto
+        stock: 
           type: integer
-          description: Stock del producto
+          required: true
+          description: Cantidad de producto en stock
         category:
           type: string
+          required: true
           description: Categoría del producto
+        owner:
+          type: string
+          description: Propietario del producto
+          default: Admin
       example:
         _id: "60a6c7e9f99b4b23c8f5b5a3"
-        title: Producto de prueba
-        description: Descripción del producto de prueba
-        price: 100.0
-        stock: 10
-        category: Prueba
+        title: Prueba
+        description: Descripcion de Prueba
+        price: 20000
+        thumbnail: Sin Imagen
+        code: abc123
+        stock: 80
+        category: prueba
+        owner: admin
     NewProduct:
       type: object
       properties:
         title:
           type: string
+          required: true
           description: Nombre del producto
         description:
           type: string
+          required: true
           description: Descripción del producto
         price:
           type: number
+          required: true
           description: Precio del producto
-        stock:
+        thumbnail:
+          type: string
+          description: URL 
+          default: Sin Imagen
+        code:
+          type: string
+          required: true
+          unique: true
+          description: Codigo del producto
+        stock: 
           type: integer
-          description: Stock del producto
+          required: true
+          description: Cantidad de producto en stock
         category:
           type: string
+          required: true
           description: Categoría del producto
+        owner:
+          type: string
+          description: Propietario del producto
+          default: Admin
       example:
-        title: Producto de prueba
-        description: Descripción del producto de prueba
-        price: 100.0
-        stock: 10
-        category: Prueba
+        title: Ejemplo
+        description: Descripcion del ejemplo
+        price: 2000
+        thumbnail: Sin Imagen
+        code: abc123
+        stock: 80
+        category: almacenamiento
+        owner: admin
     UpdateProduct:
       type: object
       properties:
@@ -207,12 +252,11 @@ components:
       example:
         title: Producto actualizado
         description: Descripción actualizada del producto
-        price: 150.0
-        stock: 15
+        price: 30000
+        stock: 1510
         category: Prueba
-
-securitySchemes:
-  bearerAuth:
-    type: http
-    scheme: bearer
-    bearerFormat: JWT
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

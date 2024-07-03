@@ -59,3 +59,6 @@
 26-06-2024 21:16:45 / Level: [ERROR] - Message: Error validando permisos Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
 26-06-2024 21:23:22 / Level: [ERROR] - Message: Error validando permisos Class constructor ObjectId cannot be invoked without 'new'
 26-06-2024 21:23:38 / Level: [ERROR] - Message: Error validando permisos Class constructor ObjectId cannot be invoked without 'new'
+02-07-2024 22:02:02 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+03-07-2024 20:10:15 / Level: [ERROR] - Message: Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User" Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
+03-07-2024 20:11:11 / Level: [ERROR] - Message: Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User" Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"

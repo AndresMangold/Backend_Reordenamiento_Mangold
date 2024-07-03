@@ -6,22 +6,22 @@ info:
 paths:
   /api/carts:
     $ref: './cart.yaml'
-  /api/createProduct:
-    $ref: './createProduct.yaml'
   /api/products:
     $ref: './products.yaml'
-  /api/cartsRepository:
-    $ref: './cartsRepository.yaml'
-  /api/productsRepository:
-    $ref: './productsRepository.yaml'
-  /api/cartController:
-    $ref: './cartController.yaml'
-  /api/productController:
-    $ref: './productController.yaml'
-  /api/daoCarts:
-    $ref: './daoCarts.yaml'
-  /api/daoProducts:
-    $ref: './daoProducts.yaml'
+  # /api/createProduct:
+  #   $ref: './createProduct.yaml'
+  # /api/cartsRepository:
+  #   $ref: './cartsRepository.yaml'
+  # /api/productsRepository:
+  #   $ref: './productsRepository.yaml'
+  # /api/cartController:
+  #   $ref: './cartController.yaml'
+  # /api/productController:
+  #   $ref: './productController.yaml'
+  # /api/daoCarts:
+  #   $ref: './daoCarts.yaml'
+  # /api/daoProducts:
+  #   $ref: './daoProducts.yaml'
 components:
   schemas:
     $ref: './schemas.yaml'
