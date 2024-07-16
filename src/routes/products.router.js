@@ -6,7 +6,7 @@ const { userIsAdmin, userIsLoggedIn, isUserPremium, isUser, canDeleteProduct } =
 const router = Router();
 const controller = new ProductController();
 
-router.get('/', userIsLoggedIn, verifyToken, (req, res) => controller.getProducts(req, res));
+router.get('/', userIsLoggedIn, verifyToken, (req, res) => controller.getProducts(req, res)); 
 router.get('/:pid', verifyToken, (req, res) => controller.getProductById(req, res));
 router.post('/:pid', verifyToken, isUser, (req, res) => controller.addProductToCart(req, res));
 router.post('/', verifyToken, isUserPremium, (req, res) => controller.addProduct(req, res));

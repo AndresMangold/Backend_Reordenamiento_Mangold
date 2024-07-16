@@ -38,6 +38,9 @@ class Controller {
             const userDto = new usersTokenDTO(user);
             req.session.user = userDto;
             res.cookie('accessToken', token, { maxAge: 60 * 60 * 1000, httpOnly: true });
+
+            await User.findByIdAndUpdate(user.id, { last_connection: new Date() });
+
             req.logger.info('Usuario logueado correctamente.');
             res.redirect('/api/products');
         } catch (e) {
@@ -186,11 +189,16 @@ class Controller {
 
 
     logout(req, res) {
-        req.logout((err) => {
+        req.logout(async (err) => {
             if (err) {
                 req.logger.error(err.message, err);
                 return res.status(500).json({ error: err.message });
             }
+
+            if (req.user) {
+                await User.findByIdAndUpdate(req.user.id, { last_connection: new Date() });
+            }
+
             req.session.destroy((err) => {
                 if (err) {
                     req.logger.error(err.message, err);

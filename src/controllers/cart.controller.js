@@ -1,6 +1,7 @@
 const CartsRepository = require('../dataRepository/carts.dataRepository');
 const TicketRepository = require('../dataRepository/tickets.dataRepository');
 const User = require('../models/user.model');
+const Product = require('../models/product.model');
 
 class CartController {
     constructor() {
@@ -105,24 +106,17 @@ class CartController {
         }
     }
 
-    async updateProductQuantityFromCart(req, res) {
+    async updateProductQuantity(req, res) {
         try {
             const cartId = req.params.cid;
             const productId = req.params.pid;
             const { quantity } = req.body;
-            await this.cartsRepository.updateProductQuantity(cartId, productId, quantity);
-            req.logger.info(`Cantidad del producto ${productId} actualizada en el carrito ${cartId}.`);
-
-            const cart = await this.cartsRepository.getCartById(cartId);
-            res.status(200).render('cart', {
-                cart: cart.toObject(),
-                titlePage: 'Carrito',
-                style: ['styles.css'],
-                isLoggedIn: req.session.user !== undefined || req.user !== undefined,
-            });
+            const updatedCart = await this.cartsRepository.updateProductQuantity(cartId, productId, quantity);
+            req.logger.info(`Cantidad del producto ${productId} en el carrito ${cartId} actualizada a ${quantity}.`);
+            res.status(200).json({ message: 'Cantidad del producto actualizada correctamente.', cart: updatedCart });
         } catch (err) {
             req.logger.error(err.message, err);
-            res.status(500).json({ Error: err.message });
+            res.status(500).json({ error: err.message });
         }
     }
 
@@ -149,9 +143,9 @@ class CartController {
         try {
             const cartId = req.params.cid;
             const { products } = req.body;
-            await this.cartsRepository.updateCart(cartId, products);
+            const updatedCart = await this.cartsRepository.updateCart(cartId, products);
             req.logger.info(`Carrito ${cartId} actualizado correctamente.`);
-            res.status(200).json({ message: 'Carrito actualizado correctamente.' });
+            res.status(200).json({ message: 'Carrito actualizado correctamente.', cart: updatedCart });
         } catch (err) {
             req.logger.error(err.message, err);
             res.status(500).json({ error: err.message });
@@ -181,7 +175,7 @@ class CartController {
                 res.status(200).json(result.ticket);
             } else {
                 await this.cartsRepository.updateCartWithRemainingProducts(cid, result.outOfStockProducts);
-                req.logger.warn('Algunos productos no pudieron ser comprados por falta de stock.');
+                req.logger.warn('Algunos productos no pudieron ser comprados por falta de stock.'); 
                 res.status(400).json({
                     message: 'Algunos productos no pudieron ser comprados por falta de stock',
                     outOfStockProducts: result.outOfStockProducts

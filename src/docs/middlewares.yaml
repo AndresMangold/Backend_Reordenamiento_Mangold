@@ -1,0 +1,88 @@
+openapi: 3.0.0
+info:
+  title: Middleware de la API
+  version: 1.0.0
+paths:
+  /middleware/canDeleteProduct:
+    get:
+      summary: Verifica si el usuario puede eliminar un producto
+      tags:
+        - Middleware
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+          required: true
+          description: Token de autenticación JWT
+        - in: path
+          name: pid
+          schema:
+            type: string
+          required: true
+          description: ID del producto a eliminar
+      responses:
+        "200":
+          description: Usuario autorizado para eliminar el producto
+        "403":
+          description: Usuario no autorizado
+        "404":
+          description: Usuario o producto no encontrado
+        "500":
+          description: Error validando permisos
+  /middleware/userIsLoggedIn:
+    get:
+      summary: Verifica si el usuario está autenticado
+      tags:
+        - Middleware
+      responses:
+        "200":
+          description: Usuario autenticado
+        "401":
+          description: Usuario no autenticado
+  /middleware/userIsNotLoggedIn:
+    get:
+      summary: Verifica si el usuario no está autenticado
+      tags:
+        - Middleware
+      responses:
+        "200":
+          description: Usuario no autenticado
+        "401":
+          description: Usuario ya autenticado
+  /middleware/userIsAdmin:
+    get:
+      summary: Verifica si el usuario es administrador
+      tags:
+        - Middleware
+      responses:
+        "200":
+          description: Usuario es administrador
+        "403":
+          description: Usuario no es administrador
+  /middleware/isUserPremium:
+    get:
+      summary: Verifica si el usuario es premium
+      tags:
+        - Middleware
+      responses:
+        "200":
+          description: Usuario es premium
+        "403":
+          description: Usuario no es premium
+  /middleware/isUser:
+    get:
+      summary: Verifica si el usuario es regular o premium
+      tags:
+        - Middleware
+      responses:
+        "200":
+          description: Usuario tiene acceso
+        "403":
+          description: Acceso denegado
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: API de Carritos
+  title: API de Carts
   version: 1.0.0
 paths:
   /api/cart:
@@ -32,7 +32,7 @@ paths:
                 $ref: '#/components/schemas/Cart'
         "500":
           description: Error Interno
-  /api/carts/{cid}:
+  /api/cart/{cid}:
     get:
       summary: Muestra un carrito específico por su ID
       tags:
@@ -117,7 +117,7 @@ paths:
           description: El carrito no existe
         "500":
           description: Error Interno
-  /api/carts/{cid}/products:
+  /api/cart/{cid}/product/{pid}:
     post:
       summary: Agrega producto al carrito específico
       tags:
@@ -129,8 +129,8 @@ paths:
           description: ID del carrito al que se agregará el producto
           schema:
             type: string
-        - name: productId
-          in: query
+        - name: pid
+          in: path
           required: true
           description: ID del producto
           schema:
@@ -146,7 +146,6 @@ paths:
           description: Carrito o producto no encontrado
         "500":
           description: Error en el servidor
-  /api/carts/{cid}/products/{productId}:
     delete:
       summary: Elimina un producto de un carrito específico
       tags:
@@ -158,7 +157,7 @@ paths:
           description: ID del carrito del que se eliminará el producto
           schema:
             type: string
-        - name: productId
+        - name: pid
           in: path
           required: true
           description: ID del producto
@@ -188,7 +187,7 @@ paths:
           description: ID del carrito
           schema:
             type: string
-        - name: productId
+        - name: pid
           in: path
           required: true
           description: ID del producto a actualizar
@@ -218,7 +217,7 @@ paths:
           description: El carrito o el producto no existe
         "500":
           description: Error Interno
-  /api/carts/{cid}/clear:
+  /api/cart/{cid}/clear:
     put:
       summary: Vaciar carrito
       tags:
@@ -237,7 +236,7 @@ paths:
           description: Carrito no encontrado
         "500":
           description: Error en el servidor
-  /api/carts/{cid}/purchase:
+  /api/cart/{cid}/purchase:
     post:
       summary: Genera un ticket de compra para un carrito específico
       tags:

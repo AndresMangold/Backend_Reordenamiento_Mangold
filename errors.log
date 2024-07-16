@@ -62,3 +62,41 @@
 02-07-2024 22:02:02 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
 03-07-2024 20:10:15 / Level: [ERROR] - Message: Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User" Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
 03-07-2024 20:11:11 / Level: [ERROR] - Message: Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User" Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
+10-07-2024 22:20:52 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+10-07-2024 22:20:53 / Level: [ERROR] - Message: Product is not defined Product is not defined
+10-07-2024 22:21:02 / Level: [ERROR] - Message: Product is not defined Product is not defined
+10-07-2024 22:21:43 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+10-07-2024 22:21:44 / Level: [ERROR] - Message: Product is not defined Product is not defined
+10-07-2024 22:39:06 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+10-07-2024 22:39:07 / Level: [ERROR] - Message: Product is not defined Product is not defined
+10-07-2024 23:05:06 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+10-07-2024 23:05:20 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+11-07-2024 09:49:08 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
+11-07-2024 09:49:08 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
+11-07-2024 09:49:08 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
+11-07-2024 09:55:21 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "p5001" }
+11-07-2024 09:55:21 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "p5000" }
+11-07-2024 10:08:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode1" }
+11-07-2024 10:08:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode2" }
+11-07-2024 10:08:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode3" }
+11-07-2024 10:08:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode4" }
+11-07-2024 10:08:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode5" }
+11-07-2024 10:09:17 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode1" }
+11-07-2024 10:09:17 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode2" }
+11-07-2024 10:09:17 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode3" }
+11-07-2024 10:09:17 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode4" }
+11-07-2024 10:09:17 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode5" }
+14-07-2024 20:48:14 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+14-07-2024 20:51:37 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+15-07-2024 17:37:28 / Level: [ERROR] - Message: this.cartsRepository.updateCart is not a function this.cartsRepository.updateCart is not a function
+15-07-2024 17:56:46 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+15-07-2024 21:24:15 / Level: [ERROR] - Message: this.cartsRepository.updateCart is not a function this.cartsRepository.updateCart is not a function
+15-07-2024 21:46:46 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode1" }
+15-07-2024 21:46:46 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode2" }
+15-07-2024 21:46:46 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode3" }
+15-07-2024 21:46:46 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode4" }
+15-07-2024 21:46:46 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode5" }
+16-07-2024 10:41:55 / Level: [ERROR] - Message: this.cartsRepository.updateCart is not a function this.cartsRepository.updateCart is not a function
+16-07-2024 11:47:05 / Level: [ERROR] - Message: this.cartsRepository.updateCartWithRemainingProducts is not a function this.cartsRepository.updateCartWithRemainingProducts is not a function
+16-07-2024 12:02:26 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+16-07-2024 12:14:53 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function

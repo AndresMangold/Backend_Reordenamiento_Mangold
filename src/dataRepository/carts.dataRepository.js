@@ -130,9 +130,9 @@ class CartsRepository {
 
             const cart = await this.#cartDAO.getCartById(cartId);
             cart.products = cart.products.filter(p => !p.product.equals(productId));
-            await this.#cartDAO.updateCart(cartId, { products: cart.products });
+            const updatedCart = await this.#cartDAO.updateCart(cartId, { products: cart.products });
             logger.info(`Producto ${productId} eliminado del carrito ${cartId} correctamente.`);
-            return cart;
+            return updatedCart;
         } catch (error) {
             logger.error(`Error al eliminar el producto ${productId} del carrito ${cartId}.`, error);
             throw CustomError.createError({
@@ -179,6 +179,25 @@ class CartsRepository {
         }
     }
 
+    async updateCartWithRemainingProducts(cartId, outOfStockProducts) {
+        try {
+            const cart = await this.#verifyCartExists(cartId);
+            const remainingProducts = cart.products.filter(p => !outOfStockProducts.includes(p.product.toString()));
+            const updatedCart = await this.#cartDAO.updateCart(cartId, { products: remainingProducts });
+            logger.info(`Carrito ${cartId} actualizado con productos restantes.`);
+            return updatedCart;
+        } catch (error) {
+            logger.error(`Error al actualizar el carrito ${cartId} con productos restantes.`, error);
+            throw CustomError.createError({
+                name: 'Error con el carrito',
+                cause: 'Hubo un problema al actualizar el carrito con los productos restantes',
+                message: 'Error al actualizar el carrito',
+                code: ErrorCodes.CART_UPDATE_ERROR,
+                otherProblems: error
+            });
+        }
+    }
+
     async clearCart(cartId) {
         try {
             await this.#verifyCartExists(cartId);
@@ -196,19 +215,52 @@ class CartsRepository {
         }
     }
 
-    async updateCartWithRemainingProducts(cartId, outOfStockProducts) {
+    async updateCart(cartId, products) {
+        try {
+            const cart = await this.#verifyCartExists(cartId);
+            cart.products = products;
+            const updatedCart = await this.#cartDAO.updateCart(cartId, { products: cart.products });
+            return updatedCart;
+        } catch (error) {
+            logger.error(`Error al actualizar el carrito ${cartId}.`, error);
+            throw CustomError.createError({
+                name: 'Error al actualizar el carrito',
+                cause: 'Hubo un problema al actualizar el carrito',
+                message: 'Error al actualizar el carrito',
+                code: ErrorCodes.CART_UPDATE_ERROR,
+                otherProblems: error
+            });
+        }
+    }
+
+    async updateProductQuantity(cartId, productId, quantity) {
         try {
             await this.#verifyCartExists(cartId);
+            await this.#verifyProductExists(productId);
+
             const cart = await this.#cartDAO.getCartById(cartId);
-            const remainingProducts = cart.products.filter(p => !outOfStockProducts.includes(p.product.toString()));
-            await this.#cartDAO.updateCart(cartId, { products: remainingProducts });
-            logger.info(`Carrito ${cartId} actualizado con productos restantes.`);
+            const productIndex = cart.products.findIndex(p => p.product.equals(productId));
+
+            if (productIndex !== -1) {
+                cart.products[productIndex].quantity = quantity;
+                const updatedCart = await this.#cartDAO.updateCart(cartId, { products: cart.products });
+                logger.info(`Cantidad del producto ${productId} en el carrito ${cartId} actualizada a ${quantity}.`);
+                return updatedCart;
+            } else {
+                logger.warn(`Producto ${productId} no encontrado en el carrito ${cartId}.`);
+                throw CustomError.createError({
+                    name: 'Producto no encontrado en el carrito',
+                    cause: 'El producto no está presente en el carrito',
+                    message: 'Producto no encontrado en el carrito',
+                    code: ErrorCodes.PRODUCT_NOT_IN_CART
+                });
+            }
         } catch (error) {
-            logger.error(`Error al actualizar el carrito ${cartId} con productos restantes.`, error);
+            logger.error(`Error al actualizar la cantidad del producto ${productId} en el carrito ${cartId}.`, error);
             throw CustomError.createError({
                 name: 'Error con el carrito',
-                cause: 'Hubo un problema al actualizar el carrito con los productos restantes',
-                message: 'Error al actualizar el carrito',
+                cause: 'Hubo un problema al actualizar la cantidad de unidades del producto en el carrito',
+                message: 'Error al actualizar el producto en el carrito',
                 code: ErrorCodes.CART_UPDATE_ERROR,
                 otherProblems: error
             });

@@ -28,7 +28,6 @@ const canDeleteProduct = async (req, res, next) => {
 module.exports = {
     userIsLoggedIn: (req, res, next) => {
         if (req.isAuthenticated()) {
-            // console.log('Token:', token);
             return next();
         } else {
             return res.redirect('/sessions/login');
