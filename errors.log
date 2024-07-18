@@ -100,3 +100,7 @@
 16-07-2024 11:47:05 / Level: [ERROR] - Message: this.cartsRepository.updateCartWithRemainingProducts is not a function this.cartsRepository.updateCartWithRemainingProducts is not a function
 16-07-2024 12:02:26 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
 16-07-2024 12:14:53 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+16-07-2024 16:23:17 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
+16-07-2024 17:27:28 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: test.products index: code_1 dup key: { code: "uniqueCode1" }
+16-07-2024 17:56:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: test.products index: code_1 dup key: { code: "uniqueCode1" }
+16-07-2024 17:56:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: test.products index: code_1 dup key: { code: "uniqueCode5" }
