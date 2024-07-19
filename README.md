@@ -45,11 +45,11 @@ Se podrá consultar productos disponibles utilizando filtros, paginación y orde
 # Para testear la API:
 
 
-- Para Utilizar SWAGGER:
-Iniciar Sesión a través del comando: (nodemon ./src/app.js) y entrar a [http://localhost:8080]
-Una vez iniciada la sesión, abrir una pestaña con el endpoint: [http://localhost:8080/apidocs/]
+- Para Utilizar **SWAGGER**:
+    - Iniciar Sesión a través del comando: ***nodemon ./src/app.js*** y entrar a [http://localhost:8080](http://localhost:8080/)
+Una vez iniciada la sesión, abrir una pestaña con el endpoint: [http://localhost:8080/apidocs/](http://localhost:8080/apidocs)
 
 
 
-- Para Utilizar los TESTS: Mocha, Chai y Supertest:
-Desde la consola correr el comando (npm test)
+- Para Utilizar los **TESTS**: Mocha, Chai y Supertest:
+    - Desde la consola correr el comando ***npm test***
