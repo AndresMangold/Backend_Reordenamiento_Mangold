@@ -13,7 +13,7 @@ Se podrá consultar productos disponibles utilizando filtros, paginación y orde
 
 # Para correr este proyecto:
 
-- git clone https://github.com/AndresMangold/PreEntrega_1_Mangold_Backend.git
+- git clone https://github.com/AndresMangold/Backend_Reordenamiento_Mangold/tree/cuarta-practica-integradora
 - npm i
 - nodemon ./src/app.js
 - [localhost:8080//](http://localhost:8080/)
@@ -42,14 +42,13 @@ Se podrá consultar productos disponibles utilizando filtros, paginación y orde
 - Swagger
 - Winston
 
-# Métodos de Postman para correr la API:
+# Para testear la API:
 
-- Para ver todos los productos:
-Get - [http://localhost:8080/api/products]
 
 - Para Utilizar SWAGGER:
 Iniciar Sesión a través del comando: (nodemon ./src/app.js) y entrar a [http://localhost:8080]
 Una vez iniciada la sesión, abrir una pestaña con el endpoint: [http://localhost:8080/apidocs/]
+
 
 
 - Para Utilizar los TESTS: Mocha, Chai y Supertest:
