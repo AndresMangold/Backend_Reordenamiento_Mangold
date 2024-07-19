@@ -135,7 +135,7 @@ describe('Product Router Tests', function () {
 
     it('should set price and stock as numeric values', async () => {
         const mockProduct = {
-            title: 'test-3',
+            title: 'test-4',
             description: 'Descripcion',
             price: '20000',
             code: 'uniqueCode4',
@@ -156,7 +156,7 @@ describe('Product Router Tests', function () {
 
     it('should update a product correctly', async () => {
         const mockProduct = {
-            title: 'test-4',
+            title: 'test-5',
             description: 'Descripcion',
             price: 200000,
             code: 'uniqueCode5',

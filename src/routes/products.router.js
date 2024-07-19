@@ -14,3 +14,4 @@ router.put('/:pid', verifyToken, userIsAdmin, (req, res) => controller.updatePro
 router.delete('/:pid', verifyToken, canDeleteProduct, (req, res) => controller.deleteProduct(req, res));
 
 module.exports = router;
+
