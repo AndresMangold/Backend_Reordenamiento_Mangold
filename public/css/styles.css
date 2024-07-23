@@ -514,7 +514,8 @@ h2 {
 }
 
 .profile-info button.logout-button {
-    background-color: #FF5733; 
+    background-color: #FF5733;
+    margin-bottom: 40px; 
 }
 
 .profile-info button:hover,
@@ -739,7 +740,7 @@ h2 {
 }
 
 .edit-button {
-    background-color: rgb(51, 51, 202);
+    background-color: rgb(50, 50, 204);
     color: white;
     border: none;
     padding: 14px 20px;
@@ -748,3 +749,36 @@ h2 {
     border-radius: 4px;
     margin: 8px 0;
 }
+
+.profile-info {
+    text-align: center;
+}
+
+.upload-section {
+    background-color: #575656;
+    padding: 10px;
+    margin: 10px auto;
+    border-radius: 5px;
+    text-align: center;
+    width: 80%; 
+    max-width: 500px; 
+}
+
+.upload-section label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.upload-button {
+    background-color: #d3e90e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.upload-button:hover {
+    background-color: #e9ec2e;
+}
+

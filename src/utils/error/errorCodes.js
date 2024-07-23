@@ -23,7 +23,10 @@ const ErrorCodes = {
     USER_REGISTER_ERROR: 22,
     INVALID_PASSWORD: 23,
     USER_LOGIN_ERROR: 24,
-    UNDEFINED_USER: 25
+    UNDEFINED_USER: 25,
+    DUPLICATE_PRODUCT_CODE: 26,         
+    INVALID_QUANTITY: 27,               
+    UNDEFINED_DATA: 28, 
 };
 
 module.exports = { ErrorCodes };

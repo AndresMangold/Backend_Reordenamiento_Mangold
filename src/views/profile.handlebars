@@ -9,6 +9,22 @@
         <form action="/sessions/logout" method="get">
             <button type="submit" class="logout-button">Logout</button>
         </form>
+        <form id="upload-documents-form" enctype="multipart/form-data" method="POST" action="/api/users/{{user._id}}/documents">
+            <h3>Subir documentos</h3>
+            <div class="upload-section">
+                <label for="identification">Identificación:</label>
+                <input type="file" name="identification" id="identification" required>
+            </div>
+            <div class="upload-section">
+                <label for="addressProof">Comprobante de domicilio:</label>
+                <input type="file" name="addressProof" id="addressProof" required>
+            </div>
+            <div class="upload-section">
+                <label for="accountProof">Comprobante de estado de cuenta:</label>
+                <input type="file" name="accountProof" id="accountProof" required>
+            </div>
+            <button type="submit" class="upload-button">Subir documentos</button>
+        </form>
         <form id="convert-role-form">
             <button type="button" class="convert-role-button">Convertir usuario</button>
         </form>
