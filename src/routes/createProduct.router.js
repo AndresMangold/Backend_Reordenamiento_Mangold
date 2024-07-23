@@ -2,6 +2,7 @@ const { Router } = require('express');
 const ProductController = require('../controllers/product.controller');
 const { verifyToken } = require('../utils/jwt');
 const { userIsAdmin, isUserPremium } = require('../middlewares/auth.middleware');
+const { productUploader, handleMulterErrors } = require('../middlewares/multer.middleware');
 
 const router = Router();
 const controller = new ProductController();
@@ -12,7 +13,7 @@ router.all('/', verifyToken, (req, res, next) => {
     } else {
         res.status(403).json({ message: 'Acceso denegado: Necesitas ser admin o usuario premium' });
     }
-}, (req, res) => controller.addProduct(req, res));
+}, productUploader, handleMulterErrors, (req, res) => controller.addProduct(req, res));
 
 router.use((err, req, res, next) => {
     if (err.message === 'User is not an admin') {

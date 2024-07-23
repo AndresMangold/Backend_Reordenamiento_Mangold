@@ -5,6 +5,7 @@ const { isValidPassword } = require('../utils/hashing')
 const UsersRepository = require('../dataRepository/users.dataRepository');
 const { usersTokenDTO } = require('../dto/usersToken.dto');
 const MailingService = require('../utils/mailingService');
+const User = require('../models/user.model');
 
 class Controller {
     constructor() {
@@ -51,12 +52,12 @@ class Controller {
 
     async register(req, res) {
         const { firstName, lastName, age, email, password } = req.body;
-
+    
         try {
             const newUser = await this.usersRepository.registerUser(firstName, lastName, age, email, password);
             const userDto = new usersTokenDTO(newUser);
             req.logger.info('Usuario registrado con éxito.');
-            res.status(201).json({ message: 'Usuario registrado con éxito', user: userDto });
+            res.status(201).json({ message: 'Usuario creado con éxito. Redirigiendo a la página de login...', redirectUrl: '/sessions/login' });
         } catch (error) {
             req.logger.error(error.message, error);
             res.status(400).json({ error: error.message });

@@ -42,6 +42,32 @@ Se podrá consultar productos disponibles utilizando filtros, paginación y orde
 - Swagger
 - Winston
 
+
+# Para subir archivos:
+
+- Se creó un formulario al que puede accederse desde el hmtl en la sección profile.
+
+![Muestra imagen upload](./public/images/Muestra%20subida%20de%20archivos.jpg)
+
+Una vez subidos los tres archivos requeridos:
+    - para identificacion una imagen con el nombre ***identification***
+    - para la dirección una imágen con el nombre ***addressProof***
+    - para la cuenta un archivo con el nombre ***accountProof***
+
+Se habilitará un mensaje donde se confirma que los archivos se subieron correctamente.
+
+Se puede entonces clickear el botón de **CONVERTIR USUARIO** pudiéndose entonces cambiar el estatus a usuario Premium.
+
+- También y alternativamente se puede añadir una foto de perfil dentro de la sección profile, pero que es independiente de los requisitos para cambiar de User a Premium.
+
+![Muestra imagen perfil](./public/images/Muestra%20subida%20profile.jpg)
+
+
+- Por otro lado se puede subir una imágen de producto al añadirlo, dentro del formulario de addProduct como premium o admin, y alojándo la imágen en el correspondiente destino.
+
+![Muestra imagen producto](./public/images/muestra%20subida%20products.jpg)
+
+
 # Para testear la API:
 
 
@@ -53,3 +79,4 @@ Una vez iniciada la sesión, abrir una pestaña con el endpoint: [http://localho
 
 - Para Utilizar los **TESTS**: Mocha, Chai y Supertest:
     - Desde la consola correr el comando ***npm test***
+

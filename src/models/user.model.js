@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose; 
-require('dotenv').config();
+const { Schema } = mongoose;
 
 const documentSchema = new Schema({
     name: String,
@@ -27,6 +26,10 @@ const userSchema = new Schema({
         ref: 'Cart', 
     },
     documents: [documentSchema],
+    profilePicture: {
+        type: String,
+        default: ''
+    },
     last_connection: Date
 });
 
