@@ -40,7 +40,9 @@ class Controller {
             req.session.user = userDto;
             res.cookie('accessToken', token, { maxAge: 60 * 60 * 1000, httpOnly: true });
 
-            await User.findByIdAndUpdate(user.id, { last_connection: new Date() });
+            if (user.id !== 'admin_id') {
+                await User.findByIdAndUpdate(user.id, { last_connection: new Date() });
+            }
 
             req.logger.info('Usuario logueado correctamente.');
             res.redirect('/api/products');
@@ -187,7 +189,6 @@ class Controller {
             res.status(500).json({ error: error.message });
         }
     }
-
 
     logout(req, res) {
         req.logout(async (err) => {

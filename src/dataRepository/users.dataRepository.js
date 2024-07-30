@@ -43,7 +43,7 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Error en la edad',
                 cause: 'Debe ingresar un número válido mayor a 0',
-                message: 'Edad inválida',
+                mensaje: 'Edad inválida',
                 code: ErrorCodes.AGE_VALIDATION_ERROR
             });
         }
@@ -77,7 +77,7 @@ class UsersRepository {
                     throw CustomError.createError({
                         name: 'Error de logeo',
                         cause: 'Ingresó una contraseña incorrecta. Intente nuevamente o cambie la misma',
-                        message: 'Contraseña incorrecta',
+                        mensaje: 'Contraseña incorrecta',
                         code: ErrorCodes.INVALID_PASSWORD
                     });
                 }
@@ -91,7 +91,7 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Error de logeo',
                 cause: 'Ocurrió un problema al validar sus credenciales. Intente nuevamente o cambie su contraseña',
-                message: 'No se pudo iniciar sesión',
+                mensaje: 'No se pudo iniciar sesión',
                 code: ErrorCodes.USER_LOGIN_ERROR,
                 otherProblems: error
             });
@@ -105,7 +105,7 @@ class UsersRepository {
                 throw CustomError.createError({
                     name: 'Error de registro',
                     cause: 'No se puede registrar el usuario administrador de esta manera',
-                    message: 'No tiene permisos para registrar este usuario',
+                    mensaje: 'No tiene permisos para registrar este usuario',
                     code: ErrorCodes.ADMIN_USER_REGISTRATION_ERROR
                 });
             }
@@ -116,7 +116,7 @@ class UsersRepository {
                 throw CustomError.createError({
                     name: 'Error de registro',
                     cause: 'El email se encuentra registrado en la base de datos. Intente validar sus credenciales.',
-                    message: 'El email ya está registrado',
+                    mensaje: 'El email ya está registrado',
                     code: ErrorCodes.EMAIL_ALREADY_REGISTERED
                 });
             }
@@ -132,7 +132,7 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Error de registro',
                 cause: 'Algo salió mal al registrar un nuevo usuario.',
-                message: 'No se pudo crear un nuevo usuario',
+                mensaje: 'No se pudo crear un nuevo usuario',
                 code: ErrorCodes.USER_REGISTER_ERROR,
                 otherProblems: error
             });
@@ -154,7 +154,7 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Error al obtener usuario',
                 cause: 'Ocurrió un problema al intentar obtener el usuario',
-                message: 'No se pudo obtener el usuario',
+                mensaje: 'No se pudo obtener el usuario',
                 code: ErrorCodes.UNDEFINED_USER,
                 otherProblems: error
             });
@@ -171,7 +171,7 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Error al obtener usuario por ID',
                 cause: 'Ocurrió un problema al intentar obtener el usuario por ID',
-                message: 'No se pudo obtener el usuario por ID',
+                mensaje: 'No se pudo obtener el usuario por ID',
                 code: ErrorCodes.UNDEFINED_USER,
                 otherProblems: error
             });
@@ -186,7 +186,7 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Error al cambiar el rol',
                 cause: 'Ocurrió un problema al intentar cambiar el rol del usuario',
-                message: 'No se pudo cambiar el rol del usuario',
+                mensaje: 'No se pudo cambiar el rol del usuario',
                 code: ErrorCodes.ROLE_CHANGE_ERROR,
                 otherProblems: error
             });
@@ -215,7 +215,7 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Error de logeo con GitHub',
                 cause: 'Ocurrió un error inesperado y no se pudo emparejar su cuenta de GitHub en la base de datos',
-                message: 'Hubo un problema con su cuenta de GitHub',
+                mensaje: 'Hubo un problema con su cuenta de GitHub',
                 code: ErrorCodes.GITHUB_LOGIN_ERROR,
                 otherProblems: error
             });
@@ -227,25 +227,23 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Sin email',
                 cause: 'Es necesario que ingrese un email para poder continuar con el cambio de contraseña',
-                message: 'Debe ingresar un email',
+                mensaje: 'Debe ingresar un email',
                 code: ErrorCodes.UNDEFINED_USER
-            })
+            });
         }
 
         const user = await this.#userDAO.findByEmail(email);
 
         if (!user) {
-            if (!user) {
-                throw CustomError.createError({
-                    name: 'Email desconocido',
-                    cause: 'Está intentando cambiar la contraseña de un email que no se encuentra registrado',
-                    message: 'El email no se encuentra registrado',
-                    code: ErrorCodes.UNDEFINED_USER
-                })
-            }
+            throw CustomError.createError({
+                name: 'Email desconocido',
+                cause: 'Está intentando cambiar la contraseña de un email que no se encuentra registrado',
+                mensaje: 'El email no se encuentra registrado',
+                code: ErrorCodes.UNDEFINED_USER
+            });
         }
 
-        const passToken = (await new MailingService().sendMail(email));
+        const passToken = await new MailingService().sendMail(email);
 
         const handlerPassToken = generatePasswordRecoveryToken(passToken.randomNumber, passToken.email);
 
@@ -259,9 +257,9 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Datos faltantes',
                 cause: 'Es necesario que ingrese una nueva contraseña y la confirmación de la misma',
-                message: 'Debe completar todos los cambios',
+                mensaje: 'Debe completar todos los cambios',
                 code: ErrorCodes.PASSWORD_UPDATE_ERROR
-            })
+            });
         }
 
         const isValidToken = urlToken === code.toString();
@@ -270,18 +268,18 @@ class UsersRepository {
             throw CustomError.createError({
                 name: 'Link inválido',
                 cause: 'El link no es válido o ha expirado. Vuelva a enviar el mail de confirmación.',
-                message: 'El link no es válido o ha expirado.',
+                mensaje: 'El link no es válido o ha expirado.',
                 code: ErrorCodes.PASSWORD_UPDATE_ERROR
-            })
+            });
         }
 
         if (newPassword !== confirmPassword) {
             throw CustomError.createError({
                 name: 'Contraseña inválida',
                 cause: 'Las dos contraseñas ingresadas deben coincidir para poder continuar con la actualización',
-                message: 'Las dos contraseñas no coinciden',
+                mensaje: 'Las dos contraseñas no coinciden',
                 code: ErrorCodes.PASSWORD_UPDATE_ERROR
-            })
+            });
         }
 
         const user = await this.#userDAO.findByEmail(email);
@@ -291,16 +289,15 @@ class UsersRepository {
         if (confirmValidPassword) {
             throw CustomError.createError({
                 name: 'Contraseña inválida',
-                cause: 'La la nueva contraseña no puede ser igual a la contraseña anterior.',
-                message: 'Debe actualizar su contraseña',
+                cause: 'La nueva contraseña no puede ser igual a la contraseña anterior.',
+                mensaje: 'Debe actualizar su contraseña',
                 code: ErrorCodes.PASSWORD_UPDATE_ERROR
-            })
+            });
         }
 
         const updatedUser = await this.#userDAO.updatePassword(email, hashPassword(newPassword));
 
         return updatedUser;
-
     }
 
     async getUserByEmail(email) {
@@ -321,7 +318,7 @@ class UsersRepository {
                 throw CustomError.createError({
                     name: 'Email desconocido',
                     cause: 'Está intentando eliminar un usuario con un email que no se encuentra registrado',
-                    message: 'El email no se encuentra registrado',
+                    mensaje: 'El email no se encuentra registrado',
                     code: ErrorCodes.UNDEFINED_USER
                 });
             }

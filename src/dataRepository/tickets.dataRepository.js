@@ -20,6 +20,22 @@ class TicketRepository {
         return Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
     }
 
+    async #verifyAndReduceStock(products) {
+        const outOfStockProducts = [];
+
+        for (const { product, quantity } of products) {
+            const dbProduct = await this.#productsRepository.getProductById(product);
+            if (dbProduct.stock >= quantity) {
+                dbProduct.stock -= quantity;
+                await this.#productsRepository.updateProduct(dbProduct.id, { stock: dbProduct.stock });
+            } else {
+                outOfStockProducts.push(product);
+            }
+        }
+
+        return outOfStockProducts;
+    }
+
     async generateTicket(cartId, userEmail) {
         try {
             const cart = await this.#cartsRepository.getCartById(cartId);
@@ -33,31 +49,20 @@ class TicketRepository {
                 });
             }
 
-            let totalAmount = 0;
-            const outOfStockProducts = [];
-
-            for (const item of cart.products) {
-                const product = await this.#productsRepository.getProductById(item.product);
-                if (product.stock < item.quantity) {
-                    outOfStockProducts.push(item.product);
-                }
-            }
+            const outOfStockProducts = await this.#verifyAndReduceStock(cart.products);
 
             if (outOfStockProducts.length > 0) {
                 logger.warn(`No hay suficiente stock para los productos con ID: ${outOfStockProducts.join(', ')}.`);
-                throw CustomError.createError({
-                    name: 'Error con el stock',
-                    cause: `No hay suficiente stock para los productos con ID: ${outOfStockProducts.join(', ')}`,
-                    message: 'No se pudo completar la operación por falta de stock',
-                    code: ErrorCodes.INSUFFICIENT_STOCK
-                });
+                return {
+                    success: false,
+                    outOfStockProducts,
+                };
             }
 
+            let totalAmount = 0;
             for (const item of cart.products) {
                 const product = await this.#productsRepository.getProductById(item.product);
-                product.stock -= item.quantity;
                 totalAmount += product.price * item.quantity;
-                await this.#productsRepository.updateProduct(product.id, { stock: product.stock });
             }
 
             const ticketData = {
@@ -70,7 +75,10 @@ class TicketRepository {
             await this.#cartsRepository.clearCart(cartId);
             logger.info(`Ticket generado correctamente para el carrito ${cartId}.`);
 
-            return ticket;
+            return {
+                success: true,
+                ticket,
+            };
         } catch (error) {
             logger.error(`Error al generar el ticket para el carrito ${cartId}.`, error);
             throw CustomError.createError({

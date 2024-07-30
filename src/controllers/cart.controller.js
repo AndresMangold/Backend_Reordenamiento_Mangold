@@ -167,25 +167,25 @@ class CartController {
     async purchase(req, res) {
         const { cid } = req.params;
         const { user } = req;
-
+    
         try {
             const result = await this.ticketRepository.generateTicket(cid, user.email);
             if (result.success) {
                 req.logger.info('Compra realizada con éxito.');
-                res.status(200).json(result.ticket);
+                res.render('purchaseSuccess', { ticket: result.ticket });
             } else {
                 await this.cartsRepository.updateCartWithRemainingProducts(cid, result.outOfStockProducts);
-                req.logger.warn('Algunos productos no pudieron ser comprados por falta de stock.'); 
-                res.status(400).json({
+                req.logger.warn('Algunos productos no pudieron ser comprados por falta de stock.');
+                res.status(400).render('purchaseError', {
                     message: 'Algunos productos no pudieron ser comprados por falta de stock',
-                    outOfStockProducts: result.outOfStockProducts
+                    cart: { _id: cid }
                 });
             }
         } catch (error) {
             req.logger.error(error.message, error);
-            res.status(400).json({ error: error.message });
+            res.status(500).render('purchaseError', { message: error.message, cart: { _id: cid } });
         }
-    }
+    }       
 }
 
 module.exports = CartController;

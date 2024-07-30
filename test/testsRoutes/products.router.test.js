@@ -51,7 +51,7 @@ describe('Product Router Tests', function () {
         const response = await request
             .get('/api/products')
             .set('Authorization', `Bearer ${token}`)
-            .expect('Content-Type', 'text/plain; charset=utf-8')
+            .expect('Content-Type', /json/)
             .expect(200);
 
         expect(response.body).to.be.an('array');
@@ -60,7 +60,6 @@ describe('Product Router Tests', function () {
     it('should handle redirection properly', async function () {
         const response = await request
             .get('/api/products')
-            .set('Authorization', `Bearer ${token}`)
             .expect(302);
 
         console.log(response.headers.location); 
