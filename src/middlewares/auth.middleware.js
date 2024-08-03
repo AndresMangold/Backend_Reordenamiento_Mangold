@@ -49,7 +49,7 @@ module.exports = {
             const error = new Error('User is not an admin');
             next(error);
         }
-    },
+    },    
 
     isUserPremium: (req, res, next) => {
         if (req.user && (req.user.role === 'admin' || req.user.role === 'premium')) {

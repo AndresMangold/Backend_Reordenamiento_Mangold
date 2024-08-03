@@ -1,0 +1,14 @@
+<div class="container">
+    <h1>Panel de Administración</h1>
+
+    <div class="user-cards">
+        {{#each users}}
+        <div class="user-card">
+            <h3>{{name}}</h3>
+            <p>Email: {{email}}</p>
+            <p>Rol: {{role}}</p>
+            <p>Última conexión: {{formatDate lastConnection}}</p>
+        </div>
+        {{/each}}
+    </div>
+</div>

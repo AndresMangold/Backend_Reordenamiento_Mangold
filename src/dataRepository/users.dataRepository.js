@@ -143,7 +143,7 @@ class UsersRepository {
         try {
             let user;
             if (id === this.#adminUser._id) {
-                user = this.#adminUser;
+                user = this.#adminUser; 
             } else {
                 user = await this.#userDAO.findById(id);
             }
@@ -160,7 +160,7 @@ class UsersRepository {
             });
         }
     }
-
+    
     async getUserById(id) {
         try {
             const user = await this.#userDAO.findById(id);
@@ -177,6 +177,23 @@ class UsersRepository {
             });
         }
     }
+
+    async getAllUsers() {
+        try {
+            const users = await this.#userDAO.findAll();
+            logger.info('Usuarios obtenidos correctamente.');
+            return users;
+        } catch (error) {
+            logger.error('Error al obtener los usuarios:', error);
+            throw CustomError.createError({
+                name: 'Error al obtener usuarios',
+                cause: 'Ocurrió un problema al intentar obtener todos los usuarios',
+                mensaje: 'No se pudieron obtener los usuarios',
+                code: ErrorCodes.DATABASE_ERROR,
+                otherProblems: error
+            });
+        }
+    }       
 
     async changeRole(id, role) {
         try {

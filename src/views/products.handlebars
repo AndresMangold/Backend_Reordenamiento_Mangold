@@ -1,12 +1,11 @@
 <div class="container">
     <h2>Productos</h2>
-
     <ul class="product-list">
         {{#each products.payload}}
         <li>
             <div class="product">
                 <h4>{{this.title}}</h4>
-                <img class="product-image" src="{{this.thumbnail}}" alt="imagen de {{this.title}}">
+                <img class="product-image" src="/images/{{this.thumbnail}}" alt="imagen de {{this.title}}">
                 <p>Precio: {{this.price}}</p>
                 <p>Stock: {{this.stock}}</p>
                 <p>Descripción: {{this.description}}</p>

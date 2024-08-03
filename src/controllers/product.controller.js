@@ -20,7 +20,8 @@ class ProductController {
                 },
                 titlePage: 'Productos',
                 style: ['styles.css'],
-                isLoggedIn: req.session.user !== undefined || req.user !== undefined
+                isLoggedIn: req.session.user !== undefined || req.user !== undefined,
+                isAdmin: req.query.isAdmin === 'true',
             });
         } catch (error) {
             req.logger.error(error.message, error);

@@ -33,7 +33,7 @@ class Controller {
 
     async login(req, res) {
         const { email, password } = req.body;
-
+    
         try {
             const { user, token } = await this.usersRepository.loginUser(email, password);
             const userDto = new usersTokenDTO(user);
@@ -43,14 +43,15 @@ class Controller {
             if (user.id !== 'admin_id') {
                 await User.findByIdAndUpdate(user.id, { last_connection: new Date() });
             }
-
+    
             req.logger.info('Usuario logueado correctamente.');
-            res.redirect('/api/products');
+            res.redirect(`/api/products?isAdmin=${user.role === 'admin'}`);
         } catch (e) {
             req.logger.error(e.message, e);
             res.status(400).json({ error: e.message });
         }
     }
+       
 
     async register(req, res) {
         const { firstName, lastName, age, email, password } = req.body;
@@ -89,8 +90,13 @@ class Controller {
             const profile = req.user;
             const { accessToken, user } = await this.usersRepository.githubLogin(profile);
             const userDto = new usersTokenDTO(user);
-
+    
             res.cookie('accessToken', accessToken, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true });
+
+            if (user.id !== 'admin_id') {
+                await User.findByIdAndUpdate(user.id, { last_connection: new Date() });
+            }
+    
             req.logger.info('Usuario autenticado con GitHub.');
             res.redirect('/api/products');
         } catch (err) {
@@ -106,12 +112,13 @@ class Controller {
                 req.logger.warn('Usuario no autenticado.');
                 return res.status(401).json({ error: 'User not authenticated' });
             }
-
+    
             res.render('profile', {
                 title: 'My profile',
                 style: ['styles.css'],
                 user: user,
                 isLoggedIn: true,
+                isAdmin: user.role === 'admin',  
             });
         } catch (err) {
             req.logger.error('Error al buscar el usuario en la base de datos:', err);
@@ -190,6 +197,30 @@ class Controller {
         }
     }
 
+    async getAllUsers(req, res) {
+        try {
+            const users = await this.usersRepository.getAllUsers();
+            const usersData = users.map(user => ({
+                name: `${user.firstName} ${user.lastName}`,
+                email: user.email,
+                role: user.role,
+                lastConnection: user.last_connection 
+            }));
+    
+            req.logger.info('Usuarios obtenidos correctamente.');
+            res.render('admin', {
+                titlePage: 'Panel de Admin',
+                style: ['styles.css'],
+                isLoggedIn: true,
+                isAdmin: true,
+                users: usersData
+            });
+        } catch (error) {
+            req.logger.error('Error al obtener los usuarios:', error);
+            res.status(500).json({ error: error.message });
+        }
+    }
+      
     logout(req, res) {
         req.logout(async (err) => {
             if (err) {
