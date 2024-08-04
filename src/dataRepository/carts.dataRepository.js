@@ -1,6 +1,7 @@
 const CartDAO = require('../dao/mongo/daoCarts');
 const ProductsRepository = require('./products.dataRepository');
 const { CustomError } = require('../utils/error/customErrors');
+const Cart = require('../models/cart.model');
 const { ErrorCodes } = require('../utils/error/errorCodes');
 const logger = require('../utils/logger').logger;
 

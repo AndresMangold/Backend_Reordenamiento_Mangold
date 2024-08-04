@@ -6,7 +6,7 @@ const nodemailer = require('nodemailer');
 class MailingService {
     constructor() {}
 
-    async sendMail(email, token) {
+    async sendMail({ to, subject, html }) {
         try {
             const transport = nodemailer.createTransport({
                 service: 'gmail',
@@ -18,14 +18,9 @@ class MailingService {
 
             await transport.sendMail({
                 from: 'Servicio Backend App',
-                to: email,
-                subject: 'BackendApp | Restablecer contraseña',
-                html: `
-                    <div>
-                        <h2>Ingrese al link para poder restablecer su contraseña</h2>
-                        <h4>El link tiene una duración de una hora.</h4>
-                        <a href="http://localhost:8080/sessions/resetPassword/${token}">Restablecer contraseña</a>
-                    </div>`
+                to,
+                subject,
+                html
             });
 
             return { success: true };

@@ -6,6 +6,7 @@ const { CustomError } = require('../utils/error/customErrors');
 const { ErrorCodes } = require('../utils/error/errorCodes');
 const { generateInvalidCredentialsUserData } = require('../utils/error/errors');
 const logger = require('../utils/logger').logger;
+const CartsRepository = require('../dataRepository/carts.dataRepository'); 
 
 class UsersRepository {
     #userDAO;
@@ -340,7 +341,10 @@ class UsersRepository {
                 });
             }
 
-            await new CartsRepository().deleteCart(user.cartId.toString());
+            if (user.cartId) {
+                await new CartsRepository().deleteCart(user.cartId.toString());
+            }
+
             await this.#userDAO.deleteByEmail(email);
             logger.info(`Usuario con email ${email} eliminado correctamente.`);
         } catch (error) {

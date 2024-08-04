@@ -1,10 +1,11 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const { generateToken, generatePasswordRecoveryToken, verifyPasswordToken } = require('../utils/jwt');
-const { isValidPassword } = require('../utils/hashing')
+const { isValidPassword } = require('../utils/hashing');
 const UsersRepository = require('../dataRepository/users.dataRepository');
 const { usersTokenDTO } = require('../dto/usersToken.dto');
 const MailingService = require('../utils/mailingService');
+const CartsRepository = require('../dataRepository/carts.dataRepository'); 
 const User = require('../models/user.model');
 
 class Controller {
@@ -51,7 +52,6 @@ class Controller {
             res.status(400).json({ error: e.message });
         }
     }
-       
 
     async register(req, res) {
         const { firstName, lastName, age, email, password } = req.body;
@@ -220,7 +220,7 @@ class Controller {
             res.status(500).json({ error: error.message });
         }
     }
-      
+
     logout(req, res) {
         req.logout(async (err) => {
             if (err) {
@@ -256,6 +256,38 @@ class Controller {
             res.status(500).json({ error: e.message });
         }
     }
+
+    async deleteInactiveUsers(req, res) {
+        try {
+            const inactivityLimit = 20 * 24 * 60 * 60 * 1000; 
+            const now = Date.now();
+    
+            const inactiveUsers = await User.find({
+                role: { $ne: 'admin' }, 
+                last_connection: { $lt: new Date(now - inactivityLimit) }
+            });
+    
+            for (const user of inactiveUsers) {
+                await this.mailingService.sendMail({
+                    to: user.email,
+                    subject: 'Cuenta Eliminada por Inactividad',
+                    html: `
+                        <div>
+                            <h2>Cuenta Eliminada</h2>
+                            <p>Tu cuenta ha sido eliminada debido a la inactividad en los últimos días.</p>
+                        </div>`
+                });
+    
+                await this.usersRepository.deleteUser(user.email);
+            }
+    
+            req.logger.info(`Usuarios inactivos eliminados correctamente.`);
+            res.json({ message: 'Usuarios inactivos eliminados correctamente.' });
+        } catch (error) {
+            req.logger.error('Error al eliminar usuarios inactivos:', error);
+            res.status(500).json({ error: 'Error al eliminar usuarios inactivos.' });
+        }
+    }    
 }
 
 module.exports = { Controller };

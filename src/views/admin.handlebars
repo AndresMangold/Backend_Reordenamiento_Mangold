@@ -11,4 +11,27 @@
         </div>
         {{/each}}
     </div>
+
+    <div class="button-container">
+        <button id="deleteInactiveUsers" class="delete-button">Eliminar Usuarios Inactivos</button>
+    </div>
 </div>
+
+<script>
+    document.getElementById('deleteInactiveUsers').addEventListener('click', async function() {
+        if (confirm('¿Estás seguro de que deseas eliminar los usuarios inactivos?')) {
+            try {
+                const response = await fetch('/admin/delete-inactive-users', {
+                    method: 'DELETE'
+                });
+
+                const result = await response.json();
+                alert(result.message || 'Usuarios inactivos eliminados.');
+                location.reload();  
+            } catch (error) {
+                alert('Ocurrió un error al eliminar los usuarios inactivos.');
+                console.error('Error:', error);
+            }
+        }
+    });
+</script>

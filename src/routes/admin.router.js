@@ -9,4 +9,8 @@ router.get('/', userIsAdmin, (req, res) => {
     controller.getAllUsers(req, res);
 });
 
+router.delete('/delete-inactive-users', userIsAdmin, (req, res) => {
+    controller.deleteInactiveUsers(req, res);
+});
+
 module.exports = router;
