@@ -2,10 +2,12 @@ const ProductsRepository = require('../dataRepository/products.dataRepository');
 const User = require('../models/user.model');
 const mongoose = require('mongoose');
 const { generateProduct } = require('../utils/generateProduct');
+const MailingService = require('../utils/mailingService');
 
 class ProductController {
     constructor() {
         this.productRepository = new ProductsRepository();
+        this.mailingService = new MailingService();
     }
 
     async getProducts(req, res) {
@@ -82,13 +84,12 @@ class ProductController {
         if (req.method === 'POST') {
             try {
                 const { title, description, price, code, stock, category } = req.body;
-                const owner = req.user.role === 'admin' ? undefined : req.user.id; // No establecer owner si es admin
+                const owner = req.user.role === 'admin' ? undefined : req.user.id; 
                 const thumbnail = req.file ? req.file.path : 'Sin Imagen';
-    
-                // Si el owner es undefined, eliminarlo del objeto para que no se valide
+
                 const productData = { title, description, price, thumbnail, code, stock, category };
                 if (owner) {
-                    productData.owner = owner; // Asignar owner solo si no es admin
+                    productData.owner = owner; 
                 }
     
                 await this.productRepository.addProduct(productData);
@@ -124,10 +125,22 @@ class ProductController {
                 return res.status(404).json({ error: 'Producto no encontrado' });
             }
 
-            // Permitir eliminación si es admin o si el propietario es el usuario actual
-            if (req.user.role === 'admin' || product.owner.toString() === req.user.id) {
+            const productOwner = await User.findById(product.owner); 
+
+            if (req.user.role === 'admin' || productOwner._id.equals(req.user.id)) {
                 await this.productRepository.deleteProduct(productId);
                 req.logger.info(`Producto ${productId} eliminado correctamente.`);
+
+                if (productOwner.role === 'premium') {
+                    await this.mailingService.sendMail({
+                        to: productOwner.email,
+                        subject: 'Tu producto ha sido eliminado',
+                        html: `<p>Hola ${productOwner.firstName},</p>
+                               <p>Tu producto "${product.title}" ha sido eliminado.</p>`
+                    });
+                    req.logger.info(`Correo enviado al propietario premium del producto ${productId}.`);
+                }
+
                 res.status(301).redirect('/api/products');
             } else {
                 req.logger.warn('Usuario no autorizado para eliminar este producto');

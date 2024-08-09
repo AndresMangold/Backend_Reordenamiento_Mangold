@@ -66,7 +66,6 @@ class CartController {
         const cartId = req.params.cid; 
         const productId = req.params.pid;
         const user = req.user; 
-        console.log('info del user', user);
 
         try {
             const product = await Product.findById(productId).populate('owner');

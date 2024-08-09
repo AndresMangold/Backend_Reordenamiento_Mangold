@@ -114,19 +114,25 @@ class Controller {
                 req.logger.warn('Usuario no autenticado.');
                 return res.status(401).json({ error: 'User not authenticated' });
             }
-    
-            res.render('profile', {
-                title: 'My profile',
-                style: ['styles.css'],
-                user: user,
-                isLoggedIn: true,
-                isAdmin: user.role === 'admin',  
+
+            this.usersRepository.getUserById(user.id).then((fullUser) => {
+                res.render('profile', {
+                    title: 'My profile',
+                    style: ['styles.css'],
+                    user: fullUser, 
+                    isLoggedIn: true,
+                    isAdmin: fullUser.role === 'admin',  
+                });
+            }).catch((err) => {
+                req.logger.error('Error al buscar el usuario en la base de datos:', err);
+                res.status(500).send('Error interno del servidor');
             });
         } catch (err) {
-            req.logger.error('Error al buscar el usuario en la base de datos:', err);
+            req.logger.error('Error inesperado al procesar el perfil:', err);
             res.status(500).send('Error interno del servidor');
         }
     }
+    
 
     async sendPasswordResetEmail(req, res) {
         try {

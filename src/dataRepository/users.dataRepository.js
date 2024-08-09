@@ -35,7 +35,6 @@ class UsersRepository {
                 _id: adminUserFromDb._id.toString() 
             };
 
-            logger.info(`Administrador inicializado correctamente con ID ${this.#adminUser._id}`);
         } catch (error) {
             logger.error('Error al inicializar el administrador:', error);
             throw error;

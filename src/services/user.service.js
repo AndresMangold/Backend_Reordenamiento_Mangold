@@ -29,7 +29,6 @@ class UserService {
                 _id: adminUserFromDb._id.toString() 
             };
 
-            logger.info(`Administrador inicializado correctamente en el servicio con ID ${this.adminUser._id}`);
         } catch (error) {
             logger.error('Error al inicializar el administrador en el servicio:', error);
             throw error;
