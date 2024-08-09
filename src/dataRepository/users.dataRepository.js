@@ -6,7 +6,7 @@ const { CustomError } = require('../utils/error/customErrors');
 const { ErrorCodes } = require('../utils/error/errorCodes');
 const { generateInvalidCredentialsUserData } = require('../utils/error/errors');
 const logger = require('../utils/logger').logger;
-const CartsRepository = require('../dataRepository/carts.dataRepository'); 
+const CartsRepository = require('../dataRepository/carts.dataRepository');
 
 class UsersRepository {
     #userDAO;
@@ -14,12 +14,32 @@ class UsersRepository {
 
     constructor() {
         this.#userDAO = new UserDAO();
-        this.#adminUser = {
-            email: 'adminCoder@coder.com',
-            password: 'adminCod3r123',
-            role: 'admin',
-            _id: 'admin_id'
-        };
+        (async () => {
+            await this.#initializeAdminUser();
+        })();
+    }
+
+    async #initializeAdminUser() {
+        try {
+            const adminEmail = process.env.ADMIN_MAIL;
+            const adminUserFromDb = await this.#userDAO.findByEmail(adminEmail);
+
+            if (!adminUserFromDb) {
+                throw new Error(`Administrador no encontrado en la base de datos con email ${adminEmail}`);
+            }
+
+            this.#adminUser = {
+                email: adminEmail,
+                password: process.env.ADMIN_PASS,
+                role: 'admin',
+                _id: adminUserFromDb._id.toString() 
+            };
+
+            logger.info(`Administrador inicializado correctamente con ID ${this.#adminUser._id}`);
+        } catch (error) {
+            logger.error('Error al inicializar el administrador:', error);
+            throw error;
+        }
     }
 
     validateLoginCredentials(email, password) {

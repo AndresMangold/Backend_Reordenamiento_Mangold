@@ -1,14 +1,39 @@
 const { hashPassword } = require('../utils/hashing');
 const jwt = require('jsonwebtoken');
+const UserDAO = require('../dao/mongo/daoUsers'); 
+const logger = require('../utils/logger').logger;
 
 class UserService {
+    #userDAO;
+
     constructor() {
-        this.adminUser = {
-            email: 'adminCoder@coder.com',
-            password: 'adminCod3r123',
-            role: 'admin',
-            _id: 'admin_id'
-        };
+        this.#userDAO = new UserDAO();
+        (async () => {
+            await this.#initializeAdminUser();
+        })();
+    }
+
+    async #initializeAdminUser() {
+        try {
+            const adminEmail = process.env.ADMIN_MAIL;
+            const adminUserFromDb = await this.#userDAO.findByEmail(adminEmail);
+
+            if (!adminUserFromDb) {
+                throw new Error(`Administrador no encontrado en la base de datos con email ${adminEmail}`);
+            }
+
+            this.adminUser = {
+                email: adminEmail,
+                password: process.env.ADMIN_PASS,
+                role: 'admin',
+                _id: adminUserFromDb._id.toString() 
+            };
+
+            logger.info(`Administrador inicializado correctamente en el servicio con ID ${this.adminUser._id}`);
+        } catch (error) {
+            logger.error('Error al inicializar el administrador en el servicio:', error);
+            throw error;
+        }
     }
 
     validateLoginCredentials(email, password) {

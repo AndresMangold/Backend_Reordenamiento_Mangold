@@ -3,6 +3,7 @@ const TicketRepository = require('../dataRepository/tickets.dataRepository');
 const User = require('../models/user.model');
 const Product = require('../models/product.model');
 
+
 class CartController {
     constructor() {
         this.cartsRepository = new CartsRepository();
@@ -62,17 +63,23 @@ class CartController {
     }
 
     async addProductToCart(req, res) {
-        try {
-            const cartId = req.params.cid;
-            const productId = req.params.pid;
-            const user = req.user;
+        const cartId = req.params.cid; 
+        const productId = req.params.pid;
+        const user = req.user; 
+        console.log('info del user', user);
 
-            const product = await Product.findById(productId);
-            if (user.role === 'premium' && product.owner === user.email) {
-                return res.status(403).json({ error: 'Cannot add your own product to the cart' });
+        try {
+            const product = await Product.findById(productId).populate('owner');
+            if (!product) {
+                return res.status(404).json({ error: 'Product not found' });
             }
 
-            const cart = await this.cartsRepository.addProductToCart(cartId, productId);
+            const productOwner = product.owner;
+            if (productOwner && productOwner.role === 'premium' && productOwner._id.equals(user.id)) {
+                return res.status(403).json({ error: 'Cannot add your own premium product to the cart' });
+            }
+
+            const cart = await this.cartsRepository.addProductToCart(cartId, productId, user.id);
             req.logger.info(`Producto ${productId} agregado al carrito ${cartId} de manera correcta.`);
             res.status(200).render('cart', {
                 cart: cart.toObject(),
@@ -81,10 +88,11 @@ class CartController {
                 isLoggedIn: req.session.user !== undefined || req.user !== undefined,
             });
         } catch (error) {
-            req.logger.error(error.message, error);
-            res.status(500).json({ error: error.message });
+            req.logger.error(`Error al agregar el producto ${productId} al carrito ${cartId}.`, error);
+            res.status(500).json({ error: 'Error al agregar el producto al carrito' });
         }
     }
+    
 
     async deleteProductFromCart(req, res) {
         try {

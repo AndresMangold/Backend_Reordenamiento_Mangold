@@ -9,7 +9,7 @@ const passport = require('passport');
 const methodOverride = require('method-override');
 const swaggerJSDoc = require('swagger-jsdoc');
 const { serve, setup } = require('swagger-ui-express');
-const moment = require('moment'); // Importa Moment.js
+const moment = require('moment'); 
 const { DEFAULT_MAX_AGE } = require('./constants');
 
 const createProductRouter = require('./routes/createProduct.router');

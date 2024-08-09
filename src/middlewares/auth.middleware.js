@@ -1,27 +1,39 @@
 const mongoose = require('mongoose');
-const User = require('../models/user.model'); 
-const Product = require('../models/product.model'); 
+const User = require('../models/user.model');
+const Product = require('../models/product.model');
 
 const canDeleteProduct = async (req, res, next) => {
     try {
-        const user = await User.findById(req.user.id);
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({ error: 'User is not authenticated' });
+        }
+
         const product = await Product.findById(req.params.pid);
-
-        if (!user || !product) {
-            return res.status(404).json({ error: 'User or product not found' });
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
         }
 
-        if (user.role === 'premium' && product.owner.toString() === user._id.toString()) {
-            return next();
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
         }
 
+        // Check if the user is an admin
         if (user.role === 'admin') {
-            return next();
+            return next(); // Allow admin to delete any product
         }
 
-        res.status(403).json({ error: 'User cannot delete this product' });
+        // Check if the user is the owner of the product and has the correct role
+        if (product.owner && product.owner.toString() === user._id.toString()) {
+            if (user.role === 'premium' || user.role === 'user') {
+                return next(); // Allow owner to delete their own product
+            }
+        }
+
+        return res.status(403).json({ error: 'User cannot delete this product' });
     } catch (error) {
-        res.status(500).json({ error: 'Error validating permissions' });
+        console.error('Error validating permissions:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 
@@ -49,7 +61,7 @@ module.exports = {
             const error = new Error('User is not an admin');
             next(error);
         }
-    },    
+    },
 
     isUserPremium: (req, res, next) => {
         if (req.user && (req.user.role === 'admin' || req.user.role === 'premium')) {
@@ -67,5 +79,5 @@ module.exports = {
         return res.status(403).json({ message: 'Acceso denegado: reservado para usuarios' });
     },
 
-    canDeleteProduct 
+    canDeleteProduct
 };

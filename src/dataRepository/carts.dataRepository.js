@@ -4,6 +4,7 @@ const { CustomError } = require('../utils/error/customErrors');
 const Cart = require('../models/cart.model');
 const { ErrorCodes } = require('../utils/error/errorCodes');
 const logger = require('../utils/logger').logger;
+const User = require('../models/user.model');
 
 class CartsRepository {
     #cartDAO;
@@ -43,21 +44,21 @@ class CartsRepository {
         }
     }
 
-    async #verifyAndReduceStock(products) {
-        const outOfStockProducts = [];
+    // async #verifyAndReduceStock(products) {
+    //     const outOfStockProducts = [];
     
-        for (const { product, quantity } of products) {
-            const dbProduct = await this.#productRepository.getProductById(product);
-            if (dbProduct.stock >= quantity) {
-                dbProduct.stock -= quantity;
-                await dbProduct.save();
-            } else {
-                outOfStockProducts.push(product);
-            }
-        }
+    //     for (const { product, quantity } of products) {
+    //         const dbProduct = await this.#productRepository.getProductById(product);
+    //         if (dbProduct.stock >= quantity) {
+    //             dbProduct.stock -= quantity;
+    //             await dbProduct.save();
+    //         } else {
+    //             outOfStockProducts.push(product);
+    //         }
+    //     }
     
-        return outOfStockProducts;
-    }
+    //     return outOfStockProducts;
+    // }
 
     async getCarts() {
         try {
@@ -111,12 +112,30 @@ class CartsRepository {
         }
     }
 
-    async addProductToCart(cartId, productId) {
+    async addProductToCart(cartId, productId, userId) {
         try {
-            await this.#verifyCartExists(cartId);
-            await this.#verifyProductExists(productId);
+            const cart = await this.#verifyCartExists(cartId);
+            const product = await this.#verifyProductExists(productId);
 
-            const cart = await this.#cartDAO.getCartById(cartId);
+            if (!product) {
+                logger.warn(`Producto con ID ${productId} no encontrado.`);
+                throw CustomError.createError({
+                    name: 'Error con los productos',
+                    cause: 'Debe ingresar un ID válido existente en la base de datos',
+                    message: 'El producto no existe',
+                    code: ErrorCodes.UNDEFINED_PRODUCT
+                });
+            }
+
+            const productOwner = product.owner;
+            if (productOwner && productOwner.role === 'premium' && productOwner._id.equals(userId)) {
+                throw CustomError.createError({
+                    name: 'Error al agregar producto al carrito',
+                    cause: 'No puede agregar su propio producto premium al carrito',
+                    message: 'Cannot add your own premium product to the cart',
+                    code: ErrorCodes.CART_UPDATE_ERROR
+                });
+            }
 
             const existingProductIndex = cart.products.findIndex(p => p.product.equals(productId));
             if (existingProductIndex !== -1) {
@@ -139,6 +158,7 @@ class CartsRepository {
             });
         }
     }
+    
 
     async deleteProductFromCart(cartId, productId) {
         try {

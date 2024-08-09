@@ -49,6 +49,7 @@ const verifyToken = (req, res, next) => {
         }
 
         req.user = { id: decoded.id, role: decoded.role };
+        console.log('Authenticated user:', req.user);
         next();
     });
 };

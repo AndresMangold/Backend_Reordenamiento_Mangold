@@ -259,7 +259,7 @@ class Controller {
 
     async deleteInactiveUsers(req, res) {
         try {
-            const inactivityLimit = 20 * 24 * 60 * 60 * 1000; 
+            const inactivityLimit = 2 * 24 * 60 * 60 * 1000; 
             const now = Date.now();
     
             const inactiveUsers = await User.find({

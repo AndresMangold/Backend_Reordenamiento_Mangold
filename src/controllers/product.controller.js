@@ -21,7 +21,7 @@ class ProductController {
                 titlePage: 'Productos',
                 style: ['styles.css'],
                 isLoggedIn: req.session.user !== undefined || req.user !== undefined,
-                isAdmin: req.query.isAdmin === 'true',
+                isAdmin: req.user && req.user.role === 'admin',
             });
         } catch (error) {
             req.logger.error(error.message, error);
@@ -56,7 +56,7 @@ class ProductController {
         }
     }
 
-    async getMockingProducts(res) {
+    async getMockingProducts(req, res) {
         try {
             const products = [];
             for (let i = 0; i < 50; i++) {
@@ -78,21 +78,29 @@ class ProductController {
                 script: ['createProduct.js']
             });
         }
-
+    
         if (req.method === 'POST') {
             try {
                 const { title, description, price, code, stock, category } = req.body;
-                const owner = req.user.id;
+                const owner = req.user.role === 'admin' ? undefined : req.user.id; // No establecer owner si es admin
                 const thumbnail = req.file ? req.file.path : 'Sin Imagen';
-                await this.productRepository.addProduct({ title, description, price, thumbnail, code, stock, category, owner });
+    
+                // Si el owner es undefined, eliminarlo del objeto para que no se valide
+                const productData = { title, description, price, thumbnail, code, stock, category };
+                if (owner) {
+                    productData.owner = owner; // Asignar owner solo si no es admin
+                }
+    
+                await this.productRepository.addProduct(productData);
                 req.logger.info('Producto agregado con éxito.');
                 res.status(301).redirect('/api/products');
             } catch (error) {
-                req.logger.error(error.message, error);
+                req.logger.error('Error al agregar el producto:', error);
                 res.status(500).send('Error interno del servidor');
             }
         }
     }
+    
 
     async updateProduct(req, res) {
         try {
@@ -109,9 +117,22 @@ class ProductController {
     async deleteProduct(req, res) {
         try {
             const productId = req.params.pid;
-            await this.productRepository.deleteProduct(productId);
-            req.logger.info(`Producto ${productId} eliminado correctamente.`);
-            res.status(301).redirect('/api/products');
+            const product = await this.productRepository.getProductById(productId);
+
+            if (!product) {
+                req.logger.warn('Producto no encontrado');
+                return res.status(404).json({ error: 'Producto no encontrado' });
+            }
+
+            // Permitir eliminación si es admin o si el propietario es el usuario actual
+            if (req.user.role === 'admin' || product.owner.toString() === req.user.id) {
+                await this.productRepository.deleteProduct(productId);
+                req.logger.info(`Producto ${productId} eliminado correctamente.`);
+                res.status(301).redirect('/api/products');
+            } else {
+                req.logger.warn('Usuario no autorizado para eliminar este producto');
+                res.status(403).json({ error: 'No tiene permisos para eliminar este producto' });
+            }
         } catch (error) {
             req.logger.error(error.message, error);
             res.status(500).json({ Error: error.message });

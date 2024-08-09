@@ -23,7 +23,7 @@ class ProductsRepository {
                 lean: true,
                 select: '-thumbnail'
             };
-
+    
             const products = await this.daoProducts.getProducts(query, options);
             logger.info('Productos obtenidos correctamente.');
             return products.docs.map(product => new productsDTO(product));
@@ -38,6 +38,7 @@ class ProductsRepository {
             });
         }
     }
+    
 
     async addProduct(productData) {
         const productDto = new productsDTO(productData);
