@@ -60,12 +60,14 @@ class Controller {
             const newUser = await this.usersRepository.registerUser(firstName, lastName, age, email, password);
             const userDto = new usersTokenDTO(newUser);
             req.logger.info('Usuario registrado con éxito.');
+
             res.status(201).json({ message: 'Usuario creado con éxito. Redirigiendo a la página de login...', redirectUrl: '/sessions/login' });
         } catch (error) {
             req.logger.error(error.message, error);
             res.status(400).json({ error: error.message });
         }
     }
+    
 
     async current(req, res) {
         try {

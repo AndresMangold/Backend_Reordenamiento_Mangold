@@ -12,19 +12,23 @@ router.get('/login', userIsNotLoggedIn, (req, res) => {
     res.render('login'); 
 });
 
+router.get('/register', userIsNotLoggedIn, (req, res) => { 
+    res.render('register'); 
+});
+
+router.post('/register', userIsNotLoggedIn, async (req, res, next) => {
+    try {
+        await controller.register(req, res);
+    } catch (error) {
+        next(error);
+    }
+});
+
 router.post('/login', userIsNotLoggedIn, passport.authenticate('login', gitConfig), (req, res) => {
     controller.login(req, res);
 });
 
-router.get('/register', (req, res) => { 
-    res.render('register'); 
-});
-
-router.post('/register', passport.authenticate('register', gitConfig), (req, res) => {
-    res.redirect('/sessions/login');
-});
-
-router.get('/profile', (req, res) => { 
+router.get('/profile', verifyToken, (req, res) => { 
     controller.profile(req, res); 
 });
 
