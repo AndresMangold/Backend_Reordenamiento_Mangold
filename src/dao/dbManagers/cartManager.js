@@ -7,7 +7,7 @@ class CartManager {
 
     async prepare() {
         if (Carts.db.readyState !== 1) {
-            throw new Error('must connect to mongodb!')
+            throw new Error('Debes conectarte a mongodb!')
         }
     }
 

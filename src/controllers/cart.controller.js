@@ -70,12 +70,12 @@ class CartController {
         try {
             const product = await Product.findById(productId).populate('owner');
             if (!product) {
-                return res.status(404).json({ error: 'Product not found' });
+                return res.status(404).json({ error: 'Producto no encontrado' });
             }
 
             const productOwner = product.owner;
             if (productOwner && productOwner.role === 'premium' && productOwner._id.equals(user.id)) {
-                return res.status(403).json({ error: 'Cannot add your own premium product to the cart' });
+                return res.status(403).json({ error: 'No puedes añadir tu propio producto premium' });
             }
 
             const cart = await this.cartsRepository.addProductToCart(cartId, productId, user.id);

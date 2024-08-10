@@ -44,21 +44,21 @@ class CartsRepository {
         }
     }
 
-    // async #verifyAndReduceStock(products) {
-    //     const outOfStockProducts = [];
+    async #verifyAndReduceStock(products) {
+        const outOfStockProducts = [];
     
-    //     for (const { product, quantity } of products) {
-    //         const dbProduct = await this.#productRepository.getProductById(product);
-    //         if (dbProduct.stock >= quantity) {
-    //             dbProduct.stock -= quantity;
-    //             await dbProduct.save();
-    //         } else {
-    //             outOfStockProducts.push(product);
-    //         }
-    //     }
+        for (const { product, quantity } of products) {
+            const dbProduct = await this.#productRepository.getProductById(product);
+            if (dbProduct.stock >= quantity) {
+                dbProduct.stock -= quantity;
+                await dbProduct.save();
+            } else {
+                outOfStockProducts.push(product);
+            }
+        }
     
-    //     return outOfStockProducts;
-    // }
+        return outOfStockProducts;
+    }
 
     async getCarts() {
         try {

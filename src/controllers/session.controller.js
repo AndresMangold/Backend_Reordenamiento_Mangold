@@ -39,8 +39,9 @@ class Controller {
             const { user, token } = await this.usersRepository.loginUser(email, password);
             const userDto = new usersTokenDTO(user);
             req.session.user = userDto;
-            res.cookie('accessToken', token, { maxAge: 60 * 60 * 1000, httpOnly: true });
 
+            res.cookie('accessToken', token, { maxAge: 5 * 60 * 1000, httpOnly: true });
+    
             if (user.id !== 'admin_id') {
                 await User.findByIdAndUpdate(user.id, { last_connection: new Date() });
             }
@@ -52,6 +53,7 @@ class Controller {
             res.status(400).json({ error: e.message });
         }
     }
+    
 
     async register(req, res) {
         const { firstName, lastName, age, email, password } = req.body;
@@ -139,46 +141,61 @@ class Controller {
             const { email } = req.body;
             const user = await this.usersRepository.getUserByEmail(email);
             if (!user) {
-                return res.status(400).json({ error: 'Email no registrado' });
+                return res.status(400).send(`<script>alert('Email no registrado'); window.location.href='/sessions/retrievePass';</script>`);
             }
-
+    
             const token = generatePasswordRecoveryToken(user);
-            await this.mailingService.sendMail(email, token);
-            res.status(200).json({ message: 'Correo de restablecimiento enviado' });
+            const resetLink = `${req.protocol}://${req.get('host')}/sessions/resetPassword/${token}`;
+    
+            const mailOptions = {
+                to: email,
+                subject: 'Restablecimiento de contraseña',
+                html: `<p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p><a href="${resetLink}">${resetLink}</a>`
+            };
+    
+            await this.mailingService.sendMail(mailOptions);
+            
+            res.status(200).send(`<script>alert('Correo enviado exitosamente, por favor revise su casilla'); window.location.href='/sessions/login';</script>`);
         } catch (error) {
-            req.logger.error(error.message, error);
-            res.status(500).json({ error: 'No se pudo enviar el email' });
+            req.logger.error('Error al enviar el correo de recuperación:', error);
+            res.status(500).send(`<script>alert('No se pudo enviar el email'); window.location.href='/sessions/retrievePass';</script>`);
         }
-    }
+    }    
 
     async renderResetPasswordPage(req, res) {
-        const { token } = req.params;
-        res.render('resetPassword', { token });
+        try {
+            const { token } = req.params;
+            res.render('resetPassword', { token });
+        } catch (error) {
+            req.logger.error('Error al renderizar la página de restablecimiento de contraseña:', error);
+            res.status(500).send('Error interno del servidor');
+        }
     }
+    
 
     async resetPassword(req, res) {
         try {
             const { token } = req.params;
             const { newPassword } = req.body;
-    
+        
             if (!newPassword) {
-                return res.status(400).json({ error: 'Debe ingresar una nueva contraseña' });
+                return res.status(400).send(`<script>alert('Debe ingresar una nueva contraseña'); window.location.href='/sessions/resetPassword/${token}';</script>`);
             }
-    
+        
             const decoded = verifyPasswordToken(token);
             const user = await this.usersRepository.getUserById(decoded.id);
-    
+        
             if (await isValidPassword(newPassword, user.password)) {
-                return res.status(400).json({ error: 'No puede usar la misma contraseña anterior' });
+                return res.status(400).send(`<script>alert('No puede usar la misma contraseña anterior'); window.location.href='/sessions/resetPassword/${token}';</script>`);
             }
-
+    
             await this.usersRepository.updatePassword(user.email, newPassword);
-            res.status(200).json({ message: 'Contraseña actualizada exitosamente' });
+            res.status(200).send(`<script>alert('Contraseña actualizada exitosamente'); window.location.href='/sessions/login';</script>`);
         } catch (error) {
             req.logger.error(error.message, error);
-            res.status(500).json({ error: error.message });
+            res.status(500).send(`<script>alert('Error al actualizar la contraseña'); window.location.href='/sessions/resetPassword/${token}';</script>`);
         }
-    }
+    }    
 
     async changeRole(req, res) {
         try {
@@ -235,11 +252,11 @@ class Controller {
                 req.logger.error(err.message, err);
                 return res.status(500).json({ error: err.message });
             }
-
+    
             if (req.user) {
                 await User.findByIdAndUpdate(req.user.id, { last_connection: new Date() });
             }
-
+    
             req.session.destroy((err) => {
                 if (err) {
                     req.logger.error(err.message, err);
@@ -252,6 +269,7 @@ class Controller {
             });
         });
     }
+    
 
     async deleteUser(req, res) {
         try {

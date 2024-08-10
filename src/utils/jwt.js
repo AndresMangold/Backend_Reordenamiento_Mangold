@@ -4,7 +4,7 @@ require('dotenv').config();
 const PRIVATE_KEY = process.env.JWT_SECRET;
 
 const generateToken = user => {
-    const token = jwt.sign({ id: user.id, role: user.role }, PRIVATE_KEY, { expiresIn: '24h' });
+    const token = jwt.sign({ id: user.id, role: user.role }, PRIVATE_KEY, { expiresIn: '5m' });
     return token;
 }
 
@@ -41,11 +41,11 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(accessToken, PRIVATE_KEY, (err, decoded) => {
         if (err) {
-            return res.redirect('/sessions/login'); 
+            return res.redirect('/sessions/login');
         }
 
         if (!decoded || !decoded.id || !decoded.role) {
-            return res.redirect('/sessions/login'); 
+            return res.redirect('/sessions/login');
         }
 
         req.user = { id: decoded.id, role: decoded.role };

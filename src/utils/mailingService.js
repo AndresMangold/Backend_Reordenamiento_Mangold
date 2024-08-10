@@ -25,6 +25,7 @@ class MailingService {
 
             return { success: true };
         } catch (error) {
+            console.error('Error al enviar correo:', error);
             throw CustomError.createError({
                 name: 'Error al enviar correo',
                 cause: 'Ocurrió un error y no se pudo enviar el correo al destinatario.',

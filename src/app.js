@@ -65,12 +65,12 @@ app.use(express.static('public'));
 app.use(session({
     store: MongoStore.create({
         mongoUrl: process.env.MONGO_URL,
-        ttl: 60 * 60
+        ttl: 5 * 60 
     }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: DEFAULT_MAX_AGE }
+    cookie: { maxAge: 5 * 60 * 1000 } 
 }));
 
 initializePassport();

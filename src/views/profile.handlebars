@@ -75,6 +75,39 @@
                 alert('An error occurred while updating the user role');
             }
         });
+
+        setInterval(async () => {
+            try {
+                const response = await fetch('/sessions/current', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include' 
+                });
+
+                if (!response.ok) {
+                    window.location.href = '/sessions/login';
+                }
+            } catch (error) {
+                console.error('Error checking session:', error);
+                window.location.href = '/sessions/login'; 
+            }
+        }, 30000); 
+
+        window.addEventListener('beforeunload', async (event) => {
+            try {
+                await fetch('/sessions/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include', 
+                });
+            } catch (error) {
+                console.error('Error logging out on unload:', error);
+            }
+        });
     });
 
     const urlParams = new URLSearchParams(window.location.search);
