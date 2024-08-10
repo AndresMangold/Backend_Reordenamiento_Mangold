@@ -1,79 +1,68 @@
-# Cuarta Preentrega del curso de Programación Backend.
+# PROYECTO FINAL: Programación Backend.
 
-Este proyecto simula un servidor con persistencia de archivos alojado MONGODB y donde es posible visualizar productos y añadirlos a un carrito de compras.
+Este proyecto simula un servidor con persistencia de datos alojado en MongoDB donde es posible visualizar productos, gestionarlos y añadirlos a un carrito de compras. También se incluye la gestión de usuarios, autenticación y autorización con características avanzadas.
 
-Se agregó para esta entrega: 
-- Nueva localización de la ruta /api/users/premium/:uid
-- Para actualizar a premium se agregaron condiciones.
-- Nueva propiedad en el User model: "documents" (incluyendo profiles, products y documents), "last_connection".
-- Nuevo endpoint: api/users/:uid/documents
 
-Se podrá consultar productos disponibles utilizando filtros, paginación y ordenamientos.
+# Características Principales
+- Gestión de Productos: Crea, actualiza, elimina y lista productos con filtros, paginación y ordenamientos.
+- Gestión de Usuarios: Registro, inicio de sesión, cambio de roles (usuario estándar/premium).
+- Autenticación y Autorización: Autenticación segura con JWT y autenticación vía GitHub.
+- Recuperación de Contraseñas: Restablecimiento de contraseñas a través de correos electrónicos de recuperación.
+- Gestión de Sesiones: Manejo de sesiones utilizando express-session y connect-mongo.
+- Documentación de API: Documentación generada automáticamente con Swagger.
 
 
 # Para correr este proyecto:
 
-- git clone https://github.com/AndresMangold/Backend_Reordenamiento_Mangold/tree/cuarta-practica-integradora
+**Clonar el repositorio**
+- git clone https://github.com/AndresMangold/Backend_Reordenamiento_Mangold/tree/entrega-final
+
+**Instalar las dependencias**
 - npm i
+
+**Ejecutar el serviror**
 - nodemon ./src/app.js
+
+**Acceder a la Aplicación**
 - [localhost:8080//](http://localhost:8080/)
 
 
 # Frameworks y librerías utilizadas en este proyecto:
 
-- Node JS
-- Node Express
-- Express
-- Express Handlebars
-- Express Sessions
-- Handlebars
-- Socket.io
-- Mongoose
-- Mongoose Paginate
-- Session-file-store
-- Connect-mongo
-- Cookie-parser
-- DotEnv
-- JsonWebToken
-- Node
-- NodeMailer
-- Passport
-- Passport: github2, jwt, local.
-- Swagger
-- Winston
+- Node.js: Entorno de ejecución para la construcción del servidor.
+- Express: Framework para construir aplicaciones web y API.
+- Express Handlebars: Motor de plantillas para la generación de vistas.
+- Express Sessions: Manejo de sesiones de usuario.
+- Socket.io: Comunicación en tiempo real.
+- Mongoose: ODM para interactuar con MongoDB.
+- Mongoose Paginate: Paginación en modelos de Mongoose.
+- Session-file-store: Almacenamiento de sesiones en archivos.
+- Connect-mongo: Almacenamiento de sesiones en MongoDB.
+- Cookie-parser: Análisis de cookies HTTP.
+- DotEnv: Manejo de variables de entorno.
+- JsonWebToken: Autenticación basada en tokens.
+- NodeMailer: Envío de correos electrónicos.
+- Passport: Middleware para la autenticación de usuarios.
+    - passport-github2: Estrategia de autenticación con GitHub.
+    - passport-jwt: Estrategia de autenticación con JWT.
+    - passport-local: Estrategia de autenticación local.
+- Swagger: Generación de documentación de API.
+- Winston: Registro de logs.
 
 
-# Para subir archivos:
+# Flow para la compra de un producto:
 
-- Se creó un formulario al que puede accederse desde el hmtl en la sección profile.
-
-![Muestra imagen upload](./public/images/Muestra%20subida%20de%20archivos.jpg)
-
-Una vez subidos los tres archivos requeridos:
-    - para identificacion una imagen con el nombre ***identification***
-    - para la dirección una imágen con el nombre ***addressProof***
-    - para la cuenta un archivo con el nombre ***accountProof***
-
-Se habilitará un mensaje donde se confirma que los archivos se subieron correctamente.
-
-Se puede entonces clickear el botón de **CONVERTIR USUARIO** pudiéndose entonces cambiar el estatus a usuario Premium.
-
-- También y alternativamente se puede añadir una foto de perfil dentro de la sección profile, pero que es independiente de los requisitos para cambiar de User a Premium.
-
-![Muestra imagen perfil](./public/images/Muestra%20subida%20profile.jpg)
-
-
-- Por otro lado se puede subir una imágen de producto al añadirlo, dentro del formulario de addProduct como premium o admin, y alojándo la imágen en el correspondiente destino.
-
-![Muestra imagen producto](./public/images/muestra%20subida%20products.jpg)
+- Ejemplo [https://drive.google.com/file/d/1yKDilo4RGEuVR85Leb5hSDCm-HrOJlJL/view?usp=sharing] (Flow de compra)
 
 
 # Para testear la API:
 
 
 - Para Utilizar **SWAGGER**:
-    - Iniciar Sesión a través del comando: ***nodemon ./src/app.js*** y entrar a [http://localhost:8080](http://localhost:8080/)
-Una vez iniciada la sesión, abrir una pestaña con el endpoint: [http://localhost:8080/apidocs/](http://localhost:8080/apidocs)
+    - Iniciar la API a través del comando: ***nodemon ./src/app.js*** y entrar a [http://localhost:8080](http://localhost:8080/)
+
+
+    - Una vez iniciada la sesión con **cualquier user autenticado**, abrir una pestaña con el endpoint **/apidocs/** : [http://localhost:8080/apidocs/](http://localhost:8080/apidocs)
 
 
 

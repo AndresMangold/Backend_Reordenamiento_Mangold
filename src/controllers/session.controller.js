@@ -285,9 +285,9 @@ class Controller {
 
     async deleteInactiveUsers(req, res) {
         try {
-            const inactivityLimit = 2 * 24 * 60 * 60 * 1000; 
+            const inactivityLimit = 2 * 24 * 60 * 60 * 1000;
             const now = Date.now();
-    
+
             const inactiveUsers = await User.find({
                 role: { $ne: 'admin' }, 
                 last_connection: { $lt: new Date(now - inactivityLimit) }
@@ -300,7 +300,7 @@ class Controller {
                     html: `
                         <div>
                             <h2>Cuenta Eliminada</h2>
-                            <p>Tu cuenta ha sido eliminada debido a la inactividad en los últimos días.</p>
+                            <p>Tu cuenta ha sido eliminada debido a la inactividad durante los últimos 2 días o más.</p>
                         </div>`
                 });
     
@@ -313,7 +313,8 @@ class Controller {
             req.logger.error('Error al eliminar usuarios inactivos:', error);
             res.status(500).json({ error: 'Error al eliminar usuarios inactivos.' });
         }
-    }    
+    }
+    
 }
 
 module.exports = { Controller };
