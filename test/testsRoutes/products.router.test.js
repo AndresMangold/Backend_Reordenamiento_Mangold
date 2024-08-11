@@ -1,92 +1,131 @@
-require('dotenv').config();
-process.env.NODE_ENV = 'test';
-
 const mongoose = require('mongoose');
-const supertest = require('supertest');
-const server = require('../../src/app');
-const User = require('../../src/models/user.model');
-const Cart = require('../../src/models/cart.model');
-const { generateToken } = require('../../src/utils/jwt');
 const ProductsRepository = require('../../src/dataRepository/products.dataRepository');
-const connectDB = require('../../src/db');
 
-describe('Product Creation Test', function () {
-    this.timeout(60000);
-    let token;
+describe('Testing Product Repository', () => {
+    let chai;
+    let expect;
+    const productRepository = new ProductsRepository();
     let connection = null;
-    let request;
 
     before(async function () {
-        const chai = await import('chai');
-        global.expect = chai.expect;
-
-        connection = await connectDB();
-
-        const adminEmail = process.env.ADMIN_MAIL;
-        const adminUser = await User.findOne({ email: adminEmail });
-        if (!adminUser) {
-            await User.create({
-                firstName: 'Admin',
-                lastName: 'User',
-                age: 30,
-                email: adminEmail,
-                password: process.env.ADMIN_PASS,
-                role: 'admin',
-                cartId: null
+        this.timeout(20000); 
+        chai = await import('chai');
+        expect = chai.expect;
+    
+        try {
+            const mongooseConnection = await mongoose.connect('mongodb+srv://andresmangold:andresPass@cluster0.hrz9nqj.mongodb.net/test', {
+                dbName: 'testing' 
             });
+            connection = mongooseConnection.connection;
+            console.log('Connected to MongoDB');
+        } catch (error) {
+            console.error('Error connecting to MongoDB:', error);
+            throw error;
         }
-
-        await User.deleteMany({ email: 'testuser@example.com' });
-
-        const cart = await Cart.create({ products: [] });
-        const user = await User.create({
-            firstName: 'Test',
-            lastName: 'User',
-            age: 30,
-            email: 'testuser@example.com',
-            password: 'password',
-            role: 'premium',
-            cartId: cart._id
-        });
-        token = generateToken(user);
-
-        request = supertest(server);
     });
 
     after(async () => {
-        if (mongoose.connection.readyState === 1) {
-            await mongoose.connection.close();
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Connection to MongoDB closed');
+            } catch (error) {
+                console.error('Error closing connection to MongoDB:', error);
+            }
         }
     });
 
-    it('should create a product correctly', async function () {
+    beforeEach(async function () {
+        this.timeout(10000);
+        await mongoose.connection.collection('products').deleteMany({});
+    });
+
+    afterEach(async () => {
+    });
+
+    it('El resultado del get debe ser un array', function (done) {
+        this.timeout(10000); 
+
+        productRepository.getProducts(1, 10)
+            .then((result) => {
+                expect(Array.isArray(result)).to.be.ok;
+                done(); 
+            })
+            .catch((err) => {
+                done(err); 
+            });
+    });
+
+    it('Se debe obtener un producto según su ID', async () => {
         const mockProduct = {
-            title: 'Test Product',
-            description: 'Product Description',
-            price: 100,
-            thumbnail: 'null',
-            code: 'uniqueCodeTest',
-            stock: 50,
+            title: 'test',
+            description: 'Descripcion para el producto',
+            price: 200,
+            thumbnail: 'Imagen',
+            code: `P${Date.now()}`, 
+            status: true,
+            stock: 20,
             category: 'Prueba',
-            owner: 'admin_id'
+            owner: new mongoose.Types.ObjectId()
         };
 
-        const response = await request
-            .post('/api/products')
-            .set('Authorization', `Bearer ${token}`)
-            .send(mockProduct)
-            .expect('Content-Type', /json/)
-            .expect(201);
+        const newProduct = await productRepository.addProduct(mockProduct);
+        const newProductId = newProduct.id;
+        const findedProduct = await productRepository.getProductById(newProductId);
 
-        expect(response.body).to.be.an('object');
-        expect(response.body._id).to.exist;
-        expect(response.body.title).to.equal('Test Product');
-        expect(response.body.description).to.equal('Product Description');
-        expect(response.body.price).to.equal(100);
-        expect(response.body.thumbnail).to.equal('null');
-        expect(response.body.code).to.equal('uniqueCodeTest');
-        expect(response.body.stock).to.equal(50);
-        expect(response.body.category).to.equal('Prueba');
-        expect(response.body.owner).to.equal('admin_id');
+        expect(findedProduct.id).to.be.equal(newProduct.id);
+    });
+
+    it('Se debe crear un producto correctamente', async function () {
+        const mockProduct = {
+            title: 'test',
+            description: 'Descripcion para el producto',
+            price: 200,
+            thumbnail: 'Imagen',
+            code: `P${Date.now()}`, 
+            status: true,
+            stock: 20,
+            category: 'Prueba',
+            owner: new mongoose.Types.ObjectId() 
+        };
+
+        const newProduct = await productRepository.addProduct(mockProduct);
+        expect(newProduct.id).to.be.ok;
+    });
+
+    it('El precio y el stock deben setearse como valores numéricos', async () => {
+        const mockProduct = {
+            title: 'test',
+            description: 'Descripcion para el producto',
+            price: '200',
+            code: `P${Date.now()}`, 
+            stock: '20',
+            category: 'Prueba',
+            owner: new mongoose.Types.ObjectId() 
+        };
+
+        const newProduct = await productRepository.addProduct(mockProduct);
+
+        expect(newProduct.price).to.equal(200);
+        expect(newProduct.stock).to.equal(20);
+    });
+
+    it('El producto se actualiza de manera correcta', async () => {
+        const mockProduct = {
+            title: 'test',
+            description: 'Descripcion para el producto',
+            price: 200,
+            code: `P${Date.now()}`, 
+            stock: 20,
+            category: 'Prueba',
+            owner: new mongoose.Types.ObjectId() 
+        };
+
+        const newProduct = await productRepository.addProduct(mockProduct);
+        const updatedProduct = await productRepository.updateProduct(newProduct.id, { title: 'updatedProduct', stock: 40 });
+        const findedProduct = await productRepository.getProductById(newProduct.id);
+
+        expect(updatedProduct.title).to.be.equal(findedProduct.title);
+        expect(updatedProduct.stock).to.be.equal(findedProduct.stock);
     });
 });

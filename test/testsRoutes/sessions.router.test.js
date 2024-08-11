@@ -1,67 +1,151 @@
-// require('dotenv').config();
-// const mongoose = require('mongoose');
-// const supertest = require('supertest');
-// const server = require('../../src/app');
-// const User = require('../../src/models/user.model');
-// const { generateToken } = require('../../src/utils/jwt'); // Asegúrate de importar generateToken
+const mongoose = require('mongoose');
+const UsersRepository = require('../../src/dataRepository/users.dataRepository');
 
-// const request = supertest(server);
+describe('Testing Users Repository', () => {
+    let chai;
+    let expect;
+    const usersRepository = new UsersRepository();
+    let connection = null;
 
-// describe('Session Router Tests', function () {
-//     this.timeout(10000); // Configurar el tiempo de espera para los tests
-//     let token;
+    before(async function () {
+        this.timeout(20000); 
+        chai = await import('chai');
+        expect = chai.expect;
+    
+        try {
+            const mongooseConnection = await mongoose.connect('mongodb+srv://andresmangold:andresPass@cluster0.hrz9nqj.mongodb.net/test', {
+                dbName: 'testing'
+            });
+            connection = mongooseConnection.connection;
+            console.log('Connected to MongoDB');
+        } catch (error) {
+            console.error('Error connecting to MongoDB:', error);
+            throw error;
+        }
+    });
 
-//     before(async () => {
-//         const chai = await import('chai');
-//         global.expect = chai.expect;
+    after(async () => {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Connection to MongoDB closed');
+            } catch (error) {
+                console.error('Error closing connection to MongoDB:', error);
+            }
+        }
+    });
 
-//         await mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-//     });
+    beforeEach(async function () {
+        this.timeout(10000);
+        await mongoose.connection.collection('users').deleteMany({});
+        await mongoose.connection.collection('carts').deleteMany({});
+    });
 
-//     after(async () => {
-//         await mongoose.connection.db.dropDatabase();
-//         await mongoose.connection.close();
-//     });
+    it('El resultado del get debe ser un array', function (done) {
+        this.timeout(10000);
 
-//     it('should register a new user', async () => {
-//         const userData = {
-//             firstName: 'John',
-//             lastName: 'Doe',
-//             age: 30,
-//             email: 'john.doe@example.com',
-//             password: 'password'
-//         };
+        usersRepository.getAllUsers()
+            .then((result) => {
+                expect(Array.isArray(result)).to.be.ok;
+                done();
+            })
+            .catch((err) => {
+                done(err);
+            });
+    });
 
-//         const response = await request
-//             .post('/sessions/register')
-//             .send(userData);
+    it('Se debe registrar un usuario correctamente', async () => {
+        const mockUser = {
+            firstName: 'Juan',
+            lastName: 'Cualquiera',
+            age: 30,
+            email: `juan${Date.now()}@example.com`,
+            password: 'password123'
+        };
 
-//         expect(response.status).to.equal(201);
-//         expect(response.body).to.have.property('message', 'Usuario registrado con éxito');
-//         expect(response.body.user).to.have.property('email', userData.email);
-//     });
+        const newUser = await usersRepository.registerUser(
+            mockUser.firstName,
+            mockUser.lastName,
+            mockUser.age,
+            mockUser.email,
+            mockUser.password
+        );
 
-//     it('should log in the user', async () => {
-//         const loginData = {
-//             email: 'john.doe@example.com',
-//             password: 'password'
-//         };
+        expect(newUser.id).to.be.ok;
+        expect(newUser.email).to.equal(mockUser.email);
+    });
 
-//         const response = await request
-//             .post('/sessions/login')
-//             .send(loginData);
+    it('Se debe obtener un usuario según su ID', async () => {
+        const mockUser = {
+            firstName: 'Lorna',
+            lastName: 'Cualca',
+            age: 25,
+            email: `lorna${Date.now()}@example.com`,
+            password: 'password123'
+        };
 
-//         expect(response.status).to.equal(200);
-//         expect(response.body).to.have.property('token');
-//         token = response.body.token;
-//     });
+        const newUser = await usersRepository.registerUser(
+            mockUser.firstName,
+            mockUser.lastName,
+            mockUser.age,
+            mockUser.email,
+            mockUser.password
+        );
 
-//     it('should get the current session', async () => {
-//         const response = await request
-//             .get('/sessions/current')
-//             .set('Authorization', `Bearer ${token}`);
+        const findedUser = await usersRepository.getUserById(newUser.id);
 
-//         expect(response.status).to.equal(200);
-//         expect(response.body).to.have.property('email', 'john.doe@example.com');
-//     });
-// });
+        expect(findedUser.id).to.be.equal(newUser.id);
+        expect(findedUser.email).to.equal(mockUser.email);
+    });
+
+    it('Se debe poder iniciar sesión correctamente', async () => {
+        const mockUser = {
+            firstName: 'Pedrito',
+            lastName: 'Calquiera',
+            age: 28,
+            email: `pedrito${Date.now()}@example.com`,
+            password: 'password123'
+        };
+
+        await usersRepository.registerUser(
+            mockUser.firstName,
+            mockUser.lastName,
+            mockUser.age,
+            mockUser.email,
+            mockUser.password
+        );
+
+        const loginResult = await usersRepository.loginUser(mockUser.email, mockUser.password);
+
+        expect(loginResult.user.email).to.equal(mockUser.email);
+        expect(loginResult.token).to.be.ok;
+    });
+
+    it('Se debe eliminar un usuario correctamente', async () => {
+        const mockUser = {
+            firstName: 'Barry',
+            lastName: 'Cualquiera',
+            age: 35,
+            email: `barry${Date.now()}@example.com`,
+            password: 'password123'
+        };
+
+        const newUser = await usersRepository.registerUser(
+            mockUser.firstName,
+            mockUser.lastName,
+            mockUser.age,
+            mockUser.email,
+            mockUser.password
+        );
+
+        await usersRepository.deleteUser(mockUser.email);
+
+        try {
+            await usersRepository.getUserById(newUser.id);
+            expect.fail('El usuario debería haber sido eliminado');
+        } catch (error) {
+            expect(error.message).to.include('No se pudo obtener el usuario');
+        }
+    });
+});
+

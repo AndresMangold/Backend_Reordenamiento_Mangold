@@ -12,6 +12,11 @@ Este proyecto simula un servidor con persistencia de datos alojado en MongoDB do
 - Documentación de API: Documentación generada automáticamente con Swagger.
 
 
+# Deploy
+
+El deploy de esta API se realizó desde Railway. Click aquí
+
+
 # Para correr este proyecto:
 
 **Clonar el repositorio**
@@ -19,6 +24,9 @@ Este proyecto simula un servidor con persistencia de datos alojado en MongoDB do
 
 **Instalar las dependencias**
 - npm i
+
+**Conexión a MongoDB**
+- Conectar MongoDB Compass utilizando la dirección IP 0.0.0.0/0 
 
 **Ejecutar el serviror**
 - nodemon ./src/app.js
@@ -50,10 +58,17 @@ Este proyecto simula un servidor con persistencia de datos alojado en MongoDB do
 - Winston: Registro de logs.
 
 
-# Flow para la compra de un producto:
+## Flow para la compra de un producto y expedición del ticket:
 
-- Ejemplo [https://drive.google.com/file/d/1yKDilo4RGEuVR85Leb5hSDCm-HrOJlJL/view?usp=sharing] (Flow de compra)
+- Ejemplo [https://drive.google.com/file/d/1NOa6h9smDInsRmOxwrpHZIcPPxpiNZK8/view?usp=sharing] 
 
+## Usuario Premium: Creación de producto, eliminación y aviso por correo.
+
+- Ejemplo [https://drive.google.com/file/d/1KwgrZhq1kc8yTWIGfsaSBV9VLBxvFKvq/view?usp=sharing]
+
+## Eliminación del admin a los usuarios por inactividad:
+
+- Ejemplo [https://drive.google.com/file/d/18JShNUVQvvT0wpFSqc7fTehtDd7HAuGQ/view?usp=sharing] 
 
 # Para testear la API:
 

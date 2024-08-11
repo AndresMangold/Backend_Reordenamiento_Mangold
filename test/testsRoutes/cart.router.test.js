@@ -1,84 +1,92 @@
-// require('dotenv').config();
-// const mongoose = require('mongoose');
-// const supertest = require('supertest');
-// const server = require('../../src/app');
-// const User = require('../../src/models/user.model');
-// const Product = require('../../src/models/product.model');
-// const { generateToken } = require('../../src/utils/jwt'); // Asegúrate de importar generateToken
+const mongoose = require('mongoose');
+const CartsRepository = require('../../src/dataRepository/carts.dataRepository');
+const ProductsRepository = require('../../src/dataRepository/products.dataRepository');
 
-// const request = supertest(server);
+describe('Testing Cart Repository', () => {
+    let chai;
+    let expect;
+    const cartRepository = new CartsRepository();
+    const productRepository = new ProductsRepository();
+    let connection = null;
 
-// describe('Cart Router Tests', function () {
-//     this.timeout(10000); // Configurar el tiempo de espera para los tests
-//     let token;
-//     let userId;
-//     let cartId;
-//     let productId;
+    before(async function () {
+        this.timeout(20000); 
+        chai = await import('chai');
+        expect = chai.expect;
+    
+        try {
+            const mongooseConnection = await mongoose.connect('mongodb+srv://andresmangold:andresPass@cluster0.hrz9nqj.mongodb.net/test', {
+                dbName: 'testing'
+            });
+            connection = mongooseConnection.connection;
+            console.log('Connected to MongoDB');
+        } catch (error) {
+            console.error('Error connecting to MongoDB:', error);
+            throw error;
+        }
+    });
 
-//     before(async () => {
-//         const chai = await import('chai');
-//         global.expect = chai.expect;
+    after(async () => {
+        if (connection) {
+            try {
+                await connection.close();
+                console.log('Connection to MongoDB closed');
+            } catch (error) {
+                console.error('Error closing connection to MongoDB:', error);
+            }
+        }
+    });
 
-//         await mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
-//         const user = await User.create({ email: 'test@example.com', password: 'password', role: 'user' });
-//         userId = user._id;
-//         token = generateToken(user); // Usar el método de generación de token
+    beforeEach(async function () {
+        this.timeout(10000);
+        await mongoose.connection.collection('carts').deleteMany({});
+        await mongoose.connection.collection('products').deleteMany({});
+    });
 
-//         const response = await request
-//             .post('/api/cart')
-//             .set('Authorization', `Bearer ${token}`);
-//         cartId = response.body.cart._id;
-//     });
+    it('El resultado del get debe ser un array', function (done) {
+        this.timeout(10000);
 
-//     after(async () => {
-//         await mongoose.connection.db.dropDatabase();
-//         await mongoose.connection.close();
-//     });
+        cartRepository.getCarts()
+            .then((result) => {
+                expect(Array.isArray(result)).to.be.ok;
+                done();
+            })
+            .catch((err) => {
+                done(err);
+            });
+    });
 
-//     it('should add a product to the cart', async () => {
-//         const product = await Product.create({
-//             title: 'Test Product',
-//             description: 'Product description',
-//             price: 300,
-//             code: 'abc123',
-//             stock: 80,
-//             category: 'storage',
-//             owner: 'admin'
-//         });
-//         productId = product._id;
+    it('Se debe crear un carrito correctamente', async () => {
+        const newCart = await cartRepository.addCart();
+        expect(newCart).to.have.property('id');
+        expect(newCart.products).to.be.an('array').that.is.empty;
+    });
 
-//         const response = await request
-//             .post(`/api/cart/${cartId}/product/${productId}`)
-//             .set('Authorization', `Bearer ${token}`)
-//             .send();
+    it('Se debe obtener un carrito según su ID', async () => {
+        const newCart = await cartRepository.addCart();
+        const findedCart = await cartRepository.getCartById(newCart.id);
 
-//         expect(response.status).to.equal(200);
-//         expect(response.body.cart.products).to.have.lengthOf(1);
-//         expect(response.body.cart.products[0].product).to.equal(productId.toString());
-//     });
+        expect(findedCart.id).to.be.equal(newCart.id);
+    });
 
-//     it('should remove a product from the cart', async () => {
-//         const response = await request
-//             .delete(`/api/cart/${cartId}/product/${productId}`)
-//             .set('Authorization', `Bearer ${token}`)
-//             .send();
+    it('Se debe agregar un producto a un carrito', async () => {
 
-//         expect(response.status).to.equal(200);
-//         expect(response.body.cart.products).to.be.empty;
-//     });
+        const mockProduct = {
+            title: 'test',
+            description: 'Descripcion para el producto',
+            price: 200,
+            code: `P${Date.now()}`,
+            stock: 20,
+            category: 'Prueba',
+            owner: new mongoose.Types.ObjectId()
+        };
+        const product = await productRepository.addProduct(mockProduct);
 
-//     it('should update the product quantity in the cart', async () => {
-//         await request
-//             .post(`/api/cart/${cartId}/product/${productId}`)
-//             .set('Authorization', `Bearer ${token}`)
-//             .send();
+        const newCart = await cartRepository.addCart();
 
-//         const response = await request
-//             .put(`/api/cart/${cartId}/product/${productId}`)
-//             .set('Authorization', `Bearer ${token}`)
-//             .send({ quantity: 5 });
+        const updatedCart = await cartRepository.addProductToCart(newCart.id, product.id, new mongoose.Types.ObjectId());
 
-//         expect(response.status).to.equal(200);
-//         expect(response.body.cart.products[0].quantity).to.equal(5);
-//     });
-// });
+        expect(updatedCart.products).to.have.lengthOf(1);
+        expect(updatedCart.products[0].product.toString()).to.be.equal(product.id);
+    });
+});

@@ -272,17 +272,16 @@ class CartsRepository {
 
     async updateProductQuantity(cartId, productId, quantity) {
         try {
-            await this.#verifyCartExists(cartId);
+            const cart = await this.#verifyCartExists(cartId);
             await this.#verifyProductExists(productId);
-
-            const cart = await this.#cartDAO.getCartById(cartId);
+    
             const productIndex = cart.products.findIndex(p => p.product.equals(productId));
-
+    
             if (productIndex !== -1) {
                 cart.products[productIndex].quantity = quantity;
                 const updatedCart = await this.#cartDAO.updateCart(cartId, { products: cart.products });
                 logger.info(`Cantidad del producto ${productId} en el carrito ${cartId} actualizada a ${quantity}.`);
-                return updatedCart;
+                return updatedCart; 
             } else {
                 logger.warn(`Producto ${productId} no encontrado en el carrito ${cartId}.`);
                 throw CustomError.createError({
@@ -302,7 +301,7 @@ class CartsRepository {
                 otherProblems: error
             });
         }
-    }
+    }    
 
     async deleteCart(cartId) {
         try {

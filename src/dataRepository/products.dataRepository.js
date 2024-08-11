@@ -21,7 +21,6 @@ class ProductsRepository {
                 page: parseInt(page),
                 sort: sort ? { price: sort } : undefined,
                 lean: true,
-                select: '-thumbnail'
             };
     
             const products = await this.daoProducts.getProducts(query, options);
