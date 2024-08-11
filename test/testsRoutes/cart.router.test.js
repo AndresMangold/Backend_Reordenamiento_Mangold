@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const CartsRepository = require('../../src/dataRepository/carts.dataRepository');
 const ProductsRepository = require('../../src/dataRepository/products.dataRepository');
+require('dotenv').config();
 
 describe('Testing Cart Repository', () => {
     let chai;
@@ -15,7 +16,7 @@ describe('Testing Cart Repository', () => {
         expect = chai.expect;
     
         try {
-            const mongooseConnection = await mongoose.connect('mongodb+srv://andresmangold:andresPass@cluster0.hrz9nqj.mongodb.net/test', {
+            const mongooseConnection = await mongoose.connect(process.env.MONGODB_URI, {
                 dbName: 'testing'
             });
             connection = mongooseConnection.connection;

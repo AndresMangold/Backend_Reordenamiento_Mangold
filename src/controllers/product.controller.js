@@ -119,38 +119,58 @@ class ProductController {
         try {
             const productId = req.params.pid;
             const product = await this.productRepository.getProductById(productId);
-
+    
             if (!product) {
                 req.logger.warn('Producto no encontrado');
                 return res.status(404).json({ error: 'Producto no encontrado' });
             }
-
-            const productOwner = await User.findById(product.owner); 
-
-            if (req.user.role === 'admin' || productOwner._id.equals(req.user.id)) {
-                await this.productRepository.deleteProduct(productId);
-                req.logger.info(`Producto ${productId} eliminado correctamente.`);
-
-                if (productOwner.role === 'premium') {
-                    await this.mailingService.sendMail({
-                        to: productOwner.email,
-                        subject: 'Tu producto ha sido eliminado',
-                        html: `<p>Hola ${productOwner.firstName},</p>
-                               <p>Tu producto "${product.title}" ha sido eliminado.</p>`
-                    });
-                    req.logger.info(`Correo enviado al propietario premium del producto ${productId}.`);
-                }
-
-                res.status(301).redirect('/api/products');
-            } else {
-                req.logger.warn('Usuario no autorizado para eliminar este producto');
-                res.status(403).json({ error: 'No tiene permisos para eliminar este producto' });
+    
+            if (!req.user) {
+                req.logger.error('Usuario no autenticado');
+                return res.status(401).json({ error: 'Debe estar autenticado para realizar esta acción' });
             }
+
+            if (req.user.role === 'admin') {
+                await this.productRepository.deleteProduct(productId);
+                req.logger.info(`Producto ${productId} eliminado correctamente por el administrador.`);
+                return res.status(301).redirect('/api/products');
+            }
+
+            if (product.owner) {
+                const productOwner = await User.findById(product.owner);
+    
+                if (!productOwner) {
+                    req.logger.warn('Propietario del producto no encontrado');
+                    return res.status(404).json({ error: 'Propietario del producto no encontrado' });
+                }
+    
+                if (productOwner._id.equals(req.user.id)) {
+                    await this.productRepository.deleteProduct(productId);
+                    req.logger.info(`Producto ${productId} eliminado correctamente por el propietario.`);
+
+                    if (productOwner.role === 'premium') {
+                        await this.mailingService.sendMail({
+                            to: productOwner.email,
+                            subject: 'Tu producto ha sido eliminado',
+                            html: `<p>Hola ${productOwner.firstName},</p>
+                                   <p>Tu producto "${product.title}" ha sido eliminado.</p>`
+                        });
+                        req.logger.info(`Correo enviado al propietario premium del producto ${productId}.`);
+                    }
+    
+                    return res.status(301).redirect('/api/products');
+                }
+            }
+
+            req.logger.warn('Usuario no autorizado para eliminar este producto');
+            res.status(403).json({ error: 'No tiene permisos para eliminar este producto' });
+    
         } catch (error) {
             req.logger.error(error.message, error);
             res.status(500).json({ Error: error.message });
         }
     }
+    
 }
 
 module.exports = ProductController;

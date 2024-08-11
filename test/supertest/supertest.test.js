@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const server = require('../../src/app'); // Importa el servidor
 const PORT = process.env.PORT || 8080;
-const path = require('path');
 
 let chai;
 let expect;
@@ -12,58 +11,37 @@ let requester; // Almacenar la instancia de requester
 let appServer; // Variable para almacenar la instancia del servidor
 
 describe('Testing Ecommerce', () => {
+    let connection = null;
+
     before(async function () {
-        this.timeout(20000); // Configurar el tiempo de espera para la conexión
+        this.timeout(10000); // Configurar el tiempo de espera para la conexión
+
+        const mongooseConnection = await mongoose.connect(process.env.MONGODB_URI, { dbName: 'testing' });
+        connection = mongooseConnection.connection;
+
+        // Iniciar el servidor solo para pruebas
+        appServer = server.listen(PORT, () => {
+            console.log(`Servidor corriendo en el puerto ${PORT}`);
+        });
+
+        requester = supertest(`http://localhost:${PORT}`); // Usa supertest con la URL del servidor
+
+        // Importar chai dinámicamente
         chai = await import('chai');
         expect = chai.expect;
-
-        try {
-            const mongooseConnection = await mongoose.connect(process.env.MONGODB_URI, {
-                dbName: 'testing',
-            });
-            connection = mongooseConnection.connection;
-            console.log('Connected to MongoDB');
-
-            // Iniciar el servidor solo para pruebas
-            appServer = server.listen(PORT, () => {
-                console.log(`Servidor corriendo en el puerto ${PORT}`);
-            });
-
-            requester = supertest(`http://localhost:${PORT}`); // Usa supertest con la URL del servidor
-        } catch (error) {
-            console.error('Error al conectar con la base de datos:', error);
-            throw error;
-        }
     });
 
     after(async () => {
+        // Cerrar la conexión a la base de datos
         if (connection) {
-            try {
-                await connection.close();
-                console.log('Connection to MongoDB closed');
-            } catch (error) {
-                console.error('Error closing connection to MongoDB:', error);
-            }
-        }
-
-        if (appServer) {
-            try {
-                await new Promise((resolve, reject) => {
-                    appServer.close((err) => {
-                        if (err) return reject(err);
-                        console.log('Server closed');
-                        resolve();
-                    });
-                });
-            } catch (error) {
-                console.error('Error closing server:', error);
-            }
+            await connection.close();
+            console.log('Connection to MongoDB closed');
         }
     });
 
     beforeEach(async function () {
         this.timeout(10000);
-
+        
         // Limpiar las colecciones necesarias
         await mongoose.connection.collection('products').deleteMany({});
         await mongoose.connection.collection('carts').deleteMany({});
@@ -97,8 +75,7 @@ describe('Testing Ecommerce', () => {
 
     describe('Test de productos', () => {
         it('El endpoint GET /api/products debe devolver todos los productos de la base de datos o un array vacio', function (done) {
-            requester
-                .get('/api/products')
+            requester.get('/api/products')
                 .then(({ statusCode, ok, body }) => {
                     expect(statusCode).to.equal(200);
                     expect(ok).to.equal(true);
@@ -109,8 +86,7 @@ describe('Testing Ecommerce', () => {
         });
 
         it('El endpoint GET /api/products debe devolver un error si se accede a una página que no existe', function (done) {
-            requester
-                .get('/api/products?page=error')
+            requester.get('/api/products?page=error')
                 .then(({ statusCode, ok, body }) => {
                     expect(statusCode).to.equal(400);
                     expect(ok).to.equal(false);
@@ -130,7 +106,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc123',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -147,8 +123,7 @@ describe('Testing Ecommerce', () => {
         it('El endpoint GET /api/product/:pid debe devolver un error si el ID no existe', function (done) {
             const pid = 'falsoPID';
 
-            requester
-                .get(`/api/products/${pid}`)
+            requester.get(`/api/products/${pid}`)
                 .then(({ statusCode, ok, body }) => {
                     expect(statusCode).to.equal(404);
                     expect(ok).to.equal(false);
@@ -169,7 +144,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc124',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const { statusCode, ok, body } = await createProduct(cookie, productMock);
@@ -187,7 +162,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc124df',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const { statusCode, ok, body } = await createProduct(cookie, productMock);
@@ -196,22 +171,21 @@ describe('Testing Ecommerce', () => {
             expect(statusCode).to.equal(400);
             expect(body.error).to.have.property('cause');
             expect(body.error.name).to.equal('Error al agregar el producto.');
-            expect(body.error.code).to.equal(7);
+            expect(body.error.code).to.equal(7)
         });
 
         it('El endpoint POST /api/products/ debe arrojar un error al intentar cargar un producto sin tener los permisos', async () => {
+
             const productMock = {
                 title: 'Test Product',
                 description: 'Product description',
                 price: 300,
                 code: 'abc124',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
-            const { statusCode, ok, body } = await requester
-                .post('/api/products')
-                .send(productMock);
+            const { statusCode, ok, body } = await requester.post('/api/products').send(productMock);
 
             expect(ok).to.equal(false);
             expect(statusCode).to.equal(403);
@@ -227,7 +201,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc124',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const { statusCode, ok, body } = await createProduct(cookie, productMock);
@@ -247,7 +221,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc125',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -256,7 +230,7 @@ describe('Testing Ecommerce', () => {
 
             const updatedProductMock = {
                 title: 'Updated Product',
-                price: 350,
+                price: 350
             };
 
             const updatedProduct = await requester
@@ -282,7 +256,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc125b',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -291,7 +265,7 @@ describe('Testing Ecommerce', () => {
 
             const updatedProductMock = {
                 title: 'Updated Product',
-                price: 350,
+                price: 350
             };
 
             const { statusCode, ok, body } = await requester
@@ -312,7 +286,7 @@ describe('Testing Ecommerce', () => {
 
             const updatedProductMock = {
                 title: 'Updated Product',
-                price: 350,
+                price: 350
             };
 
             const { statusCode, ok, body } = await requester
@@ -335,7 +309,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc126',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -346,7 +320,7 @@ describe('Testing Ecommerce', () => {
 
             const { statusCode, ok } = await requester
                 .delete(`/api/products/${pid}`)
-                .set('Cookie', cookie);
+                .set('Cookie', cookie)
 
             const verifyProduct = await requester.get(`/api/products/${pid}`);
 
@@ -364,7 +338,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc12s6',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -381,6 +355,7 @@ describe('Testing Ecommerce', () => {
             expect(ok).to.equal(false);
             expect(verifyProduct.statusCode).to.equal(200);
             expect(body).to.have.property('message');
+
         });
 
         it('El endpoint DELETE /api/products/:pid debe arrojar error si el producto no existe', async () => {
@@ -390,18 +365,19 @@ describe('Testing Ecommerce', () => {
 
             const { statusCode, ok, body } = await requester
                 .delete(`/api/products/${pid}`)
-                .set('Cookie', cookie);
+                .set('Cookie', cookie)
+
 
             expect(statusCode).to.equal(404);
             expect(ok).to.equal(false);
             expect(body.error).to.have.property('cause');
         });
+
     });
 
     describe('Test de carts', () => {
         it('El endpoint GET /api/cart debe devolver todos los carritos de la base de datos o un array vacio', function (done) {
-            requester
-                .get('/api/cart')
+            requester.get('/api/cart')
                 .then(({ statusCode, ok, body }) => {
                     expect(statusCode).to.equal(200);
                     expect(ok).to.equal(true);
@@ -422,6 +398,7 @@ describe('Testing Ecommerce', () => {
             expect(statusCode).to.equal(200);
             expect(ok).to.equal(true);
             expect(Array.isArray(body.products)).to.be.ok;
+
         });
 
         it('El endpoint POST /api/cart debe agregar un nuevo carrito a la base de datos', async () => {
@@ -429,7 +406,7 @@ describe('Testing Ecommerce', () => {
 
             const { statusCode, ok, body } = await requester
                 .post('/api/cart')
-                .set('Cookie', cookie); // Incluir la cookie en el encabezado
+                .set('Cookie', cookie) // Incluir la cookie en el encabezado
 
             expect(statusCode).to.equal(201);
             expect(ok).to.equal(true);
@@ -438,7 +415,8 @@ describe('Testing Ecommerce', () => {
         });
 
         it('El endpoint POST /api/cart debe arrojar error si no cuenta con los permisos adecuados', async () => {
-            const { statusCode, ok, body } = await requester.post('/api/cart');
+            const { statusCode, ok, body } = await requester
+                .post('/api/cart')
 
             expect(statusCode).to.equal(403);
             expect(ok).to.equal(false);
@@ -454,7 +432,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc126',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -471,7 +449,7 @@ describe('Testing Ecommerce', () => {
 
             const { statusCode, ok, body } = await requester
                 .post(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(statusCode).to.equal(200);
             expect(ok).to.equal(true);
@@ -489,7 +467,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc126g',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -502,9 +480,8 @@ describe('Testing Ecommerce', () => {
 
             expect(cart.body).to.have.property('_id');
 
-            const { statusCode, ok, body } = await requester.post(
-                `/api/cart/${cid}/product/${pid}`
-            );
+            const { statusCode, ok, body } = await requester
+                .post(`/api/cart/${cid}/product/${pid}`)
 
             expect(statusCode).to.equal(403);
             expect(ok).to.equal(false);
@@ -525,7 +502,7 @@ describe('Testing Ecommerce', () => {
 
             const { statusCode, ok, body } = await requester
                 .post(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(statusCode).to.equal(404);
             expect(ok).to.equal(false);
@@ -542,7 +519,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc127g',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -561,14 +538,14 @@ describe('Testing Ecommerce', () => {
 
             const updatedCart = await requester
                 .post(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(updatedCart.statusCode).to.equal(200);
             expect(updatedCart.body.products[0].product).to.equal(pid);
 
             const { statusCode, ok, body } = await requester
                 .delete(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(statusCode).to.equal(200);
             expect(ok).to.equal(true);
@@ -586,7 +563,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc128',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -603,12 +580,10 @@ describe('Testing Ecommerce', () => {
 
             const cookieUser = await simpleRegisterAndLoginUser('test3@test.com', '123');
 
-            const productToUpdate = [
-                {
-                    product: pid,
-                    quantity: 20,
-                },
-            ];
+            const productToUpdate = [{
+                product: pid,
+                quantity: 20
+            }]
 
             const { statusCode, ok, body } = await requester
                 .put(`/api/cart/${cid}`)
@@ -631,7 +606,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc128b',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -648,12 +623,10 @@ describe('Testing Ecommerce', () => {
 
             const cookieUser = await simpleRegisterAndLoginUser('test3@test.com', '123');
 
-            const productToUpdate = [
-                {
-                    product: pid,
-                    quantity: -20,
-                },
-            ];
+            const productToUpdate = [{
+                product: pid,
+                quantity: -20
+            }]
 
             const { statusCode, ok, body } = await requester
                 .put(`/api/cart/${cid}`)
@@ -675,7 +648,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc128c',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -692,12 +665,10 @@ describe('Testing Ecommerce', () => {
 
             const cookieUser = await simpleRegisterAndLoginUser('test3@test.com', '123');
 
-            const productToUpdate = [
-                {
-                    product: pid,
-                    quantity: 20,
-                },
-            ];
+            const productToUpdate = [{
+                product: pid,
+                quantity: 20
+            }]
 
             const { statusCode, ok, body } = await requester
                 .put(`/api/cart/${cid}`)
@@ -713,6 +684,7 @@ describe('Testing Ecommerce', () => {
 
             const pid = 'falsoPID';
 
+
             const cart = await createCart(cookie);
 
             const cid = cart.body._id;
@@ -721,12 +693,10 @@ describe('Testing Ecommerce', () => {
 
             const cookieUser = await simpleRegisterAndLoginUser('test3@test.com', '123');
 
-            const productToUpdate = [
-                {
-                    product: pid,
-                    quantity: 20,
-                },
-            ];
+            const productToUpdate = [{
+                product: pid,
+                quantity: 20
+            }]
 
             const { statusCode, ok, body } = await requester
                 .put(`/api/cart/${cid}`)
@@ -747,7 +717,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc129',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -766,14 +736,14 @@ describe('Testing Ecommerce', () => {
 
             const addProduct = await requester
                 .post(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(addProduct.body.products[0].quantity).to.equal(1);
             expect(addProduct.body.products[0].product).to.equal(pid);
 
             const quantity = {
-                quantity: 20,
-            };
+                quantity: 20
+            }
 
             const { statusCode, ok, body } = await requester
                 .put(`/api/cart/${cid}/product/${pid}`)
@@ -795,7 +765,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc129b',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -814,14 +784,14 @@ describe('Testing Ecommerce', () => {
 
             const addProduct = await requester
                 .post(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(addProduct.body.products[0].quantity).to.equal(1);
             expect(addProduct.body.products[0].product).to.equal(pid);
 
             const quantity = {
-                quantity: 20,
-            };
+                quantity: 20
+            }
 
             const { statusCode, ok, body } = await requester
                 .put(`/api/cart/${cid}/product/${pid}`)
@@ -840,7 +810,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc129c',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -859,14 +829,14 @@ describe('Testing Ecommerce', () => {
 
             const addProduct = await requester
                 .post(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(addProduct.body.products[0].quantity).to.equal(1);
             expect(addProduct.body.products[0].product).to.equal(pid);
 
             const quantity = {
-                quantity: 20,
-            };
+                quantity: 20
+            }
 
             const { statusCode, ok, body } = await requester
                 .put(`/api/cart/noCart/product/${pid}`)
@@ -887,7 +857,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc129bf',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -906,14 +876,14 @@ describe('Testing Ecommerce', () => {
 
             const addProduct = await requester
                 .post(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(addProduct.body.products[0].quantity).to.equal(1);
             expect(addProduct.body.products[0].product).to.equal(pid);
 
             const quantity = {
-                quantity: 20,
-            };
+                quantity: 20
+            }
 
             const { statusCode, ok, body } = await requester
                 .put(`/api/cart/${cid}/product/noPid`)
@@ -934,7 +904,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc130b',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -953,7 +923,7 @@ describe('Testing Ecommerce', () => {
 
             const updatedCart = await requester
                 .post(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(updatedCart.statusCode).to.equal(200);
             expect(updatedCart.ok).to.equal(true);
@@ -963,7 +933,7 @@ describe('Testing Ecommerce', () => {
 
             const { statusCode, ok } = await requester
                 .delete(`/api/cart/${cid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(statusCode).to.equal(204);
             expect(ok).to.equal(true);
@@ -977,7 +947,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc130bb',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -996,7 +966,7 @@ describe('Testing Ecommerce', () => {
 
             const updatedCart = await requester
                 .post(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(updatedCart.statusCode).to.equal(200);
             expect(updatedCart.ok).to.equal(true);
@@ -1004,7 +974,8 @@ describe('Testing Ecommerce', () => {
             expect(Array.isArray(updatedCart.body.products)).to.be.ok;
             expect(updatedCart.body.products[0].product).to.equal(pid);
 
-            const { statusCode, ok, body } = await requester.delete(`/api/cart/${cid}`);
+            const { statusCode, ok, body } = await requester
+                .delete(`/api/cart/${cid}`)
 
             expect(statusCode).to.equal(403);
             expect(ok).to.equal(false);
@@ -1019,7 +990,7 @@ describe('Testing Ecommerce', () => {
                 price: 300,
                 code: 'abc130gb',
                 stock: 80,
-                category: 'almacenamiento',
+                category: 'almacenamiento'
             };
 
             const product = await createProduct(cookie, productMock);
@@ -1038,7 +1009,7 @@ describe('Testing Ecommerce', () => {
 
             const updatedCart = await requester
                 .post(`/api/cart/${cid}/product/${pid}`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(updatedCart.statusCode).to.equal(200);
             expect(updatedCart.ok).to.equal(true);
@@ -1048,16 +1019,17 @@ describe('Testing Ecommerce', () => {
 
             const { statusCode, ok, body } = await requester
                 .delete(`/api/cart/noCart`)
-                .set('Cookie', cookieUser);
+                .set('Cookie', cookieUser)
 
             expect(statusCode).to.equal(404);
             expect(ok).to.equal(false);
             expect(body).to.have.property('error');
-            expect(body.error).to.have.property('cause');
+            expect(body.error).to.have.property('cause')
         });
     });
 
     describe('Test de users', () => {
+
         it('El endpoint POST /api/users/premium/:uid debe cambiar el rol de usuario a premium', async () => {
             const cookie = await simpleRegisterAndLoginUser('testRol@test.com', '123');
 
@@ -1074,11 +1046,10 @@ describe('Testing Ecommerce', () => {
                 .set('Cookie', cookie)
                 .attach('identification', path.join(__dirname, '../img/Fuente.webp'))
                 .attach('proofOfAddress', path.join(__dirname, '../img/Fuente.webp'))
-                .attach('proofOfAccount', path.join(__dirname, '../img/Fuente.webp'));
+                .attach('proofOfAccount', path.join(__dirname, '../img/Fuente.webp'))
 
-            const updateRol = await requester.post(
-                `/api/users/premium/${currentUser.body.id}`
-            );
+            const updateRol = await requester
+                .post(`/api/users/premium/${currentUser.body.id}`);
             expect(updateRol.body.firstName).to.equal(currentUser.body.firstName);
             expect(updateRol.body.id).to.equal(currentUser.body.id);
             expect(updateRol.body.cart).to.equal(currentUser.body.cart);
@@ -1087,10 +1058,9 @@ describe('Testing Ecommerce', () => {
         });
 
         it('El endpoint POST /api/users/premium/:uid debe arrojar error si el usuario no existe', async () => {
-            const sinID = 'noID';
-            const { body, statusCode, ok } = await requester.post(
-                `/api/users/premium/${sinID}`
-            );
+            const sinID = 'noID'
+            const { body, statusCode, ok } = await requester
+                .post(`/api/users/premium/${sinID}`);
 
             expect(ok).to.equal(false);
             expect(statusCode).to.equal(404);

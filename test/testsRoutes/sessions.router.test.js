@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const UsersRepository = require('../../src/dataRepository/users.dataRepository');
+require('dotenv').config();
 
 describe('Testing Users Repository', () => {
     let chai;
@@ -13,7 +14,7 @@ describe('Testing Users Repository', () => {
         expect = chai.expect;
     
         try {
-            const mongooseConnection = await mongoose.connect('mongodb+srv://andresmangold:andresPass@cluster0.hrz9nqj.mongodb.net/test', {
+            const mongooseConnection = await mongoose.connect(process.env.MONGODB_URI, {
                 dbName: 'testing'
             });
             connection = mongooseConnection.connection;
