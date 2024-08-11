@@ -17,22 +17,24 @@ Este proyecto simula un servidor con persistencia de datos alojado en MongoDB do
 El deploy de esta API se realizó desde Railway. Click aquí
 
 
+
 # Para correr este proyecto:
 
-**Clonar el repositorio**
-- git clone https://github.com/AndresMangold/Backend_Reordenamiento_Mangold/tree/entrega-final
+> **Clonar el repositorio**  
+> - `git clone https://github.com/AndresMangold/Backend_Reordenamiento_Mangold/tree/entrega-final`
+>
+> **Instalar las dependencias**  
+> - `npm i`
+>
+> **Conexión a MongoDB**  
+> - Conectar MongoDB Compass utilizando la dirección IP `0.0.0.0/0`
+>
+> **Ejecutar el servidor**  
+> - `nodemon ./src/app.js`
+>
+> **Acceder a la Aplicación**  
+> - [localhost:8080](http://localhost:8080/)
 
-**Instalar las dependencias**
-- npm i
-
-**Conexión a MongoDB**
-- Conectar MongoDB Compass utilizando la dirección IP 0.0.0.0/0 
-
-**Ejecutar el serviror**
-- nodemon ./src/app.js
-
-**Acceder a la Aplicación**
-- [localhost:8080//](http://localhost:8080/)
 
 
 # Frameworks y librerías utilizadas en este proyecto:
@@ -60,15 +62,15 @@ El deploy de esta API se realizó desde Railway. Click aquí
 
 ## Flow para la compra de un producto y expedición del ticket:
 
-- Ejemplo [https://drive.google.com/file/d/1NOa6h9smDInsRmOxwrpHZIcPPxpiNZK8/view?usp=sharing] 
+ Click en el [Ejemplo] (https://drive.google.com/file/d/1NOa6h9smDInsRmOxwrpHZIcPPxpiNZK8/view?usp=sharing)
 
 ## Usuario Premium: Creación de producto, eliminación y aviso por correo.
 
-- Ejemplo [https://drive.google.com/file/d/1KwgrZhq1kc8yTWIGfsaSBV9VLBxvFKvq/view?usp=sharing]
+ Click en el [Ejemplo] (https://drive.google.com/file/d/1KwgrZhq1kc8yTWIGfsaSBV9VLBxvFKvq/view?usp=sharing)
 
 ## Eliminación del admin a los usuarios por inactividad:
 
-- Ejemplo [https://drive.google.com/file/d/18JShNUVQvvT0wpFSqc7fTehtDd7HAuGQ/view?usp=sharing] 
+ Click en el [Ejemplo] (https://drive.google.com/file/d/18JShNUVQvvT0wpFSqc7fTehtDd7HAuGQ/view?usp=sharing)
 
 # Para testear la API:
 
