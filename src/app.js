@@ -99,6 +99,10 @@ app.get('/', (req, res) => {
     res.redirect('/sessions/login');
 });
 
+app.get('/', (req, res) => {
+    res.redirect('/sessions/login');
+});
+
 app.use('/sessions', sessionRouter);
 app.use('/api/users', verifyToken, userRouter);  
 app.use('/api/createProduct', verifyToken, createProductRouter);
