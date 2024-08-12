@@ -20,12 +20,15 @@
             <li><a href="http://localhost:8080/api/cart">Carrito de Compras</a></li>
             {{#if isLoggedIn}}
             <li><a href="http://localhost:8080/sessions/profile">Perfil</a></li>
+            {{#if isAdmin}}
+            <li><a href="http://localhost:8080/admin">Panel de Admin</a></li>
+            {{/if}}
             <li><a href="http://localhost:8080/sessions/logout">Logout</a></li>
             {{/if}}
         </ul>
     </div>
     {{{body}}}
-    
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 

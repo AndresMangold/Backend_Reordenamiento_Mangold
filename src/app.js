@@ -7,20 +7,28 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const methodOverride = require('method-override');
+const swaggerJSDoc = require('swagger-jsdoc');
+const { serve, setup } = require('swagger-ui-express');
+const moment = require('moment'); 
 const { DEFAULT_MAX_AGE } = require('./constants');
-
-const daoProducts = require('./dao/mongo/daoProducts');
-const daoCarts = require('./dao/mongo/daoCarts');
-const { dbName, mongoUrl } = require('./dbConfig');
 
 const createProductRouter = require('./routes/createProduct.router');
 const productsRouter = require('./routes/products.router');
 const cartRouter = require('./routes/cart.router');
 const sessionRouter = require('./routes/session.router');
+const userRouter = require('./routes/user.router');  
+const mockingProduct = require('./routes/mockingProduct.router');
+const loggerTestRouter = require('./routes/loggerTest.router');
+const adminRouter = require('./routes/admin.router');
+const { errorHandler } = require('./middlewares/errorHandler.middleware'); 
+const { useLogger } = require('./middlewares/logger.middleware'); 
 
 const initializePassport = require('./config/passport.config');
 const initializePassportGitHub = require('./config/passport-github.config');
 const initializePassportJWT = require('./config/passport-jwt.config');
+const { verifyToken } = require('./utils/jwt');
+
+const { dbName, mongoUrl } = require('./dbConfig');
 
 const app = express();
 
@@ -32,6 +40,12 @@ const hbs = exphbs.create({
     runtimeOptions: {
         allowProtoPropertiesByDefault: true,
         allowProtoMethodsByDefault: true,
+    },
+    helpers: {
+        formatDate: function (date) {
+            if (!date) return 'Nunca';
+            return moment(date).format('DD/MM/YYYY HH:mm:ss');
+        }
     }
 });
 
@@ -45,18 +59,18 @@ app.use(express.json());
 
 app.use(methodOverride('_method'));
 
-app.use(express.static(`${__dirname}/../public`));
+app.use(express.static(`${__dirname}/public`));
 app.use(express.static('public'));
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URL || "mongodb+srv://andresmangold:andresPass@cluster0.hrz9nqj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-        ttl: 60 * 60
+        mongoUrl: process.env.MONGO_URL,
+        ttl: 5 * 60 
     }),
-    secret: process.env.SESSION_SECRET || "adminCod3r123",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: DEFAULT_MAX_AGE }
+    cookie: { maxAge: 5 * 60 * 1000 } 
 }));
 
 initializePassport();
@@ -65,9 +79,24 @@ initializePassportJWT();
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
-    next();
+app.use(useLogger);
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'API de Andrés',
+            description: 'API de Andrés para CoderH!'
+        },
+    },
+    apis: [`${__dirname}/../src/docs/*.yaml`],
+};
+const specs = swaggerJSDoc(swaggerOptions);
+
+app.use('/apidocs', serve, setup(specs));
+
+app.get('/', (req, res) => {
+    res.redirect('/sessions/login');
 });
 
 app.get('/', (req, res) => {
@@ -75,21 +104,19 @@ app.get('/', (req, res) => {
 });
 
 app.use('/sessions', sessionRouter);
-app.use('/api/createProduct', createProductRouter);
-app.use('/api/products', productsRouter);
-app.use('/api/cart', cartRouter);
+app.use('/api/users', verifyToken, userRouter);  
+app.use('/api/createProduct', verifyToken, createProductRouter);
+app.use('/api/products', verifyToken, productsRouter);
+app.use('/api/cart', verifyToken, cartRouter);
+app.use('/api/mockingproducts', mockingProduct);
+app.use('/loggertest', loggerTestRouter);
+app.use('/admin', verifyToken, adminRouter);
 
 app.use((req, res, next) => {
     res.status(404).send('Page Not Found');
 });
 
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
-
-app.set('productManager', new daoProducts());
-app.set('cartManager', new daoCarts());
+app.use(errorHandler);
 
 const server = http.createServer(app);
 const PORT = process.env.PORT || 8080;
@@ -99,7 +126,7 @@ const main = async () => {
         await mongoose.connect(mongoUrl, { dbName: dbName });
         server.listen(PORT, () => {
             console.log('Servidor cargado!');
-            console.log(`http://localhost:${PORT}/api/products`);
+            console.log(`http://localhost:${PORT}/sessions/login`);
         });
     } catch (error) {
         console.error('Error al conectar con la base de datos:', error);
@@ -107,3 +134,5 @@ const main = async () => {
 };
 
 main();
+
+module.exports = server;

@@ -1,18 +1,20 @@
 <div class="container">
     <h2>Productos</h2>
-
     <ul class="product-list">
         {{#each products.payload}}
         <li>
             <div class="product">
                 <h4>{{this.title}}</h4>
-                <img class="product-image" src="{{this.thumbnail}}" alt="imagen de {{this.title}}">
+                <img class="product-image" src="/images/{{this.thumbnail}}" alt="imagen de {{this.title}}">
                 <p>Precio: {{this.price}}</p>
                 <p>Stock: {{this.stock}}</p>
                 <p>Descripción: {{this.description}}</p>
                 <p class="id-label">ID:</p> 
-                <p class="id-number">{{this._id}}</p> 
-                <a href="http://localhost:8080/api/products/{{this._id}}" class="product-link">Ver</a>
+                <p class="id-number">{{this.id}}</p> 
+                <a href="/api/products/{{this.id}}" class="product-link">Ver</a>
+                <form class="delete-product-form" method="POST" action="/api/products/{{this.id}}?_method=DELETE">
+                    <button type="submit" class="delete-button">Eliminar</button>
+                </form>
             </div>
         </li>
         {{/each}}

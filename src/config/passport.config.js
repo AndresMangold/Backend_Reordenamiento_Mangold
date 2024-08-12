@@ -46,7 +46,7 @@ const initializePassport = () => {
                         password: hashPassword(password),
                         role: 'user',
                         cartId: newCart._id
-                    }
+                    };
                     const result = await User.create(newUser);
                     return done(null, result);
                 }
@@ -68,6 +68,6 @@ const initializePassport = () => {
             done(err);
         }
     });
-}
+};
 
 module.exports = initializePassport;

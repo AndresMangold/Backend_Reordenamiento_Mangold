@@ -1,0 +1,13 @@
+openapi: 3.0.1
+info:
+  title: API de Andrés
+  description: Documentación de la API de Andrés para CoderH
+  version: 1.0.0
+paths:
+  /api/carts:
+    $ref: './cart.yaml'
+  /api/products:
+    $ref: './products.yaml'
+components:
+  schemas:
+    $ref: './schemas.yaml'

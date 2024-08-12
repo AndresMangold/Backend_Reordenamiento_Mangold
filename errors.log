@@ -1,0 +1,106 @@
+{"level":"error","message":"Test"}
+{"level":"error","message":"Test"}
+{"level":"error","message":"Test"}
+08-06-2024 11:26:19 [ERROR]: Test
+08-06-2024 11:58:50 / Level: [ERROR] - Message: ERROR - Relevancia: 1
+08-06-2024 11:58:50 / Level: [FATAL] - Message: FATAL - Relevancia: 0
+08-06-2024 11:59:51 / Level: [ERROR] - Message: ERROR test - Relevancia: 1
+08-06-2024 11:59:51 / Level: [FATAL] - Message: FATAL test - Relevancia: 0  16-06-2024 18:56:56 / Level: [ERROR] - Message: ERROR test - Relevancia: 1
+16-06-2024 18:56:56 / Level: [FATAL] - Message: FATAL test - Relevancia: 0
+17-06-2024 10:34:41 / Level: [ERROR] - Message: ERROR test - Relevancia: 1
+17-06-2024 10:34:41 / Level: [FATAL] - Message: FATAL test - Relevancia: 0
+17-06-2024 10:35:21 / Level: [ERROR] - Message: ERROR test - Relevancia: 1
+17-06-2024 10:35:21 / Level: [FATAL] - Message: FATAL test - Relevancia: 0
+17-06-2024 10:35:35 / Level: [ERROR] - Message: ERROR test - Relevancia: 1
+17-06-2024 10:35:35 / Level: [FATAL] - Message: FATAL test - Relevancia: 0
+17-06-2024 10:35:51 / Level: [ERROR] - Message: ERROR test - Relevancia: 1
+17-06-2024 10:35:51 / Level: [FATAL] - Message: FATAL test - Relevancia: 0
+17-06-2024 10:44:18 / Level: [ERROR] - Message: ERROR test - Relevancia: 1
+17-06-2024 10:44:18 / Level: [FATAL] - Message: FATAL test - Relevancia: 0
+22-06-2024 13:53:43 / Level: [ERROR] - Message: this.usersRepository.getUserByEmail is not a function this.usersRepository.getUserByEmail is not a function
+22-06-2024 17:45:31 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 17:48:08 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:00:50 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:02:29 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:03:46 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:13:29 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:16:34 / Level: [ERROR] - Message: generatePasswordRecoveryToken is not defined generatePasswordRecoveryToken is not defined
+22-06-2024 18:17:58 / Level: [ERROR] - Message: No se pudo enviar el email No se pudo enviar el email
+22-06-2024 18:47:06 / Level: [ERROR] - Message: No se pudo enviar el correo No se pudo enviar el correo
+22-06-2024 18:49:16 / Level: [ERROR] - Message: No se pudo enviar el correo No se pudo enviar el correo
+24-06-2024 20:38:34 / Level: [ERROR] - Message: isValidPassword is not defined isValidPassword is not defined
+24-06-2024 20:40:47 / Level: [ERROR] - Message: bcrypt is not defined bcrypt is not defined
+24-06-2024 20:41:35 / Level: [ERROR] - Message: bcrypt is not defined bcrypt is not defined
+24-06-2024 22:30:59 / Level: [ERROR] - Message: mongoose is not defined mongoose is not defined
+24-06-2024 22:49:32 / Level: [ERROR] - Message: accesToken is not defined accesToken is not defined
+24-06-2024 22:50:08 / Level: [ERROR] - Message: accessToken is not defined accessToken is not defined
+24-06-2024 22:50:44 / Level: [ERROR] - Message: accessToken is not defined accessToken is not defined
+25-06-2024 10:43:26 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:43:29 / Level: [ERROR] - Message: product is not defined product is not defined
+25-06-2024 10:43:36 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:43:42 / Level: [ERROR] - Message: product is not defined product is not defined
+25-06-2024 10:50:28 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:50:30 / Level: [ERROR] - Message: product is not defined product is not defined
+25-06-2024 10:50:43 / Level: [ERROR] - Message: product is not defined product is not defined
+25-06-2024 10:50:53 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:50:54 / Level: [ERROR] - Message: product is not defined product is not defined
+25-06-2024 10:53:25 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:55:12 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 10:56:30 / Level: [ERROR] - Message: Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User" Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
+25-06-2024 11:01:57 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+25-06-2024 19:40:41 / Level: [ERROR] - Message: this.usersRepository.changeRole is not a function this.usersRepository.changeRole is not a function
+25-06-2024 19:41:40 / Level: [ERROR] - Message: this.usersRepository.changeRole is not a function this.usersRepository.changeRole is not a function
+26-06-2024 18:39:31 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+26-06-2024 18:41:22 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "P505" }
+26-06-2024 18:41:22 / Level: [ERROR] - Message: Error al agregar el producto Error al agregar el producto
+26-06-2024 18:42:24 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+26-06-2024 18:52:09 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
+26-06-2024 18:52:09 / Level: [ERROR] - Message: Error al agregar el producto Error al agregar el producto
+26-06-2024 21:16:45 / Level: [ERROR] - Message: Error validando permisos Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
+26-06-2024 21:23:22 / Level: [ERROR] - Message: Error validando permisos Class constructor ObjectId cannot be invoked without 'new'
+26-06-2024 21:23:38 / Level: [ERROR] - Message: Error validando permisos Class constructor ObjectId cannot be invoked without 'new'
+02-07-2024 22:02:02 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+03-07-2024 20:10:15 / Level: [ERROR] - Message: Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User" Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
+03-07-2024 20:11:11 / Level: [ERROR] - Message: Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User" Cast to ObjectId failed for value "admin_id" (type string) at path "_id" for model "User"
+10-07-2024 22:20:52 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+10-07-2024 22:20:53 / Level: [ERROR] - Message: Product is not defined Product is not defined
+10-07-2024 22:21:02 / Level: [ERROR] - Message: Product is not defined Product is not defined
+10-07-2024 22:21:43 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+10-07-2024 22:21:44 / Level: [ERROR] - Message: Product is not defined Product is not defined
+10-07-2024 22:39:06 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+10-07-2024 22:39:07 / Level: [ERROR] - Message: Product is not defined Product is not defined
+10-07-2024 23:05:06 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+10-07-2024 23:05:20 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+11-07-2024 09:49:08 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
+11-07-2024 09:49:08 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
+11-07-2024 09:49:08 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
+11-07-2024 09:55:21 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "p5001" }
+11-07-2024 09:55:21 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "p5000" }
+11-07-2024 10:08:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode1" }
+11-07-2024 10:08:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode2" }
+11-07-2024 10:08:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode3" }
+11-07-2024 10:08:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode4" }
+11-07-2024 10:08:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode5" }
+11-07-2024 10:09:17 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode1" }
+11-07-2024 10:09:17 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode2" }
+11-07-2024 10:09:17 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode3" }
+11-07-2024 10:09:17 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode4" }
+11-07-2024 10:09:17 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode5" }
+14-07-2024 20:48:14 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+14-07-2024 20:51:37 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+15-07-2024 17:37:28 / Level: [ERROR] - Message: this.cartsRepository.updateCart is not a function this.cartsRepository.updateCart is not a function
+15-07-2024 17:56:46 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+15-07-2024 21:24:15 / Level: [ERROR] - Message: this.cartsRepository.updateCart is not a function this.cartsRepository.updateCart is not a function
+15-07-2024 21:46:46 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode1" }
+15-07-2024 21:46:46 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode2" }
+15-07-2024 21:46:46 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode3" }
+15-07-2024 21:46:46 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode4" }
+15-07-2024 21:46:46 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: ecommerce.products index: code_1 dup key: { code: "uniqueCode5" }
+16-07-2024 10:41:55 / Level: [ERROR] - Message: this.cartsRepository.updateCart is not a function this.cartsRepository.updateCart is not a function
+16-07-2024 11:47:05 / Level: [ERROR] - Message: this.cartsRepository.updateCartWithRemainingProducts is not a function this.cartsRepository.updateCartWithRemainingProducts is not a function
+16-07-2024 12:02:26 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+16-07-2024 12:14:53 / Level: [ERROR] - Message: req.logger.warn is not a function req.logger.warn is not a function
+16-07-2024 16:23:17 / Level: [ERROR] - Message: Error al agregar el producto. Product validation failed: owner: Path `owner` is required.
+16-07-2024 17:27:28 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: test.products index: code_1 dup key: { code: "uniqueCode1" }
+16-07-2024 17:56:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: test.products index: code_1 dup key: { code: "uniqueCode1" }
+16-07-2024 17:56:30 / Level: [ERROR] - Message: Error al agregar el producto. E11000 duplicate key error collection: test.products index: code_1 dup key: { code: "uniqueCode5" }

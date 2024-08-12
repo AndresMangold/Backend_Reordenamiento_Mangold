@@ -1,0 +1,17 @@
+<div class="cart-container">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                title: '¡Compra realizada con éxito!',
+                text: 'ID del ticket: {{ticket.code}} - Monto: ${{ticket.amount}}',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/api/products';
+                }
+            });
+        });
+    </script>
+</div>

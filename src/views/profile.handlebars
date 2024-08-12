@@ -6,11 +6,118 @@
         <h2>Datos del perfil:</h2>
         <div>Edad: {{user.age}}</div>
         <div>Email: {{user.email}}</div>
+        {{#if uploadSuccess}}
+        <div class="alert alert-success">
+            Los documentos se subieron correctamente.
+        </div>
+        {{/if}}
         <form action="/sessions/logout" method="get">
             <button type="submit" class="logout-button">Logout</button>
+        </form>
+        <form id="upload-documents-form" enctype="multipart/form-data" method="POST" action="/api/users/{{user._id}}/documents">
+            <h3>Subir documentos</h3>
+            <div class="upload-section">
+                <label for="identification">Identificación:</label>
+                <input type="file" name="identification" id="identification" required>
+            </div>
+            <div class="upload-section">
+                <label for="addressProof">Comprobante de domicilio:</label>
+                <input type="file" name="addressProof" id="addressProof" required>
+            </div>
+            <div class="upload-section">
+                <label for="accountProof">Comprobante de estado de cuenta:</label>
+                <input type="file" name="accountProof" id="accountProof" required>
+            </div>
+            <button type="submit" class="upload-button">Subir documentos</button>
+        </form>
+        <form id="upload-profile-picture-form" enctype="multipart/form-data" method="POST" action="/api/users/{{user._id}}/profile-picture">
+            <h3>Subir foto de perfil</h3>
+            <div class="upload-section">
+                <label for="profile">Foto de perfil:</label>
+                <input type="file" name="profile" id="profile">
+            </div>
+            <button type="submit" class="upload-button">Subir foto</button>
+        </form>
+        <form id="convert-role-form">
+            <button type="button" class="convert-role-button">Convertir usuario</button>
         </form>
     </div>
     {{else}}
     <p>No estás logueado. <a href="/sessions/login">Iniciar sesión</a></p>
     {{/if}}
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const convertRoleButton = document.querySelector('.convert-role-button');
+
+        convertRoleButton.addEventListener('click', async () => {
+            const userId = '{{user._id}}';  
+
+            try {
+                const response = await fetch(`/api/users/premium/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${document.cookie.replace('accessToken=', '')}`
+                    }
+                });
+
+                if (response.ok) {
+                    alert('Rol del usuario actualizado correctamente.');
+                    location.reload();  
+                } else {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.error}`);
+                }
+            } catch (error) {
+                console.error('Error updating user role:', error);
+                alert('An error occurred while updating the user role');
+            }
+        });
+
+        setInterval(async () => {
+            try {
+                const response = await fetch('/sessions/current', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include' 
+                });
+
+                if (!response.ok) {
+                    window.location.href = '/sessions/login';
+                }
+            } catch (error) {
+                console.error('Error checking session:', error);
+                window.location.href = '/sessions/login'; 
+            }
+        }, 30000); 
+
+        window.addEventListener('beforeunload', async (event) => {
+            try {
+                await fetch('/sessions/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include', 
+                });
+            } catch (error) {
+                console.error('Error logging out on unload:', error);
+            }
+        });
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('uploadSuccess')) {
+        const uploadSuccess = urlParams.get('uploadSuccess');
+        if (uploadSuccess === 'true') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success';
+            alertDiv.textContent = 'Los documentos se subieron correctamente.';
+            document.querySelector('.profile-info').insertBefore(alertDiv, document.querySelector('#upload-documents-form'));
+        }
+    }
+</script>

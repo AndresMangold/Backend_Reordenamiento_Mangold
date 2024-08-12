@@ -1,30 +1,56 @@
 <div class="registration-form">
-    <form action="/api/register" method="post" enctype="application/x-www-form-urlencoded">
+    <form id="registrationForm" method="post">
         <div class="form-group">
             <label for="_f_name">First name:</label>
-            <input type="text" name="firstName" id="_f_name" />
+            <input type="text" name="firstName" id="_f_name" required />
         </div>
 
         <div class="form-group">
             <label for="_l_name">Last name:</label>
-            <input type="text" name="lastName" id="_l_name" />
+            <input type="text" name="lastName" id="_l_name" required />
         </div>
 
         <div class="form-group">
             <label for="_age">Age:</label>
-            <input type="number" name="age" id="_age" />
+            <input type="number" name="age" id="_age" required />
         </div>
 
         <div class="form-group">
             <label for="_email">Email:</label>
-            <input type="email" name="email" id="_email" />
+            <input type="email" name="email" id="_email" required />
         </div>
 
         <div class="form-group">
             <label for="_pass">Password:</label>
-            <input type="password" name="password" id="_pass" />
+            <input type="password" name="password" id="_pass" required />
         </div>
 
         <button type="submit" class="register-button">Register</button>
     </form>
 </div>
+
+<script>
+    document.getElementById('registrationForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const data = {};
+        formData.forEach((value, key) => { data[key] = value });
+
+        const response = await fetch('/sessions/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        if (response.status === 201) {
+            alert('Usuario creado con éxito!'); 
+            window.location.href = result.redirectUrl; 
+        } else {
+            alert('Error: ' + result.error); 
+        }
+    });
+</script>

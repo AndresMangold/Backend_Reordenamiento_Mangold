@@ -1,0 +1,262 @@
+openapi: 3.0.0
+info:
+  title: API de Productos
+  version: 1.0.0
+paths:
+  /api/products/:
+    get:
+      summary: Devuelve el catálogo completo de productos
+      tags:
+        - Products
+      parameters:
+        - in: query
+          name: page
+          schema: 
+            type: integer
+            default: 1
+          description: Página de resultado a devolver
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [asc, desc]
+          description: Orden de los productos por orden de precio
+      responses:
+        "200":
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        "400": 
+          description: Página no existente
+        "500":
+          description: Error Interno
+    post:
+      summary: Añade un nuevo producto a la base de datos
+      tags:
+        - Products
+      requestBody:
+        description: Datos del nuevo producto
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProduct'
+      responses:
+        "201":
+          description: Producto creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "400":
+          description: Error en la solicitud
+        "403":
+          description: No cuenta con los permisos adecuados
+        "409":
+          description: Código de producto duplicado
+        "500":
+          description: Error Interno
+  /api/products/{productId}:
+    get:
+      summary: Devuelve un único producto según su ID
+      tags:
+        - Products
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID del producto a devolver
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Operación exitosa
+          content: 
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Product'
+        "404":
+          description: El producto no existe
+        "500":
+          description: Error Interno
+    put:
+      summary: Actualiza un producto según su ID
+      tags:
+        - Products
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID del producto a actualizar
+          schema:
+            type: string
+      requestBody:
+        description: Campos del producto a actualizar
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProduct'
+      responses:
+        "201":
+          description: Producto actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        "403":
+          description: No cuenta con los permisos adecuados
+        "404":
+          description: El producto no existe
+        "500":
+          description: Error Interno
+    delete:
+      summary: Elimina un producto según su ID
+      tags:
+        - Products
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          description: ID del producto a eliminar
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Producto eliminado exitosamente
+        "403":
+          description: No cuenta con los permisos adecuados
+        "404":
+          description: El producto no existe
+        "500":
+          description: Error Interno
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: ID del producto
+        title:
+          type: string
+          required: true
+          description: Nombre del producto
+        description:
+          type: string
+          required: true
+          description: Descripción del producto
+        price:
+          type: number
+          required: true
+          description: Precio del producto
+        thumbnail:
+          type: string
+          description: URL con la imagen del producto
+          default: Sin Imagen
+        code:
+          type: string
+          required: true
+          unique: true
+          description: Codigo del producto
+        stock: 
+          type: integer
+          required: true
+          description: Cantidad de producto en stock
+        category:
+          type: string
+          required: true
+          description: Categoría del producto
+        owner:
+          type: string
+          description: Propietario del producto
+          default: Admin
+      example:
+        _id: "60a6c7e9f99b4b23c8f5b5a3"
+        title: Prueba
+        description: Descripcion de Prueba
+        price: 20000
+        thumbnail: Sin Imagen
+        code: abc123
+        stock: 80
+        category: prueba
+        owner: admin
+    NewProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          required: true
+          description: Nombre del producto
+        description:
+          type: string
+          required: true
+          description: Descripción del producto
+        price:
+          type: number
+          required: true
+          description: Precio del producto
+        thumbnail:
+          type: string
+          description: URL 
+          default: Sin Imagen
+        code:
+          type: string
+          required: true
+          unique: true
+          description: Codigo del producto
+        stock: 
+          type: integer
+          required: true
+          description: Cantidad de producto en stock
+        category:
+          type: string
+          required: true
+          description: Categoría del producto
+        owner:
+          type: string
+          description: Propietario del producto
+          default: Admin
+      example:
+        title: Ejemplo
+        description: Descripcion del ejemplo
+        price: 2000
+        thumbnail: Sin Imagen
+        code: abc123
+        stock: 80
+        category: almacenamiento
+        owner: admin
+    UpdateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: integer
+          description: Stock del producto
+        category:
+          type: string
+          description: Categoría del producto
+      example:
+        title: Producto actualizado
+        description: Descripción actualizada del producto
+        price: 30000
+        stock: 1510
+        category: Prueba
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

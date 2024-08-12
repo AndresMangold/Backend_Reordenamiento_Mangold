@@ -1,4 +1,16 @@
-module.exports = {
-    dbName: 'ecommerce',
-    mongoUrl: 'mongodb+srv://andresmangold:andresPass@cluster0.hrz9nqj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
-}
+require('dotenv').config();
+
+const environment = process.env.NODE_ENV || 'development';
+
+const config = {
+    development: {
+        dbName: process.env.DB_NAME,
+        mongoUrl: process.env.MONGO_URL,
+    },
+    test: {
+        dbName: process.env.DB_NAME_TEST,
+        mongoUrl: process.env.MONGO_URL_TEST,
+    }
+};
+
+module.exports = config[environment];

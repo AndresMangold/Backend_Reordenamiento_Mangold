@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-const mongoosePaginate = require('mongoose-paginate-v2');
-const Schema = mongoose.Schema;
 
-const productSchema = new Schema({
+const productSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
@@ -33,15 +31,15 @@ const productSchema = new Schema({
     category: {
         type: String,
         required: true
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', 
+        required: false
     }
 }, { timestamps: true });
 
-productSchema.virtual('id').get(function () {
-    return this._id.toString();
-});
 
-productSchema.plugin(mongoosePaginate);
+productSchema.plugin(require('mongoose-paginate-v2'));
 
-const Product = mongoose.model('Product', productSchema);
-
-module.exports = Product;
+module.exports = mongoose.model('Product', productSchema);
