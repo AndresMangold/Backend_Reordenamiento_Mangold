@@ -17,7 +17,6 @@ Este proyecto simula un servidor con persistencia de datos alojado en MongoDB do
 El deploy de esta API se realizó desde Railway. Click aquí!
 
 
-
 # Para correr este proyecto:
 
 > **Clonar el repositorio**  
