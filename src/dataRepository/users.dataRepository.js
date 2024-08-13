@@ -120,6 +120,7 @@ class UsersRepository {
 
     async registerUser(firstName, lastName, age, email, password) {
         try {
+            // console.log(this.#adminUser)
             if (email === this.#adminUser.email) {
                 logger.warn(`Intento de registro del usuario administrador con email ${email}.`);
                 throw CustomError.createError({

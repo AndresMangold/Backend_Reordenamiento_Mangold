@@ -9,7 +9,7 @@ describe('Testing Users Repository', () => {
     let connection = null;
 
     before(async function () {
-        this.timeout(20000); 
+        this.timeout(20000);
         chai = await import('chai');
         expect = chai.expect;
     
@@ -40,6 +40,18 @@ describe('Testing Users Repository', () => {
         this.timeout(10000);
         await mongoose.connection.collection('users').deleteMany({});
         await mongoose.connection.collection('carts').deleteMany({});
+
+        const adminUser = {
+            firstName: 'Admin',
+            lastName: 'User',
+            age: 99,
+            email: 'adminCoder@coder.com',
+            password: 'hashedAdminPassword', 
+            role: 'admin'
+        };
+
+        await mongoose.connection.collection('users').insertOne(adminUser);
+
     });
 
     it('El resultado del get debe ser un array', function (done) {
@@ -60,20 +72,20 @@ describe('Testing Users Repository', () => {
             firstName: 'Juan',
             lastName: 'Cualquiera',
             age: 30,
-            email: `juan${Date.now()}@example.com`,
+            email: `juan${Date.now()}@example.com`, 
             password: 'password123'
         };
 
-        const newUser = await usersRepository.registerUser(
-            mockUser.firstName,
-            mockUser.lastName,
-            mockUser.age,
-            mockUser.email,
-            mockUser.password
-        );
-
-        expect(newUser.id).to.be.ok;
-        expect(newUser.email).to.equal(mockUser.email);
+            const newUser = await usersRepository.registerUser(
+                mockUser.firstName,
+                mockUser.lastName,
+                mockUser.age,
+                mockUser.email,
+                mockUser.password
+            );
+    
+            expect(newUser.id).to.be.ok;
+            expect(newUser.email).to.equal(mockUser.email);
     });
 
     it('Se debe obtener un usuario según su ID', async () => {
@@ -81,22 +93,21 @@ describe('Testing Users Repository', () => {
             firstName: 'Lorna',
             lastName: 'Cualca',
             age: 25,
-            email: `lorna${Date.now()}@example.com`,
+            email: `lorna${Date.now()}@example.com`, 
             password: 'password123'
         };
 
-        const newUser = await usersRepository.registerUser(
-            mockUser.firstName,
-            mockUser.lastName,
-            mockUser.age,
-            mockUser.email,
-            mockUser.password
-        );
-
-        const findedUser = await usersRepository.getUserById(newUser.id);
-
-        expect(findedUser.id).to.be.equal(newUser.id);
-        expect(findedUser.email).to.equal(mockUser.email);
+            const newUser = await usersRepository.registerUser(
+                mockUser.firstName,
+                mockUser.lastName,
+                mockUser.age,
+                mockUser.email,
+                mockUser.password)
+    
+            const findedUser = await usersRepository.getUserById(newUser.id)
+    
+            expect(findedUser.id).to.be.equal(newUser.id);
+            expect(findedUser.email).to.equal(mockUser.email);
     });
 
     it('Se debe poder iniciar sesión correctamente', async () => {
@@ -104,22 +115,22 @@ describe('Testing Users Repository', () => {
             firstName: 'Pedrito',
             lastName: 'Calquiera',
             age: 28,
-            email: `pedrito${Date.now()}@example.com`,
+            email: `pedrito${Date.now()}@example.com`, 
             password: 'password123'
         };
 
-        await usersRepository.registerUser(
-            mockUser.firstName,
-            mockUser.lastName,
-            mockUser.age,
-            mockUser.email,
-            mockUser.password
-        );
-
-        const loginResult = await usersRepository.loginUser(mockUser.email, mockUser.password);
-
-        expect(loginResult.user.email).to.equal(mockUser.email);
-        expect(loginResult.token).to.be.ok;
+            await usersRepository.registerUser(
+                mockUser.firstName,
+                mockUser.lastName,
+                mockUser.age,
+                mockUser.email,
+                mockUser.password
+            );
+    
+            const loginResult = await usersRepository.loginUser(mockUser.email, mockUser.password);
+    
+            expect(loginResult.user.email).to.equal(mockUser.email);
+            expect(loginResult.token).to.be.ok;
     });
 
     it('Se debe eliminar un usuario correctamente', async () => {
@@ -127,26 +138,22 @@ describe('Testing Users Repository', () => {
             firstName: 'Barry',
             lastName: 'Cualquiera',
             age: 35,
-            email: `barry${Date.now()}@example.com`,
+            email: `barry${Date.now()}@example.com`, 
             password: 'password123'
         };
 
-        const newUser = await usersRepository.registerUser(
-            mockUser.firstName,
-            mockUser.lastName,
-            mockUser.age,
-            mockUser.email,
-            mockUser.password
-        );
+            const newUser = await usersRepository.registerUser(
+                mockUser.firstName,
+                mockUser.lastName,
+                mockUser.age,
+                mockUser.email,
+                mockUser.password
+            );
+    
+            await usersRepository.deleteUser(mockUser.email);
 
-        await usersRepository.deleteUser(mockUser.email);
-
-        try {
-            await usersRepository.getUserById(newUser.id);
-            expect.fail('El usuario debería haber sido eliminado');
-        } catch (error) {
-            expect(error.message).to.include('No se pudo obtener el usuario');
-        }
+                const userNotFound = await usersRepository.getUserById(newUser.id);
+                console.log(userNotFound)
+                expect(userNotFound).to.be.null;
     });
 });
-

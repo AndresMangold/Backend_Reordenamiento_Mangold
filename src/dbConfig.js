@@ -9,7 +9,7 @@ const config = {
     },
     test: {
         dbName: process.env.DB_NAME_TEST,
-        mongoUrl: process.env.MONGO_URL_TEST,
+        mongoUrl: process.env.MONGODB_URI,
     }
 };
 
