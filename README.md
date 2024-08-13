@@ -14,14 +14,14 @@ Este proyecto simula un servidor con persistencia de datos alojado en MongoDB do
 
 # Deploy
 
-El deploy de esta API se realizó desde Railway. Click aquí!
+El deploy de esta API se realizó desde Railway. [Click aquí!](https://proyecto-final-mangold.up.railway.app)
 
 
 
 # Para correr este proyecto:
 
 > **Clonar el repositorio**  
-> - `git clone https://github.com/AndresMangold/Backend_Reordenamiento_Mangold/tree/entrega-final`
+> - `git clone https://github.com/AndresMangold/Backend_Reordenamiento_Mangold/tree/main`
 >
 > **Instalar las dependencias**  
 > - `npm i`
