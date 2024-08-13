@@ -1,88 +1,140 @@
 // require('dotenv').config();
 // const mongoose = require('mongoose');
 // const supertest = require('supertest');
-// const server = require('../../src/app'); // Importa el servidor
+// const server = require('../../src/app');
+// const path = require('path');
 // const PORT = process.env.PORT || 8080;
 
 // let chai;
 // let expect;
 // let connection = null;
-// let requester; // Almacenar la instancia de requester
-// let appServer; // Variable para almacenar la instancia del servidor
+// let requester;
+// let appServer;
 
 // describe('Testing Ecommerce', () => {
-//     let connection = null;
+//     let cookie;
 
 //     before(async function () {
-//         this.timeout(10000); // Configurar el tiempo de espera para la conexión
+//         this.timeout(20000);
 
-//         const mongooseConnection = await mongoose.connect(process.env.MONGODB_URI, { dbName: 'testing' });
-//         connection = mongooseConnection.connection;
+//         try {
+//             // Conexión a MongoDB
+//             const mongooseConnection = await mongoose.connect(process.env.MONGODB_URI, { dbName: 'testing' });
+//             connection = mongooseConnection.connection;
+//             console.log('Connected to MongoDB');
 
-//         // Iniciar el servidor solo para pruebas
-//         appServer = server.listen(PORT, () => {
-//             console.log(`Servidor corriendo en el puerto ${PORT}`);
-//         });
+//             // Iniciar el servidor de pruebas
+//             appServer = server.listen(PORT, () => {
+//                 console.log(`Server running on port ${PORT}`);
+//             });
 
-//         requester = supertest(`http://localhost:${PORT}`); // Usa supertest con la URL del servidor
+//             requester = supertest(appServer);
 
-//         // Importar chai dinámicamente
-//         chai = await import('chai');
-//         expect = chai.expect;
+//             chai = await import('chai');
+//             expect = chai.expect;
+
+//             // Autenticación de usuario admin para obtener la cookie
+//             const user = { email: process.env.ADMIN_MAIL, password: process.env.ADMIN_PASS };
+//             const loginResponse = await requester.post('/api/users/login').send(user);
+            
+//             if (loginResponse.status !== 200) {
+//                 throw new Error(`Login failed with status ${loginResponse.status}`);
+//             }
+            
+//             const cookies = loginResponse.headers['set-cookie'];
+//             if (!cookies || cookies.length === 0) {
+//                 throw new Error('No cookies returned from login');
+//             }
+
+//             cookie = cookies[0];
+
+//         } catch (error) {
+//             console.error('Error in setup:', error);
+//             throw error;
+//         }
 //     });
 
 //     after(async () => {
-//         // Cerrar la conexión a la base de datos
+//         // Cerrar la conexión a MongoDB
 //         if (connection) {
-//             await connection.close();
-//             console.log('Connection to MongoDB closed');
+//             try {
+//                 await connection.close();
+//                 console.log('Connection to MongoDB closed');
+//             } catch (error) {
+//                 console.error('Error closing connection to MongoDB:', error);
+//             }
+//         }
+
+//         // Detener el servidor de pruebas
+//         if (appServer) {
+//             appServer.close(() => {
+//                 console.log('Server stopped');
+//             });
 //         }
 //     });
 
 //     beforeEach(async function () {
 //         this.timeout(10000);
-        
-//         // Limpiar las colecciones necesarias
-//         await mongoose.connection.collection('products').deleteMany({});
-//         await mongoose.connection.collection('carts').deleteMany({});
-//         await mongoose.connection.collection('users').deleteMany({});
+
+//         // Limpiar las colecciones antes de cada test
+//         const collections = ['products', 'carts', 'users'];
+//         for (const collection of collections) {
+//             await mongoose.connection.collection(collection).deleteMany({});
+//         }
+
+//         // Insertar usuario administrador
+//         const adminUser = {
+//             firstName: 'Admin',
+//             lastName: 'User',
+//             age: 99,
+//             email: process.env.ADMIN_MAIL,
+//             password: 'hashedAdminPassword', // Ajustar a la implementación de hashing que uses
+//             role: 'admin'
+//         };
+
+//         await mongoose.connection.collection('users').insertOne(adminUser);
 //     });
 
-//     // Función auxiliar para autenticación
+//     // Funciones auxiliares
 //     const authenticateAdminUser = async () => {
 //         const user = { email: process.env.ADMIN_MAIL, password: process.env.ADMIN_PASS };
 //         const loginResponse = await requester.post('/api/users/login').send(user);
-//         return loginResponse.headers['set-cookie'][0];
+//         const cookies = loginResponse.headers['set-cookie'];
+//         if (!cookies || cookies.length === 0) {
+//             throw new Error('No cookies returned from login');
+//         }
+//         return cookies[0];
 //     };
 
-//     // Función auxiliar para crear un producto
 //     const createProduct = async (cookie, productData) => {
 //         return requester.post('/api/products').set('Cookie', cookie).send(productData);
 //     };
 
-//     // Función auxiliar para crear un carrito
 //     const createCart = async (cookie) => {
 //         return requester.post('/api/cart').set('Cookie', cookie);
 //     };
 
-//     // Función auxiliar para crear y logear un usuario
 //     const simpleRegisterAndLoginUser = async (email, password) => {
 //         const user = { email, password };
 //         await requester.post('/api/users/register').send(user);
 //         const loginResponse = await requester.post('/api/users/login').send(user);
-//         return loginResponse.headers['set-cookie'][0]; // Obtener la cookie del encabezado de la respuesta
+//         const cookies = loginResponse.headers['set-cookie'];
+//         if (!cookies || cookies.length === 0) {
+//             throw new Error('No cookies returned from login');
+//         }
+//         return cookies[0];
 //     };
 
 //     describe('Test de productos', () => {
-//         it('El endpoint GET /api/products debe devolver todos los productos de la base de datos o un array vacio', function (done) {
+//         it('El endpoint GET /api/products debe devolver todos los productos en una página HTML o un array vacío', function (done) {
 //             requester.get('/api/products')
-//                 .then(({ statusCode, ok, body }) => {
-//                     expect(statusCode).to.equal(200);
-//                     expect(ok).to.equal(true);
-//                     expect(Array.isArray(body)).to.be.ok;
-//                     done();
-//                 })
-//                 .catch(done);
+//             .then(({ statusCode, text }) => {
+//                 expect(statusCode).to.equal(200);
+//                 expect(text).to.contain('<html');
+//                 expect(text).to.contain('Productos');
+//                 done();
+//             })
+//             .catch(done);
 //         });
 
 //         it('El endpoint GET /api/products debe devolver un error si se accede a una página que no existe', function (done) {
@@ -106,7 +158,7 @@
 //                 price: 300,
 //                 code: 'abc123',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -120,7 +172,7 @@
 //             expect(body.thumbnail).to.equal('Sin Imagen');
 //         });
 
-//         it('El endpoint GET /api/product/:pid debe devolver un error si el ID no existe', function (done) {
+//         it('El endpoint GET /api/products/:pid debe devolver un error si el ID no existe', function (done) {
 //             const pid = 'falsoPID';
 
 //             requester.get(`/api/products/${pid}`)
@@ -144,7 +196,7 @@
 //                 price: 300,
 //                 code: 'abc124',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const { statusCode, ok, body } = await createProduct(cookie, productMock);
@@ -162,7 +214,7 @@
 //                 price: 300,
 //                 code: 'abc124df',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const { statusCode, ok, body } = await createProduct(cookie, productMock);
@@ -171,7 +223,7 @@
 //             expect(statusCode).to.equal(400);
 //             expect(body.error).to.have.property('cause');
 //             expect(body.error.name).to.equal('Error al agregar el producto.');
-//             expect(body.error.code).to.equal(7)
+//             expect(body.error.code).to.equal(7);
 //         });
 
 //         it('El endpoint POST /api/products/ debe arrojar un error al intentar cargar un producto sin tener los permisos', async () => {
@@ -182,7 +234,7 @@
 //                 price: 300,
 //                 code: 'abc124',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const { statusCode, ok, body } = await requester.post('/api/products').send(productMock);
@@ -201,7 +253,7 @@
 //                 price: 300,
 //                 code: 'abc124',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const { statusCode, ok, body } = await createProduct(cookie, productMock);
@@ -212,7 +264,7 @@
 //             expect(body.error.code).to.equal(26);
 //         });
 
-//         it('El endpoint PUT /api/product/:pid debe actualizar el producto de forma correcta', async () => {
+//         it('El endpoint PUT /api/products/:pid debe actualizar el producto de forma correcta', async () => {
 //             const cookie = await authenticateAdminUser();
 
 //             const productMock = {
@@ -221,7 +273,7 @@
 //                 price: 300,
 //                 code: 'abc125',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -247,7 +299,7 @@
 //             expect(updatedProduct.ok).to.be.ok;
 //         });
 
-//         it('El endpoint PUT /api/product/:pid debe arrojar error si no cuenta con los permisos adecuados', async () => {
+//         it('El endpoint PUT /api/products/:pid debe arrojar error si no cuenta con los permisos adecuados', async () => {
 //             const cookie = await authenticateAdminUser();
 
 //             const productMock = {
@@ -256,7 +308,7 @@
 //                 price: 300,
 //                 code: 'abc125b',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -279,7 +331,7 @@
 //             expect(body).to.have.property('message');
 //         });
 
-//         it('El endpoint PUT /api/product/:pid debe arrojar error el producto no existe', async () => {
+//         it('El endpoint PUT /api/products/:pid debe arrojar error si el producto no existe', async () => {
 //             const cookie = await authenticateAdminUser();
 
 //             const pid = 'falsoPID';
@@ -309,7 +361,7 @@
 //                 price: 300,
 //                 code: 'abc126',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -320,7 +372,7 @@
 
 //             const { statusCode, ok } = await requester
 //                 .delete(`/api/products/${pid}`)
-//                 .set('Cookie', cookie)
+//                 .set('Cookie', cookie);
 
 //             const verifyProduct = await requester.get(`/api/products/${pid}`);
 
@@ -338,7 +390,7 @@
 //                 price: 300,
 //                 code: 'abc12s6',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -355,7 +407,6 @@
 //             expect(ok).to.equal(false);
 //             expect(verifyProduct.statusCode).to.equal(200);
 //             expect(body).to.have.property('message');
-
 //         });
 
 //         it('El endpoint DELETE /api/products/:pid debe arrojar error si el producto no existe', async () => {
@@ -365,8 +416,7 @@
 
 //             const { statusCode, ok, body } = await requester
 //                 .delete(`/api/products/${pid}`)
-//                 .set('Cookie', cookie)
-
+//                 .set('Cookie', cookie);
 
 //             expect(statusCode).to.equal(404);
 //             expect(ok).to.equal(false);
@@ -376,7 +426,7 @@
 //     });
 
 //     describe('Test de carts', () => {
-//         it('El endpoint GET /api/cart debe devolver todos los carritos de la base de datos o un array vacio', function (done) {
+//         it('El endpoint GET /api/cart debe devolver todos los carritos de la base de datos o un array vacío', function (done) {
 //             requester.get('/api/cart')
 //                 .then(({ statusCode, ok, body }) => {
 //                     expect(statusCode).to.equal(200);
@@ -398,7 +448,6 @@
 //             expect(statusCode).to.equal(200);
 //             expect(ok).to.equal(true);
 //             expect(Array.isArray(body.products)).to.be.ok;
-
 //         });
 
 //         it('El endpoint POST /api/cart debe agregar un nuevo carrito a la base de datos', async () => {
@@ -406,7 +455,7 @@
 
 //             const { statusCode, ok, body } = await requester
 //                 .post('/api/cart')
-//                 .set('Cookie', cookie) // Incluir la cookie en el encabezado
+//                 .set('Cookie', cookie); 
 
 //             expect(statusCode).to.equal(201);
 //             expect(ok).to.equal(true);
@@ -416,7 +465,7 @@
 
 //         it('El endpoint POST /api/cart debe arrojar error si no cuenta con los permisos adecuados', async () => {
 //             const { statusCode, ok, body } = await requester
-//                 .post('/api/cart')
+//                 .post('/api/cart');
 
 //             expect(statusCode).to.equal(403);
 //             expect(ok).to.equal(false);
@@ -432,7 +481,7 @@
 //                 price: 300,
 //                 code: 'abc126',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -449,7 +498,7 @@
 
 //             const { statusCode, ok, body } = await requester
 //                 .post(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(statusCode).to.equal(200);
 //             expect(ok).to.equal(true);
@@ -467,7 +516,7 @@
 //                 price: 300,
 //                 code: 'abc126g',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -481,7 +530,7 @@
 //             expect(cart.body).to.have.property('_id');
 
 //             const { statusCode, ok, body } = await requester
-//                 .post(`/api/cart/${cid}/product/${pid}`)
+//                 .post(`/api/cart/${cid}/product/${pid}`);
 
 //             expect(statusCode).to.equal(403);
 //             expect(ok).to.equal(false);
@@ -502,7 +551,7 @@
 
 //             const { statusCode, ok, body } = await requester
 //                 .post(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(statusCode).to.equal(404);
 //             expect(ok).to.equal(false);
@@ -519,7 +568,7 @@
 //                 price: 300,
 //                 code: 'abc127g',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -538,14 +587,14 @@
 
 //             const updatedCart = await requester
 //                 .post(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(updatedCart.statusCode).to.equal(200);
 //             expect(updatedCart.body.products[0].product).to.equal(pid);
 
 //             const { statusCode, ok, body } = await requester
 //                 .delete(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(statusCode).to.equal(200);
 //             expect(ok).to.equal(true);
@@ -563,7 +612,7 @@
 //                 price: 300,
 //                 code: 'abc128',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -583,11 +632,11 @@
 //             const productToUpdate = [{
 //                 product: pid,
 //                 quantity: 20
-//             }]
+//             }];
 
 //             const { statusCode, ok, body } = await requester
 //                 .put(`/api/cart/${cid}`)
-//                 .set('Cookie', cookieUser) // Incluir la cookie en el encabezado
+//                 .set('Cookie', cookieUser) 
 //                 .send(productToUpdate);
 
 //             expect(statusCode).to.equal(200);
@@ -606,7 +655,7 @@
 //                 price: 300,
 //                 code: 'abc128b',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -626,11 +675,11 @@
 //             const productToUpdate = [{
 //                 product: pid,
 //                 quantity: -20
-//             }]
+//             }];
 
 //             const { statusCode, ok, body } = await requester
 //                 .put(`/api/cart/${cid}`)
-//                 .set('Cookie', cookieUser) // Incluir la cookie en el encabezado
+//                 .set('Cookie', cookieUser) 
 //                 .send(productToUpdate);
 
 //             expect(statusCode).to.equal(400);
@@ -648,7 +697,7 @@
 //                 price: 300,
 //                 code: 'abc128c',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -668,7 +717,7 @@
 //             const productToUpdate = [{
 //                 product: pid,
 //                 quantity: 20
-//             }]
+//             }];
 
 //             const { statusCode, ok, body } = await requester
 //                 .put(`/api/cart/${cid}`)
@@ -684,7 +733,6 @@
 
 //             const pid = 'falsoPID';
 
-
 //             const cart = await createCart(cookie);
 
 //             const cid = cart.body._id;
@@ -696,11 +744,11 @@
 //             const productToUpdate = [{
 //                 product: pid,
 //                 quantity: 20
-//             }]
+//             }];
 
 //             const { statusCode, ok, body } = await requester
 //                 .put(`/api/cart/${cid}`)
-//                 .set('Cookie', cookieUser) // Incluir la cookie en el encabezado
+//                 .set('Cookie', cookieUser) 
 //                 .send(productToUpdate);
 
 //             expect(statusCode).to.equal(404);
@@ -717,7 +765,7 @@
 //                 price: 300,
 //                 code: 'abc129',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -736,14 +784,14 @@
 
 //             const addProduct = await requester
 //                 .post(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(addProduct.body.products[0].quantity).to.equal(1);
 //             expect(addProduct.body.products[0].product).to.equal(pid);
 
 //             const quantity = {
 //                 quantity: 20
-//             }
+//             };
 
 //             const { statusCode, ok, body } = await requester
 //                 .put(`/api/cart/${cid}/product/${pid}`)
@@ -765,7 +813,7 @@
 //                 price: 300,
 //                 code: 'abc129b',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -784,14 +832,14 @@
 
 //             const addProduct = await requester
 //                 .post(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(addProduct.body.products[0].quantity).to.equal(1);
 //             expect(addProduct.body.products[0].product).to.equal(pid);
 
 //             const quantity = {
 //                 quantity: 20
-//             }
+//             };
 
 //             const { statusCode, ok, body } = await requester
 //                 .put(`/api/cart/${cid}/product/${pid}`)
@@ -810,7 +858,7 @@
 //                 price: 300,
 //                 code: 'abc129c',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -829,14 +877,14 @@
 
 //             const addProduct = await requester
 //                 .post(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(addProduct.body.products[0].quantity).to.equal(1);
 //             expect(addProduct.body.products[0].product).to.equal(pid);
 
 //             const quantity = {
 //                 quantity: 20
-//             }
+//             };
 
 //             const { statusCode, ok, body } = await requester
 //                 .put(`/api/cart/noCart/product/${pid}`)
@@ -857,7 +905,7 @@
 //                 price: 300,
 //                 code: 'abc129bf',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -876,14 +924,14 @@
 
 //             const addProduct = await requester
 //                 .post(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(addProduct.body.products[0].quantity).to.equal(1);
 //             expect(addProduct.body.products[0].product).to.equal(pid);
 
 //             const quantity = {
 //                 quantity: 20
-//             }
+//             };
 
 //             const { statusCode, ok, body } = await requester
 //                 .put(`/api/cart/${cid}/product/noPid`)
@@ -904,7 +952,7 @@
 //                 price: 300,
 //                 code: 'abc130b',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -923,7 +971,7 @@
 
 //             const updatedCart = await requester
 //                 .post(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(updatedCart.statusCode).to.equal(200);
 //             expect(updatedCart.ok).to.equal(true);
@@ -933,7 +981,7 @@
 
 //             const { statusCode, ok } = await requester
 //                 .delete(`/api/cart/${cid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(statusCode).to.equal(204);
 //             expect(ok).to.equal(true);
@@ -947,7 +995,7 @@
 //                 price: 300,
 //                 code: 'abc130bb',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -966,7 +1014,7 @@
 
 //             const updatedCart = await requester
 //                 .post(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(updatedCart.statusCode).to.equal(200);
 //             expect(updatedCart.ok).to.equal(true);
@@ -975,7 +1023,7 @@
 //             expect(updatedCart.body.products[0].product).to.equal(pid);
 
 //             const { statusCode, ok, body } = await requester
-//                 .delete(`/api/cart/${cid}`)
+//                 .delete(`/api/cart/${cid}`);
 
 //             expect(statusCode).to.equal(403);
 //             expect(ok).to.equal(false);
@@ -990,7 +1038,7 @@
 //                 price: 300,
 //                 code: 'abc130gb',
 //                 stock: 80,
-//                 category: 'almacenamiento'
+//                 category: 'Prueba'
 //             };
 
 //             const product = await createProduct(cookie, productMock);
@@ -1009,7 +1057,7 @@
 
 //             const updatedCart = await requester
 //                 .post(`/api/cart/${cid}/product/${pid}`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(updatedCart.statusCode).to.equal(200);
 //             expect(updatedCart.ok).to.equal(true);
@@ -1019,12 +1067,12 @@
 
 //             const { statusCode, ok, body } = await requester
 //                 .delete(`/api/cart/noCart`)
-//                 .set('Cookie', cookieUser)
+//                 .set('Cookie', cookieUser);
 
 //             expect(statusCode).to.equal(404);
 //             expect(ok).to.equal(false);
 //             expect(body).to.have.property('error');
-//             expect(body.error).to.have.property('cause')
+//             expect(body.error).to.have.property('cause');
 //         });
 //     });
 
@@ -1044,9 +1092,9 @@
 //             await requester
 //                 .post(`/api/users/${currentUser.body.id}/documents`)
 //                 .set('Cookie', cookie)
-//                 .attach('identification', path.join(__dirname, '../img/Fuente.webp'))
-//                 .attach('proofOfAddress', path.join(__dirname, '../img/Fuente.webp'))
-//                 .attach('proofOfAccount', path.join(__dirname, '../img/Fuente.webp'))
+//                 .attach('identification', path.join(__dirname, '../public/images/Caballero.jpg'))
+//                 .attach('proofOfAddress', path.join(__dirname, '../public/images/Earl.jpg'))
+//                 .attach('proofOfAccount', path.join(__dirname, '../public/images/Rey.jpg'));
 
 //             const updateRol = await requester
 //                 .post(`/api/users/premium/${currentUser.body.id}`);
@@ -1058,7 +1106,7 @@
 //         });
 
 //         it('El endpoint POST /api/users/premium/:uid debe arrojar error si el usuario no existe', async () => {
-//             const sinID = 'noID'
+//             const sinID = 'noID';
 //             const { body, statusCode, ok } = await requester
 //                 .post(`/api/users/premium/${sinID}`);
 

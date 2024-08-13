@@ -63,7 +63,6 @@ describe('Testing Product Repository', () => {
             price: 200,
             thumbnail: 'Imagen',
             code: `P${Date.now()}`, 
-            status: true,
             stock: 20,
             category: 'Prueba',
             owner: new mongoose.Types.ObjectId()
@@ -83,7 +82,6 @@ describe('Testing Product Repository', () => {
             price: 200,
             thumbnail: 'Imagen',
             code: `P${Date.now()}`, 
-            status: true,
             stock: 20,
             category: 'Prueba',
             owner: new mongoose.Types.ObjectId() 
