@@ -11,6 +11,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const { serve, setup } = require('swagger-ui-express');
 const moment = require('moment'); 
 const { DEFAULT_MAX_AGE } = require('./constants');
+require('dotenv').config();
 
 const createProductRouter = require('./routes/createProduct.router');
 const productsRouter = require('./routes/products.router');
@@ -126,7 +127,7 @@ const main = async () => {
         await mongoose.connect(mongoUrl, { dbName: dbName });
         server.listen(PORT, () => {
             console.log('Servidor cargado!');
-            console.log(`http://localhost:${PORT}/sessions/login`);
+            console.log(`${process.env.DEPLOY_PORT}/sessions/login`);
         });
     } catch (error) {
         console.error('Error al conectar con la base de datos:', error);
