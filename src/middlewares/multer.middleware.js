@@ -16,7 +16,7 @@ const profileStorage = multer.diskStorage({
 
 const productStorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const dest = path.join(__dirname, '../../uploads/products');
+        const dest = path.join(__dirname, '../../public/images');
         cb(null, dest);
     },
     filename: function (req, file, cb) {

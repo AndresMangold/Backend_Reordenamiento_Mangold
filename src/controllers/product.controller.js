@@ -85,8 +85,8 @@ class ProductController {
             try {
                 const { title, description, price, code, stock, category } = req.body;
                 const owner = req.user.role === 'admin' ? undefined : req.user.id; 
-                const thumbnail = req.file ? req.file.path : 'Sin Imagen';
-
+                const thumbnail = req.file ? req.file.filename : 'Sin Imagen';
+    
                 const productData = { title, description, price, thumbnail, code, stock, category };
                 if (owner) {
                     productData.owner = owner; 
@@ -101,7 +101,6 @@ class ProductController {
             }
         }
     }
-    
 
     async updateProduct(req, res) {
         try {

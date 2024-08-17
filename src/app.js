@@ -10,6 +10,7 @@ const methodOverride = require('method-override');
 const swaggerJSDoc = require('swagger-jsdoc');
 const { serve, setup } = require('swagger-ui-express');
 const moment = require('moment'); 
+const path = require('path');
 const { DEFAULT_MAX_AGE } = require('./constants');
 
 const createProductRouter = require('./routes/createProduct.router');
@@ -45,6 +46,9 @@ const hbs = exphbs.create({
         formatDate: function (date) {
             if (!date) return 'Nunca';
             return moment(date).format('DD/MM/YYYY HH:mm:ss');
+        },
+        eq: function (a, b) {
+            return a === b;
         }
     }
 });
@@ -61,6 +65,7 @@ app.use(methodOverride('_method'));
 
 app.use(express.static(`${__dirname}/public`));
 app.use(express.static('public'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(session({
     store: MongoStore.create({
@@ -94,10 +99,6 @@ const swaggerOptions = {
 const specs = swaggerJSDoc(swaggerOptions);
 
 app.use('/apidocs', serve, setup(specs));
-
-app.get('/', (req, res) => {
-    res.redirect('/sessions/login');
-});
 
 app.get('/', (req, res) => {
     res.redirect('/sessions/login');
